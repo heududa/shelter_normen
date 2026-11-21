@@ -1,0 +1,287 @@
+# Normenbibliothek – CHANGELOG
+
+## 0.8.0 – 21.11.2026
+
+Format- und Strukturerkennung aus dem Auftrag „KI-gestützte Format- und Strukturerkennung“, soweit sie in einer Datei ohne Server geht.
+
+### Neu
+- **Struktur aus dem Layout:** Beim Hinzufügen eines PDF werden aus Schriftgrösse, Nummerierung und Lage der Zeilen erkannt: Normtitel, Überschriften in drei Stufen (auch Dezimalgliederung wie 2.2 → 2.21), Anhänge, Tabellentitel, Bildbeschriftungen, Fussnoten, Aufzählungen und Formeln. Für die 97 eingebetteten PDF ist das beim Bauen geschehen.
+- **Inhaltsverzeichnis:** In der Bearbeitung öffnet „Inhalt“ die Kapitelnavigation; ein Klick springt auf die Seite.
+- **Formatvorlagen je Norm:** Aus den erkannten Schriftgrössen entsteht je PDF ein Satz Vorlagen (Reiter „Angaben“). Der Seitentext wird damit dargestellt, auch im Druck und in der Word-Ausgabe.
+- **Zuweisen von Hand:** Im Bearbeitungsmodus weist „Formatvorlage der Zeile“ der Zeile unter dem Cursor eine Vorlage zu. Das ist eine eigene Änderungsart „Formatänderung“, getrennt von OCR-Korrektur und fachlicher Änderung, mit Freigabe, Verwerfen, Vergleich und Protokoll.
+- **Neu erkennen:** „Struktur neu erkennen“ wertet das Layout erneut aus. Zuweisungen von Hand bleiben erhalten.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| I1 | Es ist **kein KI-Modell** eingebaut. Die Erkennung arbeitet mit festen Regeln (Schriftgrösse, Nummernmuster, Lage). Ein lokales Sprach- oder Layoutmodell passt nicht in eine einzelne Datei ohne Installation. |
+| I2 | Schriftart, Fett/Kursiv, Abstände und Einzüge des Originals werden nicht ausgewertet; nur die Schriftgrösse. |
+| I3 | Die Formatvorlage hängt am Text der Zeile (und bei Überschriften an der Kapitelnummer), nicht an einer Position. |
+| I4 | Die Erkennung ändert nie den Text. Sie zeichnet nur Zeilen aus. |
+
+### Offene Punkte
+- **Scans:** Bei gescannten Normen stammen Schriftgrössen aus der OCR-Textebene und sind ungenau. TWS 1982 Kap. 3 liefert nur zwei Überschriften; bei der TWP 1984 stehen einzelne Zeilen des gedruckten Inhaltsverzeichnisses doppelt in der Navigation.
+- **Tabellen** werden nur am Titel („Tabelle 3.1-3 …“) erkannt, nicht als Zeilen und Spalten.
+- **Word-Dateien** lassen sich nicht einlesen, nur PDF.
+- Eigene Formatvorlagen anlegen und Vorlagen bearbeiten (Grösse, Farbe) geht noch nicht.
+
+## 0.7.0 – 21.11.2026
+
+Die Punkte aus dem Auftrag „Professionelle Bearbeitungswerkzeuge, OCR-Funktionen und Hybridansicht“, die mit einer Datei und einem Nutzer gehen.
+
+### Neu
+- **Änderung im Scan vorschlagen:** Stelle im Original einrahmen; das Fenster nimmt Originalinhalt (aus dem PDF vorbefüllt), vorgeschlagene Änderung, Änderungsart und Begründung auf. Der Vorschlag hängt an der Scanposition, steht in der Änderungsliste und lässt sich mit „In den Text übernehmen“ einsetzen, wenn der Originalinhalt genau einmal auf der Seite steht.
+- **Änderungsart automatisch vorgeschlagen:** Verwechslungen wie O/0, l/1, rn/m gelten als OCR-Korrektur, geänderte Zahlen als fachliche Änderung. Beim Speichern im Grundtext warnt das Programm, wenn eine Stelle fachlich aussieht. Der Autor entscheidet.
+- **Hybrid als Überlagerung:** Im Original lässt sich zwischen „Scan“ und „Hybrid“ wechseln. Hybrid legt den erkannten Text positionsgenau über den Scan, mit Deckkraftregler 0–100 % und Schaltern für Scan, Text und Markierungen. Der Text ist dort markierbar.
+- **Editor:** Rückgängig, Wiederholen, Sonderzeichen (Ø ± ≤ ≥ µ ° ² ³ × …), Suchen und Ersetzen. Ungesicherte Entwürfe lösen beim Schliessen eine Rückfrage aus.
+- **Auswahl freigeben:** In „Änderungen“ hat jeder Eintrag ein Häkchen. Freigegeben wird nur die Auswahl; der Rest bleibt offen. Abhängige Einträge (z. B. die neue Norm zu einer Regel) kommen automatisch dazu.
+- **Verwerfen:** Ein offener Eintrag lässt sich mit Begründung auf den Stand der letzten Version zurücksetzen.
+- **Versionen vergleichen:** Unter „Versionen und Verlauf“ zwei Stände wählen (jede Version oder der aktuelle Stand); gezeigt wird, was neu, geändert oder entfernt ist, samt markierten Seitentexten.
+- **Ausgabe:** Änderungsprotokoll für Excel (CSV) je Norm und gesamt; Word-Datei (.doc) zum Weiterbearbeiten; Seitenauswahl bei Druck, Word und PDF-Export; Kommentare im Protokoll ein- oder ausblendbar; nicht freigegebene Stände tragen „ENTWURF“.
+- Die Textansichten heissen jetzt „Grundtext“, „Mit Änderungen“ und „Neu“ (bisher Original, Hybrid, Neu).
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| H1 | „Hybrid“ meint die Überlagerung von Scan und erkanntem Text (ersetzt G1). |
+| H2 | Die Überlagerung zeigt den Text, wie er im PDF steckt. OCR-Korrekturen und fachliche Änderungen stehen in der Textspalte, nicht in der Überlagerung. |
+| H3 | Fachliche Änderungen behalten Grün für Ergänzung und Rot für Löschung; ein eigenes Gelb gibt es nicht, weil jede Änderung aus Löschung und Ergänzung besteht. |
+| H4 | „Excel“ ist eine CSV-Datei mit Strichpunkt, „Word“ eine .doc-Datei im HTML-Format. Beide öffnen sich in Excel bzw. Word, sind aber kein .xlsx bzw. .docx. |
+| H5 | Eine Teilfreigabe erzeugt eine vollständige Version, in der die nicht gewählten Einträge auf ihrem bisherigen Stand stehen. |
+
+### Nicht umgesetzt aus dem Auftrag
+- **Braucht einen Server:** Rollen (Gast, Autor, Prüfer, Admin), Prüfer und Prüfdatum, serverseitige Rechte, Konflikte bei mehreren Autoren.
+- **Eigener grosser Schritt:** Tabellen bearbeiten, Bilder einfügen, Hoch- und Tiefstellen als Formatierung, Formeleditor, Querverweise.
+- **Bewusst weggelassen:** Schriftart, Schriftfarbe, Seitenränder, Kopf- und Fusszeilen. Das Layout ist das Original-PDF.
+- **Keine Texterkennung:** OCR für einen Bereich neu ausführen und unsichere Ergebnisse kennzeichnen. Das Programm liest nur den Text, der schon im PDF steckt.
+- **PDF/A** und der Vergleich zweier Fassungen als PDF.
+
+### Offene Punkte
+- **Push ins Repo heududa/Claude_Shelter** weiterhin nicht möglich (kein Repo-Zugriff in dieser Sitzung).
+- Drehen der Seiten wird nicht unterstützt.
+- Rückgängig im Texteditor geht nach einem Seitenwechsel oder Speichern nicht über diesen Punkt zurück.
+
+### Geprüft
+`node test_klein.js` mit der Testdatei: zusätzlich Inhaltsverzeichnis und Formatvorlagen, Zuweisung von Hand, Hybrid-Überlagerung mit Regler, Änderung im Scan (Text aus dem Rechteck, Art automatisch, Übernahme in den Text), Sonderzeichen, Suchen und Ersetzen, Warnung bei Zahlenänderung im Grundtext, Protokoll als CSV, Word-Datei mit Seitenauswahl und Entwurf-Vermerk, Teilfreigabe, Verwerfen, Vergleich zweier Versionen. `node test.js` und `node test_pdf.js testdaten` laufen mit der vollen Datei.
+
+## 0.6.0 – 21.11.2026
+
+Neue Oberfläche nach den beiden Entwürfen (Startseite und Bearbeitung), dazu Drucken, PDF-Export und die Hybrid-Ansicht.
+
+### Neu
+- **Bibliothek (Startseite):** dunkle Seitenleiste nach Aufgaben (Bibliothek, Änderungen, Geltende Fassung, Versionen und Verlauf) und Herausgebern. Karten mit echtem Titelblatt, Gruppe, Seitenzahl und Status je Norm (Änderungen offen, Zu bestätigen, Freigegeben, Ohne Inhalt). Filter nach Nummer/Titel, Gruppe, Status und Herausgeber; Umschaltung Karten/Liste. Rechts die offenen Änderungen.
+- **Ansicht „Änderungen“:** alles, was seit der letzten Version neu, geändert oder entfernt ist, je Norm, mit Sprung an die Stelle.
+- **Bearbeitung in drei Spalten:** links die Originalseite (unverändert), in der Mitte der Text derselben Seite, rechts die Änderungen mit Alt, Neu und Begründung.
+  - **OCR-Korrektur:** berichtigt den Grundtext (Lesefehler). Gehört zur Norm.
+  - **Fachliche Änderung:** wird in der gewählten Schicht (z. B. ANDAIR 2026) gespeichert, nie in der Norm. Auswahl „Ich bearbeite“.
+  - Jede Änderung braucht eine Begründung, trägt Name und Datum, ist zuerst „nicht freigegeben“ und wird mit der Freigabe Teil der Version.
+  - **Verbindung zur Regel:** Eine fachliche Änderung nennt die betroffene Regel. Die Karte zeigt, ob der Regelwert in der Schicht schon angepasst ist; „Regelwert anpassen“ legt den Eintrag in der Schicht an. Ohne Regel steht der Hinweis „wirkt nicht auf die Auslegung“.
+  - Ändert sich der Grundtext nach einer fachlichen Änderung, erscheint „Grundtext geändert – prüfen“.
+  - Kommentare auf dem Original (Rechteck oder ganze Seite) stehen in derselben Liste.
+- **Hybrid-Ansicht:** Umschaltung des Textes zwischen Original (Grundtext aus dem PDF), Hybrid (Original mit farbig markierten Änderungen: Ergänzung, Löschung, OCR-Korrektur) und Neu (geltender Text ohne Markierungen).
+- **Drucken:** diese Seite oder ganze Norm, in der Ansicht Original, Hybrid oder Neu, wahlweise mit Änderungsverzeichnis. Im Druckdialog des Browsers lässt sich auch „Als PDF speichern“ wählen.
+- **PDF exportieren:** erzeugt ein PDF aus den unveränderten Originalseiten, mit Deckblatt und Änderungsverzeichnis, einem eingefügten Änderungsblatt nach jeder Seite mit Änderungen und Rahmen um kommentierte Stellen. Eingebaut mit pdf-lib 1.17.1 (MIT), ohne Netz.
+- **Reiter je Norm:** Bearbeitung, Ganze Norm, Regeln, Originaltext, Änderungsprotokoll, Angaben.
+- Der Seitentext wird beim Hinzufügen eines PDF gelesen und zu Absätzen gefügt; ältere Dateien lesen ihn auf Knopfdruck nach.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| G1 | „Hybride Sichtweise“ ist als Textansicht verstanden, die Original und Änderungen zusammen zeigt (am Bildschirm, im Druck und als eingefügte Änderungsblätter im PDF-Export). |
+| G2 | Aus den Entwürfen nicht übernommen, weil es dafür keine Funktion gibt: Prüfungen, Benutzerverwaltung, Rolle, „Zur Prüfung einreichen“, Version je Norm. Der Status je Norm ist aus dem abgeleitet, was die Bibliothek weiss. |
+| G3 | Eine Textänderung speichert den ganzen Seitentext vorher und nachher; Alt und Neu werden daraus wortweise berechnet. Eine Begründung gilt für alle Stellen eines Speichervorgangs. |
+| G4 | Zurückziehen oder löschen lässt sich nur die jeweils letzte Änderung einer Seite und Ebene, damit die Kette stimmt. |
+| G5 | Der bearbeitbare Text ist reiner Text: keine Tabellen, keine Formatierung. Tabellen aus dem PDF erscheinen als Zeilen. |
+| G6 | Beim Zusammenfügen der Zeilen fallen Trennstriche am Zeilenende weg (ausser vor „und“, „oder“, „bzw.“). Das kann einzelne Wörter falsch verbinden und ist dann als OCR-Korrektur zu berichtigen. |
+| G7 | Der PDF-Export enthält auch nicht freigegebene Änderungen und kennzeichnet sie. Zurückgezogene fehlen. |
+| G8 | Der Reiter „Originaltext“ (in Abschnitte geteilt) bleibt neben der seitenweisen Bearbeitung bestehen und zeigt den unkorrigierten Text. |
+
+### Offene Punkte
+- **Push ins Repo heududa/Claude_Shelter** weiterhin nicht möglich (kein Repo-Zugriff in dieser Sitzung).
+- Fachliche Textänderungen wirken nicht auf die geltende Fassung und den Regelwerk-Export; massgebend bleibt dort der Eintrag in der Schicht.
+- Die Suche findet Textänderungen noch nicht, und sie durchsucht den unkorrigierten Originaltext.
+- Im PDF-Export sitzen Rahmen bei gedrehten Seiten falsch; Zeichen ausserhalb des westeuropäischen Zeichensatzes werden auf den Änderungsblättern als „?“ geschrieben.
+- Kein Vergleich zweier Versionen, kein Tabelleneditor, keine Antworten auf Kommentare.
+- Die volle Datei ist weiterhin rund 197 MB gross.
+
+### Geprüft
+`node test_klein.js` mit der Testdatei: Bibliothek (Filter, Liste, Herausgeber, Änderungen), OCR-Korrektur und fachliche Änderung auf TWP Seite 64 (125 Pa → 150 Pa als ANDAIR, mit Regel), die drei Ansichten, Regelwert anpassen, „Grundtext geändert – prüfen“, Kommentar, Drucken (79 Seiten mit Markierungen und Verzeichnis), PDF-Export (81 Seiten, Änderungsblatt nach Seite 64), Freigabe, Speichern und Wiederöffnen, schmale Ansicht. `node test.js` und `node test_pdf.js testdaten` laufen mit der vollen Datei.
+
+## 0.5.0 – 21.11.2026
+
+### Neu
+- **Startseite mit Titelblättern:** Jede Norm erscheint als Karte mit der ersten Seite ihres PDF, darunter Kurzbezeichnung, Titel, Seitenzahl, Anzahl Regeln und Anmerkungen. Gegliedert nach Herausgeber und Gruppe. Ein Klick öffnet die Norm im Original-PDF; Werke ohne PDF zeigen eine leere Karte und öffnen bei den Regeln.
+- Das Titelbild wird beim Hinzufügen oder Ersetzen eines PDF erzeugt (260 px breit, JPEG) und in der Datei gespeichert. Ältere Dateien und Datensicherungen ohne Titelbilder holen sie beim Öffnen der Startseite nach.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| F1 | Bei Werken mit mehreren PDF zeigt die Karte das Titelblatt des ersten Teils. |
+| F2 | Titelbilder sind nur Vorschau und nicht Teil der freigegebenen Versionen. |
+| F3 | Die Zahlen und die Kurzanleitung stehen weiterhin auf der Startseite, jetzt unter den Karten. |
+
+### Geprüft
+`node test_klein.js` (Karten und Bilder, Nachholen fehlender Titelbilder, Klick öffnet PDF bzw. Regeln), dazu `node test_pdf.js testdaten` und `node test.js` mit der vollen Datei.
+
+## 0.4.1 – 21.11.2026
+
+### Neu
+- **Testdatei** `Normenbibliothek_Test.html`, rund 9 MB, gebaut mit `node build.js --test`. Gleiches Programm wie die volle Datei, aber nur 15 Werke und 6 PDF:
+  - mit PDF: TWP 1984 (79 Seiten), TWS 1982 nur Kap. 3 Freifeldschutzräume (21 Seiten), TPH-14, -15, -16, -17 (ohne Beilagen);
+  - ohne PDF, mit Regeln: TWE 1994, TW Schock 2021, TPH-04, -06, -11;
+  - ohne PDF, ohne Regeln: TWK 2017, TWP 1966, Altbestand vor 1967; dazu die Schicht ANDAIR 2026.
+- Die volle Datei (`node build.js`, rund 196 MB, 77 Werke, 97 PDF) ist unverändert.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| E1 | 8 MB sind mit TWP und der ganzen TWS nicht erreichbar: TWP 1984 braucht eingebettet 5,1 MB, die ganze TWS 14,4 MB, das Programm 1,5 MB. Deshalb enthält die Testdatei von der TWS nur Kap. 3, zu dem die erfassten Regeln gehören. |
+| E2 | Alle 73 Regeln bleiben in der Testdatei, damit geltende Fassung, Schichten und Export wie in der vollen Datei prüfbar sind. |
+
+### Geprüft
+`node test_klein.js`: TWP-PDF, Sprung von der Regel auf PDF-Seite 64, Anmerkung, TWS-PDF, Werk ohne PDF, Suche, geltende Fassung, Speichern und Wiederöffnen.
+
+## 0.4.0 – 20.11.2026
+
+Die in Kapitel aufgeteilten Normen sind zu je einem PDF zusammengefügt; Normen mit Anhängen lassen sich als Ganzes öffnen.
+
+### Neu
+- **TWS 1982 und TWO 1977 als je ein PDF:** Die fünf bzw. vier Kapiteldateien des BABS sind mit `zusammenfuegen.sh` (qpdf) in der Reihenfolge der Kapitel zusammengefügt. Seiten und Textebene sind unverändert, die Seiten zählen durchgehend.
+  - TWS 1982, 148 Seiten: Kap. 1 ab Seite 1, Kap. 2 ab 13, Kap. 3 ab 100, Kap. 4 ab 121, Kap. 5.1 ab 138.
+  - TWO 1977, 420 Seiten: Kap. 1 ab Seite 1, Kap. 2 ab 25, Kap. 3 ab 183, Kap. 4 ab 299.
+- **Ansicht „Ganze Norm“:** Bei Werken, die weiterhin aus mehreren PDF bestehen (z. B. TWK 2017 mit Beispielen, TW Schock 2021 mit Anhang, TPH-15/16/17 mit Beilage), stehen alle Teile hintereinander und lassen sich in einem Zug lesen und kommentieren. Das ist die Vorgabe; die einzelnen Teile bleiben wählbar. Jede Anmerkung nennt ihren Teil.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| D1 | „Geteilte Normen“ sind die in Kapiteldateien gelieferten Normen TWS 1982 und TWO 1977. Anhänge, Beispiele und Beilagen sind eigene Dokumente und bleiben Teile des Werks (ersetzt C2 für TWS und TWO). |
+| D2 | Das zusammengefügte PDF ist eine neue Datei mit eigener Prüfsumme; die Kapiteldateien des BABS bleiben im Ordner `quellen/` erhalten. |
+| D3 | Reihenfolge der TWS-Kapitel nach Kapitelnummer. Das vom BABS überarbeitete Kap. 4 (gültig ab 01.01.2012) steht an seiner Stelle. |
+
+### Offene Punkte
+- **Push ins Repo heududa/Claude_Shelter** weiterhin nicht möglich (kein Repo-Zugriff in dieser Sitzung).
+- Die elf erfassten Regeln aus TWS Kap. 3 und die fünf aus Kap. 2 tragen noch keine PDF-Seite.
+- Übrige offene Punkte wie in 0.3.0.
+
+### Geprüft
+`node test_pdf.js testdaten` und `node test.js`: TWS 1982 mit 148 Seiten ohne Teilwahl, Sprung auf Seite 100 zeigt das Titelblatt von Kap. 3, TWO 1977 mit 420 Seiten, TWK 2017 als ganze Norm (226 Seiten, Anmerkung landet im richtigen Teil, Sprung aus der Suche), Speichern und Wiederöffnen ohne Verlust.
+
+## 0.3.0 – 20.11.2026
+
+Alle gelieferten Unterlagen des BABS liegen als Original-PDF in der Bibliothek: 97 PDF mit 2378 Seiten in 77 Werken. Eine Norm kann jetzt aus mehreren PDF bestehen.
+
+### Neu
+- **Mehrere PDF je Werk (Teile):** z. B. TWS 1982 mit fünf Kapiteln, TWO 1977 mit vier, TWK 2017 mit Weisungen und Beispielen, TW Schock 2021 mit Hauptdokument und Anhang, TPH-15/16/17 mit Beilage. Jeder Teil hat eigene Anmerkungen, Prüfsumme und Seitenzählung. Teile lassen sich hinzufügen, ersetzen und (ohne Anmerkungen) entfernen.
+- **Gruppen in der Seitenleiste:** Technische Weisungen, Pflichtenhefte (TPH), Weisungen, Merkblätter, Übrige Unterlagen. Auf- und zuklappbar; die Gruppe ist ein Feld des Werks.
+- **Neue Art „Weisung, Merkblatt oder Unterlage“** für Werke ohne Regelwerk. Sie erscheinen nicht als Basisnorm in der geltenden Fassung.
+- **Regeln und Abschnitte** merken sich, in welchem Teil ihre PDF-Seite liegt.
+- **Originaltext** aller PDF mit Textebene ist eingelesen (2326 Abschnitte) und durchsuchbar, auch die OCR-Textebene der Scans (TWP 1984, TWE 1994, TWS 1982, TWO 1977).
+- Dateien und Datensicherungen aus 0.1.0 und 0.2.0 werden beim Laden umgestellt.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| C1 | Alle 97 PDF gehören zur Version 1 „Ersterfassung“. Die Datei ist dadurch rund 196 MB gross (PDF zusammen 143 MB). Gemessen: Öffnen rund 2 s, Speichern rund 1 s, auf einem Netzlaufwerk entsprechend länger. |
+| C2 | Zuordnung der PDF zu Werken und Teilen nach Titelblatt und Dateiname. Die Beilagen der TPH-15/16/17 sind jetzt Teile des Pflichtenhefts (ersetzt B2 für diese drei). |
+| C3 | Die acht PDF zur Gaswarnanlage sind als Teile des Kreisschreibens 9/98 zusammengefasst, Checkliste und Musterschilder als Teile des Rundschreibens Medizinalgas 2005. |
+| C4 | TW EMP 2007, TW-Z&Q 2026 und TW Typenschilder 2003 sind als Produktanforderung geführt (gelten unter jeder Norm), TWE 1997 und TWO 1977 als Norm ohne Regeln. |
+| C5 | Verknüpfung „TWE 1997 erneuert TWO 1977 und TWS 1982“ ist aus dem Titel abgeleitet. |
+| C6 | Ausgabedaten ohne Tag (AW 2025, TW EMP 2007), aus dem Dateinamen (Bericht Dübelsysteme) oder aus der Änderungstabelle (Wegleitungen, Materialliste) sind zu bestätigen. TWS 1982 hat weiterhin kein Ausgabedatum. |
+| C7 | Die Aufteilung des Originaltexts in Abschnitte ist automatisch und bei den Scans durch OCR-Fehler ungenau; bei wenigen erkannten Abschnitten wird nach Seiten geteilt. Bei TMB 2000 (drei Merkblätter) sind die Überschriften im PDF nicht als Text lesbar. |
+
+### Geklärt
+- **125 Pa / 150 Pa (Druckverlust ÜV/ESV 75/150 im Frischluftbetrieb):** kein Erfassungsfehler. Die TWP 1984 nennt 125 Pa (PDF-Seite 64), das TPH-04 von 2016 nennt in 5.2.2 150 Pa (PDF-Seite 11). Beide Stellen im PDF nachgelesen. Offen ist nur noch der Entscheid, gegen welchen Wert ANDAIR prüft (Kommentar in ANDAIR 2026).
+- Titel und Daten von TWK 2017, TWW 2012, TW Schock 2021 stammen jetzt vom Titelblatt (erledigt A7 bis auf TWS 1982).
+
+### Offene Punkte
+- **Push ins Repo heududa/Claude_Shelter war wieder nicht möglich** (Repo-Zugriff in dieser Sitzung nicht freigegeben). Der Quellcode liegt als ZIP bei, ohne den Ordner `quellen/` mit den PDF (137 MB); dessen Aufbau steht im README.
+- **Regeln:** Nur TWP 1984, TWE 1994, TWS 1982, TW Schock 2021 und sieben TPH haben Regeln. Kein Regelwert ist am Original geprüft; die Regeln von TWP, TWE und TWS tragen bis auf drei noch keine PDF-Seite.
+- **Ohne PDF:** TWP 1966, Altbestand vor 1967, ANDAIR 2026.
+- **Dateigrösse:** Eine Datei von rund 196 MB ist für E-Mail zu gross und auf langsamen Laufwerken träge. Falls das stört, wäre der nächste Schritt die früher besprochene Trennung in Programmdatei und PDF-Ordner.
+- Kantonale Weisungen und ausländische Normen sind weiterhin nicht erfasst.
+
+### Geprüft
+`node test_pdf.js testdaten` und `node test.js` mit der vollständigen Datei: zusätzlich Norm mit fünf Teilen (Teil wechseln, Anmerkung je Teil, Sprung aus der Suche in den richtigen Teil), Regel der TWP führt auf PDF-Seite 64, Gruppen in der Seitenleiste, Speichern und Wiederöffnen der ganzen Datei ohne Verlust.
+
+## 0.2.0 – 20.11.2026
+
+Das Original-PDF liegt als ganze Norm in der Bibliothek und lässt sich direkt auf der Seite kommentieren. 26 PDF des BABS sind eingebettet.
+
+### Neu
+- **Original-PDF je Werk:** Jedes Werk (Norm, Produktanforderung, Schicht) kann genau ein PDF tragen. Es wird vollständig in die eine HTML-Datei eingebettet, bleibt unverändert und trägt Dateiname, Grösse, Datum, Name und Prüfsumme (SHA-256). Anzeige mit eingebettetem pdf.js 3.11.174 (Apache-2.0), ohne Netz.
+- **Anmerkungen im PDF:** Stelle als Rechteck markieren oder die ganze Seite kommentieren. Arten: Kommentar, Änderung, offene Frage. Jede Anmerkung trägt Nummer, Name, Datum und optional die zugehörige Regel.
+- **Versionierung der Anmerkungen:** Bearbeiten erzeugt eine neue Fassung, frühere Fassungen bleiben im Verlauf lesbar. Neue und geänderte Anmerkungen sind offene Änderungen und werden mit „Änderungen freigeben“ Teil der nächsten Version. Freigegebene Anmerkungen lassen sich nur zurückziehen, nicht löschen. „Erledigt“ für abgeschlossene Fragen.
+- **Verbindung zu den Regeln:** „Regel daraus anlegen“ übernimmt Seite und Text; bei Regeln und Originaltext-Abschnitten ist die PDF-Seite ein Link ins PDF.
+- **Text aus dem PDF:** Enthält das PDF Text, lässt er sich als Originaltext übernehmen (durchsuchbar, in Abschnitte geteilt).
+- **Suche** findet auch Anmerkungen.
+- **Datensicherung** enthält die PDF. Sicherungen aus 0.1.0 lassen sich laden.
+
+### Eingebettete Originale (Stand der Titelblätter)
+TPH-01, -02 (01.07.1992), TPH-04 (30.06.2016), TPH-05 (26.04.2004), TPH-06 (14.04.2015), TPH-07 (01.11.2011), TPH-08 (14.03.2013), TPH-09 (31.08.2001), TPH-10 (01.03.2025), TPH-11 (01.10.2026), TPH-12 (01.02.2026), TPH-14 (26.03.2004), TPH-15, -16, -17 (16.04.1998) mit je einer Beilage, TPH-18 (19.05.2003), TPH-19 (05.12.2023), TPH-20 (01.02.2012), TPH-21 und TSp-21 (01.11.2016), TPH-22 (01.04.2011), TPH-23 (01.09.2017), Präzisierung zu den TPH (16.09.2011). Zusammen 349 Seiten; die Datei ist dadurch rund 21 MB gross.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| B1 | Die 26 PDF gehören zur Version 1 „Ersterfassung“. Titel und Ausgabedatum der TPH stammen jetzt vom Titelblatt (ersetzt A7 für die TPH). |
+| B2 | Beilagen (TPH-15/16/17, TSp-21) und die Präzisierung 2011 sind eigene Werke, mit „ergänzt“ verknüpft. Die Präzisierung gilt für alle TPH, ist aber nur stellvertretend mit TPH-04 verknüpft. |
+| B3 | Neue Werke (TPH-01, -02, -05, -07 bis -10, -12, -18 bis -23) haben das PDF und den Originaltext, aber **noch keine Regeln**. |
+| B4 | Die PDF-Seiten an 12 bestehenden TPH-Regeln stammen aus einer Stichwortsuche. Die Regeln bleiben „zu bestätigen“. |
+| B5 | Anmerkungen im PDF sind Notizen zum Original. Abweichungen von Kanton oder ANDAIR, die für die Rechnung gelten sollen, bleiben Einträge in der Schicht. |
+| B6 | Der Originaltext der TPH ist automatisch aus dem PDF gelesen und nach nummerierten Abschnitten geteilt; die Teilung ist nicht geprüft. Die drei Zeichnungs-Beilagen sind Scans ohne Text. |
+
+### Offene Punkte
+- **Push ins Repo heududa/Claude_Shelter war wieder nicht möglich:** Der Zugriff auf das Repo wurde in dieser Sitzung nicht freigegeben. Quellcode und PDF liegen als ZIP bei.
+- **125 Pa / 150 Pa:** Das TPH-04 nennt in 5.2.2 (PDF-Seite 11) 150 Pa, im PDF nachgelesen. Offen bleibt der Wert 125 Pa aus der TWP-Auswertung.
+- **TWP 1984, TWE 1994, TWS 1982, TW Schock 2021, TWK, TWW:** Für diese Werke liegt noch kein PDF vor.
+- **PDF ersetzen:** Es wird nur das aktuelle PDF aufbewahrt; das frühere bleibt mit Prüfsumme im Verlauf, aber nicht als Datei. Anmerkungen bleiben auf ihrer Seitenzahl stehen.
+- **Dateigrösse:** Jedes PDF vergrössert die Datei um rund das 1,3-Fache. Grenze je PDF 120 MB; grosse Scans machen Speichern und Öffnen langsam.
+- **Markieren** geht als Rechteck, nicht als Textauswahl. Antworten auf Anmerkungen (Diskussion) gibt es noch nicht.
+- **Schriften:** PDF ohne eingebettete Schriften werden mit Ersatzschriften gezeichnet.
+
+### Geprüft
+`node test_pdf.js <Ordner mit Test-PDF>`: PDF hinzufügen, Seite zeichnen, Rechteck markieren, ganze Seite kommentieren, bearbeiten → Fassung 2 mit früherer Fassung im Verlauf, freigeben, zurückziehen, Regel daraus anlegen, Text übernehmen, Scan ohne Text, falsche Datei abgelehnt, eingebettetes TPH-04 (19 Seiten, Sprung auf Seite 12, Originaltext, Suche), Speichern und Wiederöffnen der 21-MB-Datei ohne Verlust, schmale Ansicht. `node test.js` (Durchlauf aus 0.1.0) läuft weiter.
+
+## 0.1.0 – 20.11.2026
+
+Erste Fassung der Normenbibliothek als **eine HTML-Datei für eine Person gleichzeitig**. Ohne Server, ohne Installation, ohne Internet (keine externen Schriften, Skripte oder Aufrufe). Das Auslegeprogramm ist nicht Teil dieses Schritts; die Bibliothek liefert dafür einen Export.
+
+### Enthalten
+- **Ablage nach Herausgeber:** BABS Schweiz und ANDAIR sind angelegt; Kantone und ausländische Normstellen lassen sich als Herausgeber anlegen.
+- **Werke:** TWP 1984, TWE 1994, TWS 1982, TWK 2017, TWW 2012, TWP 1966, TW Schock 2021, TPH-04/06/11/14/15/16/17, Schicht ANDAIR 2026 (Basis TWP 1984).
+- **70 Regeln** aus dem Projektwissen (Dokumente 03 und 05), je mit Abschnitt, Thema, Text in eigenen Worten und Werten mit Schlüssel für das Auslegeprogramm.
+- **Verknüpfungen** mit festen Typen: erneuert, ersetzt, verweist auf, ist abgeleitet von, ergänzt. Sie werden bei beiden Normen angezeigt.
+- **Schichten** für Kantone und Hersteller: ändern, ergänzen, aufheben, Kommentar. Die Norm selbst bleibt unverändert. Jeder Eintrag braucht eine Begründung.
+- **Geltende Fassung:** Basisnorm + kantonale Schicht + Hersteller-Schicht, mit Herkunft je Regel, Konfliktanzeige, „Basis aktualisiert – prüfen“ und „in <Norm> nicht geregelt“ (N2).
+- **Versionen:** Änderungen sind zuerst offen; „Änderungen freigeben“ erzeugt eine unveränderliche Version mit Name, Datum, Notiz und Prüfsumme (SHA-256). Verlauf je Regel und gesamt.
+- **Originaltext einlesen:** .md/.txt je Norm, Aufteilung nach nummerierten Abschnitten, Überschriften oder Seiten; „## PDF-Seite n“ wird als Seitenzahl übernommen. Eingelesener Text ist gesperrt.
+- **Suche** über Regeln und Originaltext.
+- **Speichern:** Die Datei schreibt sich selbst neu (Edge/Chrome direkt in die gewählte Datei, sonst als Download). Datensicherung als JSON zum Übernehmen in eine neuere Programmdatei.
+- **Regelwerk-Export** (JSON, Format `normenbibliothek-regelwerk/1`) für das spätere Auslegeprogramm.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| A1 | Version 1 „Ersterfassung“ gilt als freigegeben, obwohl **kein Wert am Original geprüft** ist. Jede Regel trägt deshalb „zu bestätigen: nicht am Original geprüft“ (N6), bis jemand sie abhakt. |
+| A2 | Solange nur eine Person arbeitet, gibt dieselbe Person frei. Das Vier-Augen-Prinzip und die Rollen (Leser, Autor, Prüfer, Admin) sind ausgesetzt, nicht gestrichen. |
+| A3 | Widersprechen sich kantonale Schicht und Hersteller-Schicht, gilt die kantonale (behördliche); der Konflikt bleibt sichtbar. |
+| A4 | TWE 1994 „erneuert“ einen Sammelposten „Altbestand vor 1967“, weil die einzelnen alten Erlasse nicht bekannt sind. |
+| A5 | Die Themenliste N7 ist um vier Schlüssel erweitert: Geltung und Allgemeines, Einrichtung, Schocksicherheit und Befestigung, Statik (ausserhalb des Umfangs). |
+| A6 | Die Originaltexte sind **nicht** in die Datei eingebaut. Sie werden je Norm einmal über „Originaltext einlesen“ geladen (die OCR-Dateien aus dem Projekt funktionieren). |
+| A7 | Titel von TWS 1982, TWK 2017, TWW 2012, TW Schock 2021 und der TPH sind sinngemäss gesetzt, nicht vom Titelblatt übernommen. |
+| A8 | Regel-IDs sind je Norm eigenständig (`TWP84-2.2-01`, `TWE94-2.6-01` …), wie im Normkonzept verlangt. Die bisherigen Planer-IDs (`TWP-2.2-03` …) sind nicht übernommen. |
+| A9 | Die ANDAIR-Schicht enthält drei offene, nicht freigegebene Einträge: Schleusenspülung mit 5 Luftwechseln (ergänzen) und zwei Kommentare. |
+
+### Offene Punkte
+- **Push ins Repo heududa/Claude_Shelter war nicht möglich:** In dieser Umgebung fehlen Zugangsdaten für GitHub. Der Quellcode liegt als ZIP bei (Ordner `normenbibliothek/`).
+- **Widerspruch 125 Pa / 150 Pa:** Druckverlust ÜV/ESV 75/150 im Frischluftbetrieb – die TWP-Auswertung nennt 125 Pa, das TPH-04 150 Pa. Als Kommentar in ANDAIR 2026 erfasst.
+- **Wandabstand Liegestellen:** TWP 5 cm, TPH-16/17 10 cm (bestehende Frage TWP-2.4-02). Als Kommentar erfasst.
+- **TWS 2.22 Schleusenspülung:** steht im Kapitel Tiefgaragen; Geltung für Freifeld offen.
+- **Abschnittsnummern** sind teils nur auf Kapitel genau (z. B. „3.1“); PDF-Seiten fehlen fast überall.
+- **Kantonale Sonderregeln:** Mechanik vorhanden und getestet, aber keine echte kantonale Weisung erfasst.
+- **Verweise TWE → TWP:** nur als eine Sammelverknüpfung; einzelne Verweisstellen fehlen.
+- **Einlesen von OCR-Text:** Die Aufteilung erkennt Abschnittsnummern mit Punkt (2.6, 3.14); Kapitelüberschriften ohne Punkt und Tabellen bleiben im vorherigen Abschnitt.
+- **Keine Sperre gegen gleichzeitiges Bearbeiten:** Öffnen zwei Personen die Datei, überschreibt die zuletzt gespeicherte Fassung die andere.
+- **Später:** Rollen und Zweitprüfung, Vergleich zweier Versionen, Ordner mit getrennten Inhalten, Anschluss des Auslegeprogramms.
+
+### Geprüft
+Automatischer Durchlauf im Browser (`node test.js`): Abweichung Hersteller und Kanton auf dieselbe Regel → Konflikt, Kanton gilt; Freigabe → Version 2; TWE-OCR einlesen und durchsuchen; Basisregel ändern → Schicht meldet „Basis aktualisiert – prüfen“; Speichern und Wiederöffnen ohne Verlust; schmale Ansicht ohne Querscrollen; keine Skriptfehler.
