@@ -431,3 +431,14 @@ img.ausschnitt{display:block;max-width:100%;width:100%;height:auto;background:#f
 mark.unsicher{background:#FFE9A8;color:#4A3500;border-bottom:2px dotted #B07A00;padding:0 .1em}
 @media (prefers-color-scheme:dark){mark.unsicher{background:#4A3A0A;color:#FFE08A;border-bottom-color:#E0B040}}
 @media print{.ue figcaption .uetools{display:none}#druck .uetab th,#druck .uetab td{border:1px solid #666}#druck img.ausschnitt{border:0;max-height:22cm;width:auto;max-width:100%}}
+
+/* Werkzeuge an Tabellen und Skizzen erst beim Zeigen oder mit der Tastatur */
+.lesetext .ue{position:relative}
+.lesetext .ue figcaption{position:absolute;right:0;top:0;background:var(--blatt);border:1px solid var(--linie);border-radius:0 0 0 6px;padding:.2rem .45rem;opacity:0;pointer-events:none;z-index:2;box-shadow:0 -2px 8px rgba(0,0,0,.08)}
+.lesetext .ue:hover figcaption,.lesetext .ue:focus-within figcaption,.lesetext .ue:focus figcaption{opacity:1;pointer-events:auto}
+.lesetext .ue:hover,.lesetext .ue:focus-within,.lesetext .ue:focus{outline:1px solid var(--blau);outline-offset:3px}
+.lesetext .ue.hand::after{content:"von Hand";position:absolute;left:0;bottom:-1.05rem;font-size:.7rem;color:var(--leise)}
+.lesetext .ue.hand{margin-bottom:1.4rem}
+@media (hover:none){.lesetext .ue figcaption{position:static;transform:none;opacity:1;pointer-events:auto;border:0;box-shadow:none;padding:.25rem 0 0}}
+.uetab,.uegitter{overflow-wrap:normal;word-break:normal;hyphens:auto}
+.uetab th,.uetab td{min-width:3.2rem}

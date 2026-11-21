@@ -1,5 +1,62 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.10.0 – 21.11.2026
+
+Die gescannten Normen sind neu eingelesen. Tabellen und Skizzen stehen jetzt als eigene Elemente im Text.
+
+### Neu
+- **Neue Texterkennung für alle gescannten Seiten:** 721 Seiten mit Text aus 15 PDF (TWP 1984, TWE 1994, TWS 1982, TWO 1977, TPH-01, TPH-02, Beilagen zu TPH-15 und -16, Präzisierung 2011, Merkblatt ST-88, drei Merkblätter 2000 und weitere). Werkzeug: `werkzeuge/ocr.py` mit Tesseract 5, Modell «deu» aus tessdata_best, 300 dpi. Die Original-PDF werden nur gelesen. Mittlere Sicherheit der Erkennung je Norm: 87,5 bis 93,1 von 100.
+  - Rasterflächen und Punktlinien werden vor dem Lesen entfernt.
+  - Ein zweiter Durchgang liest Schrift nach, die der erste ausgelassen hat.
+  - m² und m³ werden einzeln nachgelesen; Aufzählungspunkte, Trennstriche und Absätze werden wiederhergestellt.
+  - Die drei Merkblätter von 2000, deren Überschriften im PDF nicht als Text lesbar waren, sind vollständig über die Texterkennung gelesen.
+- **Tabellen und Skizzen als Elemente:** 711 Tabellen und 813 Bildausschnitte sind automatisch erkannt und vom Lauftext getrennt.
+  - Tabellen mit Linien, Tabellen ohne Linien und die Listen «Bezeichnung: Angabe» der TWO 1977 sind echte Tabellen mit Zeilen und Spalten.
+  - Skizzen sind Ausschnitte aus dem Original-PDF. Sie werden beim Anzeigen aus dem PDF gezeichnet; es gibt keine Bildkopien.
+  - Gesetzte Formeln (105 Blöcke) und Tabellen, die nicht sauber lesbar waren (25), erscheinen als Bild aus dem Original statt als fehlerhafte Abschrift.
+  - 66 Seiten mit einer seitenfüllenden, oft quer gesetzten Zeichnung sind eine einzige Skizze mit Seitenzahl und Bildtitel.
+  - 23 Seiten, die die Texterkennung nicht sauber liest (Formelrechnungen im Anhang der TWO, Tabellen auf Raster, Kurvenblätter), erscheinen ganz als Bild. Der gelesene Text bleibt für die Suche erhalten.
+  - Im Text steht je Element eine Marke wie `[[Tabelle 64.1]]` oder `[[Skizze 38.1]]`. Sie lässt sich beim Bearbeiten verschieben.
+- **Übernahme von Hand:** In der Bearbeitung «Tabelle übernehmen» oder «Skizze übernehmen» wählen und den Bereich im Scan einrahmen. Bei Tabellen schlägt das Programm Zeilen und Spalten aus dem Text des PDF vor.
+- **Tabelleneditor:** Zellen bearbeiten, Zeilen und Spalten anfügen oder entfernen, Kopfzeile ein und aus, Titel. Der Ausschnitt aus dem Original steht zum Vergleich darüber.
+- **Je Element:** «Bearbeiten», «Als Bild zeigen» bzw. «Als Tabelle erfassen», «Entfernen». Die Knöpfe erscheinen beim Zeigen auf das Element oder mit der Tabulatortaste.
+- **Versioniert:** Übernahmen und Änderungen an erkannten Elementen sind eine eigene Liste (`uebernahmen`), stehen unter «Änderungen» und werden wie alles andere freigegeben.
+- **Unsicher gelesene Stellen:** 2296 Stellen auf 503 Seiten sind gelb markiert, bis die Seite als verglichen markiert ist. Markiert wird, was die Texterkennung mit geringer Sicherheit gelesen hat, und jede Zahl, die die frühere Erkennung im PDF anders gelesen hatte.
+- **Suche, Index, Druck, Word:** Der Inhalt der Tabellen und die Beschriftungen der Skizzen sind in Volltextsuche und Index. Druck und Word-Datei enthalten Tabellen und Skizzen.
+
+### Kontrolle
+- Automatisch je Seite: Sicherheit der Erkennung, Anteil nicht gelesener Schrift, Abgleich aller Zahlen mit der früheren Erkennung. Ergebnis je PDF in `daten/ocr/bericht.json`.
+- Von Hand gegen das Seitenbild verglichen: fünf Seiten vollständig (TWP 1984 S. 38 und 49, TWE 1994 S. 20, TWS 1982 S. 52, TWO 1977 S. 196), dazu die Lage der Elemente auf rund 30 Seiten. Fliesstext und Zahlenwerte stimmten. Gefundene Fehlerarten sind unten genannt; drei Einzelfehler sind berichtigt (⅔ statt «24» in TWP 3.15, ≥135 m² statt «2135 m²», «Variante 1» statt «Variante 7»).
+- Alle 74 Normen bleiben «Ungeprüft». Die Kontrolle ersetzt den Vergleich durch einen Prüfer nicht.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| K1 | Der neu erkannte Text ersetzt den bisherigen Grundtext der gescannten Seiten. Es gab noch keine OCR-Korrekturen von Hand; die frühere Erkennung bleibt als Textebene im Original-PDF und in der Git-Historie. |
+| K2 | Im Zweifel Bild statt Abschrift: Unsichere Tabellen, Formeln und schlecht lesbare Seiten werden als Ausschnitt aus dem Original gezeigt. Wer die Tabelle als Text braucht, erfasst sie über «Als Tabelle erfassen». |
+| K3 | Sichere Berichtigungen ohne Rückfrage: «{» und «}» zu Klammern, «@» vor einer Zahl zu «Ø», «mh» nach einer Zahl zu «m³/h», «UV» zu «ÜV» (ausser «UV-»), Umlaute bei Wörtern, die es ohne Umlaut in den digital entstandenen Normen nicht gibt (63 Stellen, z. B. Beluftung, Oltank). Die Stellen mit «m³/h», «ÜV» und berichtigtem Umlaut sind als unsicher markiert. |
+| K4 | Die gedruckte Seitenzahl bleibt als erste Zeile im Text der Seite stehen. |
+| K5 | Skizzen werden mit dem PDF mitgeführt, nicht als Bilddatei gespeichert. Ohne das PDF in der Ablage erscheint ein Hinweis statt der Skizze. |
+| K6 | Einzelne Ziffern werden nicht als unsicher markiert, weil sonst jede gleiche Ziffer der Seite markiert würde. |
+| K7 | Die Daten der Texterkennung je PDF liegen in `daten/ocr/` (4 MB). Die Ersterfassung übernimmt sie; das Programm selbst lädt sie nicht. |
+
+### Bekannte Fehlerarten im erkannten Text
+- **Bruchzeichen und Sonderzeichen:** ⅔, ≥, Tiefstellungen (b_min) und Fussnotenziffern werden oft falsch gelesen und nicht immer als unsicher erkannt.
+- **Kursive Bildtitel:** einzelne Ziffern können falsch sein.
+- **Mehrzeilige Zellen und Kopfzeilen über mehrere Spalten** sind in automatisch erkannten Tabellen teils auf mehrere Zeilen verteilt oder der ersten Spalte zugeordnet.
+- **Beschriftungen in Skizzen** sind nur für die Suche gelesen und lückenhaft.
+- **Titelblätter** mit grosser Schrift und Signet sind teils als Skizze erfasst.
+- **Vereinzelt** steht ein Störzeichen als Aufzählungsstrich am Zeilenanfang und teilt eine Liste.
+- **Glossar:** 511 statt 518 Einträge. 13 Einträge aus dem Lauftext sind entfallen, weil die Stelle jetzt in einem Bild liegt (u. a. TPH-01 und TPH-02); wenige neue kamen dazu.
+
+### Nicht umgesetzt
+- **Mehrnutzerversion mit Anmeldung und Rollen** (im Gespräch gewünscht): noch nicht begonnen. Sie braucht einen Server.
+- **Tabellen und Skizzen in den digital entstandenen PDF** werden nicht automatisch erkannt; die Übernahme von Hand geht bei jedem PDF.
+- **Texterkennung im Programm:** Sie läuft als Werkzeug ausserhalb (`werkzeuge/ocr.py`), nicht im Browser.
+- **Zellen verbinden** im Tabelleneditor.
+- **Word-Datei mit Bildern:** als Webarchiv (.doc) gebaut, in Word selbst nicht geprüft.
+- **ANDAIR-Farben und Logo:** weiterhin offen, die Vorgaben fehlen.
+
 ## 0.9.0 – 21.11.2026
 
 Abschied von der Einzeldatei. Die Bibliothek ist jetzt ein Ordner (dieses Repo) mit Programm, Daten und Original-PDF nebeneinander.

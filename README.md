@@ -9,11 +9,12 @@ Alle Normen an einem Ort: Original-PDF, erkannter Text, Regeln, Änderungen und 
 | `index.html`, `app.js`, `style.css` | das Programm |
 | `lib/` | PDF-Anzeige (pdf.js) und PDF-Export (pdf-lib) |
 | `daten/bibliothek.json` | Bearbeitungsstand: Normen, Regeln, Änderungen, Anmerkungen, Glossar, Versionen, Verlauf |
-| `daten/texte.json` | Seitentexte, Abschnitte und erkannte Struktur aus den PDF |
+| `daten/texte.json` | Seitentexte, Abschnitte, erkannte Struktur, Tabellen und Skizzen, unsicher gelesene Stellen |
+| `daten/ocr/` | Ergebnis der Texterkennung je gescanntem PDF und `bericht.json`; Quelle für die Ersterfassung |
 | `daten/titelbilder.json` | Titelblätter für die Startseite |
 | `pdf/` | Original-PDF, unverändert |
 | `pdf/eigene/` | PDF, die im Programm hinzugefügt wurden |
-| `werkzeuge/` | Ersterfassung, Zusammenfügen von Kapiteldateien, kleiner Webserver |
+| `werkzeuge/` | Ersterfassung, Texterkennung für Scans, Zusammenfügen von Kapiteldateien, kleiner Webserver |
 | `test/` | Prüfläufe im Browser |
 
 ## Benutzen
@@ -28,6 +29,8 @@ Firefox und Safari können keine Ordner öffnen. Dort geht nur Ansehen über ein
 
 - **Bibliothek:** 77 Werke des BABS und die Schicht ANDAIR 2026, 99 Original-PDF mit 2378 Seiten.
 - **Prüfungen:** Stand der digitalen Fassung je Norm, von „Ungeprüft“ bis „Freigegeben“.
+- **Gescannte Normen:** neu erkannter Text, Tabellen als Tabellen, Skizzen als Ausschnitt aus dem Original, unsicher gelesene Stellen gelb markiert.
+- **Tabellen und Skizzen übernehmen:** Bereich im Scan einrahmen; Tabellen lassen sich Zelle für Zelle bearbeiten.
 - **Glossar und Index:** Abkürzungen mit Quelle und alle Fundstellen in den Normen.
 - **Änderungen und Versionen:** offene Änderungen freigeben oder verwerfen, Stände vergleichen.
 
@@ -40,6 +43,7 @@ Firefox und Safari können keine Ordner öffnen. Dort geht nur Ansehen über ein
 - `npm install` holt pdf.js und pdf-lib; die fertigen Dateien liegen bereits in `lib/`.
 - `node test/test.js` prüft den ganzen Ablauf im Browser (Playwright). Geschrieben wird dabei nur nach `test/tmp/`.
 - `node werkzeuge/ersterfassung.js --ueberschreiben` erzeugt `daten/` neu aus den PDF. **Das ersetzt den Bearbeitungsstand.**
+- `python3 werkzeuge/ocr.py --tessdata <Ordner>` liest die gescannten Seiten neu ein und schreibt `daten/ocr/`. Braucht Tesseract 5 mit `deu.traineddata` aus tessdata_best, poppler, Python mit opencv und pytesseract. Der ganze Lauf dauert auf zwei Kernen rund 35 Minuten. Danach die Ersterfassung laufen lassen.
 - `sh werkzeuge/zusammenfuegen.sh` fügt die Kapiteldateien von TWS 1982 und TWO 1977 zusammen (braucht qpdf).
 
 ## Grundsätze

@@ -1083,7 +1083,7 @@ if (typeof document !== 'undefined') (function () {
     const name = (e.typ === 'tabelle' ? 'Tabelle ' : 'Skizze ') + e.nr, nr = `data-nr="${h(e.nr)}"`;
     const tools = druck ? '' : `<span class="uetools"><button class="klein" data-act="ue-bearbeiten" ${nr}>Bearbeiten</button><button class="klein" data-act="ue-typ" ${nr}>${e.typ === 'tabelle' ? 'Als Bild zeigen' : 'Als Tabelle erfassen'}</button><button class="klein" data-act="ue-weg" ${nr}>Entfernen</button></span>`;
     const innen = e.typ === 'tabelle' ? tabelleHtml(e, druck) : schnittImg(e.dokId, e.s, e.box, `${name} aus dem Original, Seite ${e.s}${e.text ? '. Beschriftungen: ' + e.text.slice(0, 200) : ''}`);
-    return `<figure class="ue ue-${e.typ}${e.hand ? ' hand' : ''}" id="ue-${h(e.nr.replace('.', '-'))}">${innen}<figcaption><span>${h(name)}${e.titel ? ': ' + h(e.titel) : ''}${druck ? '' : e.hand ? ' · von Hand übernommen' : ' · automatisch erkannt'}</span>${tools}</figcaption></figure>`;
+    return `<figure class="ue ue-${e.typ}${e.hand ? ' hand' : ''}"${druck ? '' : ' tabindex="0"'} id="ue-${h(e.nr.replace('.', '-'))}">${innen}<figcaption><span>${h(name)}${e.titel ? ': ' + h(e.titel) : ''}${druck ? '' : e.hand ? ' · von Hand übernommen' : ' · automatisch erkannt'}</span>${tools}</figcaption></figure>`;
   }
   function mitElementen(html, dok, n, druck) { // Platzhalter [[Tabelle 12.1]] und [[Skizze 12.2]] durch das Element ersetzen
     if (!hatEl(dok.id)) return html;
