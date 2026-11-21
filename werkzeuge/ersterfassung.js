@@ -29,6 +29,22 @@ for (const q of d.pdfs) {
   try { const tmp = path.join(require('os').tmpdir(), 'nb-titel'); require('child_process').execFileSync('pdftoppm', ['-f', '1', '-l', '1', '-singlefile', '-scale-to-x', '260', '-scale-to-y', '-1', '-jpeg', '-jpegopt', 'quality=72', path.join('pdf', q.datei), tmp]); lib.titelbilder[id] = 'data:image/jpeg;base64,' + fs.readFileSync(tmp + '.jpg').toString('base64'); } catch (e) { console.log('  ohne Titelbild:', q.datei); }
   erfasst.push({ q, w, id, seitenT, zeilen, roh, alt: roh.slice(), ocr: null });
 }
+// Seiten, die fast nur aus einer Zeichnung bestehen (oft quer gesetzt): die ganze Zeichnung ist eine Skizze, als Text bleiben Seitenzahl und Bildtitel
+let bildseiten = 0;
+function bildseite(p) {
+  const zl = p.text.split('\n'), echt = zl.filter(z => !/^\[\[/.test(z)), sk = p.elemente.filter(x => x.typ === 'skizze');
+  const flaeche = sk.reduce((a, x) => a + x.box[2] * x.box[3], 0), kurz = echt.filter(z => z.replace(/\s/g, '').length <= 6).length;
+  if (!sk.length || flaeche < 0.12 || !(p.conf < 82 || (kurz >= 4 && kurz >= 0.5 * echt.length))) return;
+  const ti = zl.findIndex(z => /^(Figur|Fig\.|Bild|Abb\.|Abbildung|Tabelle)\s/.test(z)), kopf = /^\d{1,3}$/.test(zl[0] || '') ? [zl[0]] : [], fuss = ti >= 0 ? zl.slice(ti).filter(z => !/^\[\[/.test(z)) : [];
+  const bleibt = new Set(kopf.concat(fuss)), weg = p.zeilen.filter(z => !bleibt.has(z.t) && ![...bleibt].some(b => b.replace(/\s+/g, ' ').startsWith(z.t)));
+  let x0 = Math.min(...p.elemente.map(x => x.box[0])), y0 = Math.min(...p.elemente.map(x => x.box[1])), x1 = Math.max(...p.elemente.map(x => x.box[0] + x.box[2])), y1 = Math.max(...p.elemente.map(x => x.box[1] + x.box[3]));
+  weg.forEach(z => { x0 = Math.min(x0, z.x / 595 - 0.01); y0 = Math.min(y0, z.yy - 0.005); y1 = Math.max(y1, z.yy + 0.02); x1 = Math.max(x1, 0.93); });
+  const kap = p.zeilen.filter(z => fuss.some(f => f.replace(/\s+/g, ' ').startsWith(z.t))).map(z => z.yy); if (kap.length) y1 = Math.min(y1, Math.min(...kap) - 0.004);
+  x0 = Math.max(0.02, x0); y0 = Math.max(0.03, y0); x1 = Math.min(0.98, x1); y1 = Math.min(0.97, y1); if (y1 - y0 < 0.1) return;
+  const text = p.elemente.map(x => x.typ === 'tabelle' ? '' : x.text || '').join(' ').replace(/\s+/g, ' ').trim().slice(0, 600);
+  p.elemente = [{ nr: 1, typ: 'skizze', box: [x0, y0, x1 - x0, y1 - y0].map(v => +v.toFixed(4)), text, ganz: true }];
+  p.text = kopf.concat([`[[Skizze ${p.s}.1]]`], fuss).join('\n'); p.roh = kopf.concat(fuss).join('\n'); p.zeilen = p.zeilen.filter(z => !weg.includes(z)); p.unsicher = p.unsicher.filter(u => p.text.includes(u)); bildseiten++;
+}
 // Gescannte Seiten: Text, Tabellen und Skizzen aus der neuen Texterkennung (werkzeuge/ocr.py, Dateien in daten/ocr/)
 const bericht = [];
 for (const e of erfasst) {
@@ -36,39 +52,48 @@ for (const e of erfasst) {
   const o = JSON.parse(fs.readFileSync(f, 'utf8')), dk = lib.dokumente.find(x => x.id === e.id);
   if (o.pruefsumme !== dk.pruefsumme) { console.log('  Texterkennung passt nicht zum PDF, übersprungen:', e.id); continue; }
   e.ocr = o; lib.elemente[e.id] = []; lib.unsicher[e.id] = {};
+  // Lesefehler der Texterkennung, die sich sicher berichtigen lassen: doppelte Klammern, @ statt Durchmesserzeichen
+  const putzen = t => String(t).replace(/\(\(/g, '(').replace(/\)\)/g, ')').replace(/@ ?(?=\d)/g, 'Ø').replace(/(\d) ?mh(?![a-zäöü])/g, '$1 m³/h').replace(/([A-ZÄÖÜ]{2,})- (?!und |oder |bzw)(?=[A-Za-zäöü])/g, '$1-');
+  o.seiten.forEach(p => { p.text = putzen(p.text); p.roh = putzen(p.roh); p.zeilen.forEach(z => { z.t = putzen(z.t); }); if (/\d ?mh(?![a-zäöü])/.test(p.text)) p.unsicher.push('m³/h'); p.unsicher = p.unsicher.map(putzen); p.elemente.forEach(x => { if (x.zeilen) x.zeilen = x.zeilen.map(z => z.map(putzen)); }); });
+  o.seiten.forEach(bildseite);
   o.seiten.forEach(p => { e.seitenT[p.s - 1] = p.text; e.zeilen[p.s - 1] = p.zeilen; e.roh[p.s - 1] = p.roh; });
 }
 // Wortschatz aus den digital entstandenen Normen: für Umlaute, die der Scan verschluckt hat (Oltank statt Öltank)
 const wortschatz = new Map(), RW = /([A-Za-zÄÖÜäöüß]+)/;
 erfasst.filter(e => !e.ocr).forEach(e => e.seitenT.forEach(t => t.split(RW).forEach((x, i) => { if (i % 2 && x.length >= 4) wortschatz.set(x, (wortschatz.get(x) || 0) + 1); })));
+const scanschatz = new Map(); erfasst.filter(e => e.ocr).forEach(e => e.seitenT.forEach(t => t.split(RW).forEach((x, i) => { if (i % 2 && x.length >= 4) scanschatz.set(x, (scanschatz.get(x) || 0) + 1); })));
+const KEIN_UMLAUT = new Set(['halt', 'nahe', 'konnte', 'konnten', 'schaden', 'hatte', 'hatten', 'wurde', 'wurden', 'mochte', 'mochten', 'boden', 'kasten', 'graben', 'mangel', 'laden', 'wagen', 'lauft', 'fallen', 'grun', 'schon', 'losen', 'fordern', 'forderung', 'forderungen', 'drucken', 'druck', 'zahlen', 'lage', 'stucke']);
 const UML = { O: 'Ö', U: 'Ü', A: 'Ä', o: 'ö', u: 'ü', a: 'ä' }; let umlaute = 0; const umlautListe = new Map();
 function umlaut(wort) {
   if (wort.length < 4 || /[ÄÖÜäöü]/.test(wort)) return wort;
-  if (wortschatz.has(wort)) return wort; // das Wort gibt es so in den digital entstandenen Normen: nichts ändern
-  let best = wort, bn = 3;
-  for (let i = 0; i < wort.length; i++) { const u = UML[wort[i]]; if (!u || (i > 0 && wort[i] === wort[i].toUpperCase())) continue; const k = wort.slice(0, i) + u + wort.slice(i + 1), kn = wortschatz.get(k) || 0; if (kn >= bn) { best = k; bn = kn; } }
+  if (wortschatz.has(wort) || KEIN_UMLAUT.has(wort.toLowerCase())) return wort; // das Wort gibt es so in den digital entstandenen Normen: nichts ändern
+  let best = wort, bn = 3; const selbst = scanschatz.get(wort) || 0;
+  for (let i = 0; i < wort.length; i++) { const u = UML[wort[i]]; if (!u || (i > 0 && wort[i] === wort[i].toUpperCase())) continue; const k = wort.slice(0, i) + u + wort.slice(i + 1), kn = wortschatz.get(k) || 0; if (kn >= bn && (scanschatz.get(k) || 0) >= 8 * selbst) { best = k; bn = kn; } }
   return best;
 }
-const mitUmlaut = t => String(t).split(RW).map((x, i) => { if (!(i % 2)) return x; const k = umlaut(x); if (k !== x) { umlaute++; umlautListe.set(x + ' → ' + k, (umlautListe.get(x + ' → ' + k) || 0) + 1); } return k; }).join('');
+let geaendert = new Set();
+const mitUmlaut = t => String(t).split(RW).map((x, i) => { if (!(i % 2)) return x; const k = umlaut(x); if (k !== x) { umlaute++; geaendert.add(k); umlautListe.set(x + ' → ' + k, (umlautListe.get(x + ' → ' + k) || 0) + 1); } return k; }).join('');
 // Zahlen, die die frühere Erkennung (Textebene des PDF) anders gelesen hat, gelten als unsicher
 const zahlen = t => { const m = new Map(); String(t).split(/\s+/).forEach(x => { const k = x.replace(/[^0-9A-Za-zÄÖÜäöü.,/\-]/g, '').replace(/^[.,\-]+|[.,\-]+$/g, ''); if (/\d/.test(k)) m.set(k, (m.get(k) || 0) + 1); }); return m; };
 for (const e of erfasst) {
   if (!e.ocr) continue;
   let nT = 0, nS = 0, nU = 0, conf = 0, worte = 0;
   e.ocr.seiten.forEach(p => {
-    const i = p.s - 1;
+    const i = p.s - 1; geaendert = new Set();
     e.seitenT[i] = mitUmlaut(e.seitenT[i]); e.roh[i] = mitUmlaut(e.roh[i]); e.zeilen[i].forEach(z => { z.t = mitUmlaut(z.t); });
-    const els = p.elemente.map(x => { const el = { nr: p.s + '.' + x.nr, s: p.s, typ: x.typ, box: x.box }; if (x.typ === 'tabelle') { el.zeilen = x.zeilen.map(z => z.map(mitUmlaut)); if (x.ohneKopf) el.ohneKopf = true; nT++; } else { el.text = mitUmlaut(x.text || ''); if (x.tab) el.tab = true; nS++; } return el; });
+    const els = p.elemente.map(x => { const el = { nr: p.s + '.' + x.nr, s: p.s, typ: x.typ, box: x.box }; if (x.typ === 'tabelle') { el.zeilen = x.zeilen.map(z => z.map(mitUmlaut)); if (x.ohneKopf) el.ohneKopf = true; nT++; } else { el.text = mitUmlaut(x.text || ''); if (x.tab) el.tab = true; if (x.formel) el.formel = true; nS++; } return el; });
     lib.elemente[e.id].push(...els);
     const alt = zahlen(e.alt[i]), un = new Set(p.unsicher.map(mitUmlaut));
     const neuT = e.seitenT[i].replace(/\[\[[^\]]*\]\]/g, ' ') + ' ' + els.map(x => x.typ === 'tabelle' ? x.zeilen.map(z => z.join(' ')).join(' ') : '').join(' ');
     if (e.alt[i].replace(/\s/g, '').length > 40) zahlen(neuT).forEach((n, k) => { if ((alt.get(k) || 0) < n) neuT.split(/\s+/).forEach(x => { if (x.replace(/[^0-9A-Za-zÄÖÜäöü.,/\-]/g, '').replace(/^[.,\-]+|[.,\-]+$/g, '') === k) un.add(x); }); });
+    const worteNeu = new Set(neuT.split(/\s+/)); geaendert.forEach(k => worteNeu.forEach(x => { if (x.includes(k)) un.add(x); }));
     if (un.size) { lib.unsicher[e.id][p.s] = [...un].sort(); nU += un.size; }
     conf += p.conf * p.worte; worte += p.worte;
   });
   lib.ocr[e.id] = { werkzeug: e.ocr.werkzeug, seiten: e.ocr.seiten.length, datum: '2026-11-21', sicherheit: +(conf / Math.max(1, worte)).toFixed(1), tabellen: nT, skizzen: nS, unsicher: nU };
   bericht.push({ dok: e.id, norm: e.w.kurz, teil: e.q.teil || '', seiten: e.ocr.seiten.length, sicherheit: lib.ocr[e.id].sicherheit, tabellen: nT, skizzen: nS, unsicher: nU, schwach: e.ocr.seiten.filter(p => p.conf < 80 && p.worte > 20).map(p => p.s) });
 }
+console.log('Bildseiten:', bildseiten);
 console.log('Umlaute berichtigt:', umlaute, [...umlautListe].sort((a, b) => b[1] - a[1]).slice(0, 40).map(x => x[0] + ' (' + x[1] + ')').join(', '));
 // Struktur und Abschnitte
 for (const e of erfasst) {

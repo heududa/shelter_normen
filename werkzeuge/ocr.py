@@ -123,6 +123,9 @@ def gruppen(gross, th, W, H):
     return [x for x in g if x]
 
 
+BULLET = re.compile(r'^(e|se|ee|eo|oe|o|®|©|°|\*|»|«|\+|@|0|O|9|-|–|—|\.|·|•)$')
+
+
 def zeilen_bauen(worte, th):
     """Wörter zu Zeilen (nach Tesseract-Zeile), Zeilen von oben nach unten."""
     z = {}
@@ -130,13 +133,15 @@ def zeilen_bauen(worte, th):
     out = []
     for ws in z.values():
         ws.sort(key=lambda w: w['x'])
+        ws = [w for k, w in enumerate(ws) if k == 0 or not (w.get('bul') and w['c'] < 50)]  # Störzeichen mitten in der Zeile
+        if len(ws) == 1 and ws[0].get('bul') and ws[0]['c'] < 60: continue
         # sehr weit auseinanderliegende Teile einer Tesseract-Zeile bleiben eine Zeile (Spaltenabstand wird als Lücke geschrieben)
         seg, t = [[ws[0]]], ''
         for i, w in enumerate(ws):
             if i:
                 luecke = w['x'] - (ws[i - 1]['x'] + ws[i - 1]['w'])
                 t += '   ' if luecke > 2.2 * th else ' '
-                if i == 1 and luecke > 0.8 * th and re.match(r'^(e|se|ee|eo|oe|o|®|©|°|\*|»|«|\+|@|0|O|9)$', t.strip()) and ws[0]['w'] < 1.6 * th and ws[0]['h'] < 1.3 * th: t = '• '; seg[-1].append(w)
+                if i == 1 and luecke > 0.8 * th and ws[0].get('bul'): t = ('– ' if re.match(r'^[-–—]$', t.strip()) else '• '); seg[-1].append(w)
                 elif luecke > 2.2 * th and re.match(r'^(\d{1,2}(\.\d{1,2}){0,3}\.?|[a-z]\)|[-–•])$', t.strip()) and len(seg) == 1: t = t.strip() + ' '; seg[-1].append(w)
                 elif luecke > 2.2 * th: seg.append([w])
                 else: seg[-1].append(w)
@@ -184,7 +189,7 @@ def spaltenbloecke(zeilen, th):
 
 def formelbloecke(zeilen, th):
     """Gesetzte Formeln liest die Texterkennung nicht zuverlässig: als Bild aus dem Original übernehmen."""
-    def f(l): return '=' in l['t'] and len(l['worte']) <= 12
+    def f(l): return len(l['worte']) <= 12 and re.match(r'^\S{1,10}(\s+\S{1,6})?\s*=', l['t']) is not None and not l['t'].endswith('-')
     def g(l, k): return f(l) or (len(l['t']) <= 16 and not KOPF.match(l['t']) and re.search(r'[\d+·/—-]', l['t']) is not None and not (k == 0 and re.match(r'^\d+$', l['t'])))
     out, bloecke, i = [], [], 0
     while i < len(zeilen):
@@ -313,6 +318,18 @@ def tabelle_aus(worte, box, hlinien, vlinien, th):
 
 
 def seite(arg):
+    """Eine Seite lesen. Schlägt die Zerlegung fehl, wird die Seite ohne Tabellen und Skizzen gelesen und so vermerkt."""
+    try: return seite_(arg)
+    except Exception as ex:
+        pfad, i, tessdata = arg
+        img = lade_seite(pfad, i); H, W = img.shape
+        zl = zeilen_bauen(tess(img, tessdata, 4), 30.0)
+        alle = [w for l in zl for w in l['worte']]
+        return dict(s=i, luecke=0, fehler=str(ex)[:120], text=absaetze(zl, 30.0), roh='\n'.join(l['t'] for l in zl), zeilen=[dict(t=re.sub(r'\s+', ' ', l['t']), g=10, x=round(l['x0'] * 72 / DPI), yy=round(l['y0'] / H, 3)) for l in zl],
+                    elemente=[], unsicher=sorted({w['t'] for w in alle if w['c'] < 55 and re.search(r'\d', w['t'])}), conf=round(float(np.mean([w['c'] for w in alle])) if alle else 0, 1), worte=len(alle))
+
+
+def seite_(arg):
     pfad, i, tessdata = arg
     img = lade_seite(pfad, i)
     H, W = img.shape
@@ -419,7 +436,9 @@ def seite(arg):
                 w['x'] += x0; w['y'] += y0; w['l'] = ('n', k) + tuple(w['l']); worte.append(w)
     luecke_ = round(float(ungelesen(worte).sum()) / gesamt, 3)
     for w in worte: hochzahl(img, bw, w, tessdata)
-    worte = [w for w in worte if w.get('frag') or not ((w['c'] < 30 and not re.search(r'[A-Za-zÄÖÜäöü0-9]{2}', w['t'])) or re.match(r'^[_|~]+$', w['t']) or (w['c'] < 50 and re.match(r'^[-–—.,\'‘’"]+$', w['t'])))]
+    for w in worte:  # mögliche Aufzählungspunkte nicht als Störzeichen verwerfen; zeilen_bauen entscheidet
+        if BULLET.match(w['t']) and w['w'] < 1.6 * th and w['h'] < 1.3 * th: w['bul'] = True
+    worte = [w for w in worte if w.get('frag') or w.get('bul') or not ((w['c'] < 30 and not re.search(r'[A-Za-zÄÖÜäöü0-9]{2}', w['t'])) or re.match(r'^[_|~]+$', w['t']) or (w['c'] < 50 and re.match(r'^[-–—.,\'‘’"]+$', w['t'])))]
     for w in worte: w['t'] = re.sub(r'\bIll\b', 'III', re.sub(r'\bIl\b', 'II', w['t']))
     # kleine Formen ohne Linien: gut lesbare Schrift bleibt Text (Titel in grosser Schrift), sonst ist es eine Skizze
     for e in elemente:
@@ -502,7 +521,9 @@ def seite(arg):
     zeilen, b3 = rasterbloecke(zeilen, th)
     for bl in bloecke + b2 + b3:
         bl['b'] = [max(0, int(bl['b'][0])), max(0, int(bl['b'][1])), min(W, int(bl['b'][2])), min(H, int(bl['b'][3]))]; elemente.append(bl)
-    for t in titel.values(): t['y0'] = t['e']['b'][3] + 1; t['y1'] = t['y0'] + th; zeilen.append(t)
+    for t in titel.values():
+        if t['e'].get('b'): t['y0'] = t['e']['b'][3] + 1; t['y1'] = t['y0'] + th
+        zeilen.append(t)
     # Marken für Tabellen und Skizzen in die Lesereihenfolge setzen
     elemente.sort(key=lambda e: (e['b'][1], e['b'][0]))
     for k, e in enumerate(elemente):
