@@ -1,5 +1,54 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.9.0 – 21.11.2026
+
+Abschied von der Einzeldatei. Die Bibliothek ist jetzt ein Ordner (dieses Repo) mit Programm, Daten und Original-PDF nebeneinander.
+
+### Neu
+- **Aufbau als Ordner:** `index.html`, `app.js`, `style.css`, `lib/`, `daten/` (drei JSON-Dateien) und `pdf/` (99 Original-PDF). Das Programm lädt in unter einer Sekunde; ein PDF wird erst geholt, wenn man es öffnet.
+- **Speichern in den Ordner:** In Edge oder Chrome den Ordner des Repos verbinden; „Speichern“ schreibt `daten/*.json` und neu hinzugefügte PDF nach `pdf/eigene/`. Gesichert und versioniert wird zusätzlich mit Git.
+- **Nur lesen über Webserver:** `node werkzeuge/server.js` oder GitHub Pages. Ohne verbundenen Ordner ist die Bibliothek schreibgeschützt.
+- **PDF-Anzeige ohne Worker:** Der Fehler „Setting up fake worker failed“ aus der Chat-Vorschau ist behoben; der Zeichenbaustein läuft im Hauptfenster.
+- **Glossar:** 518 Einträge. 194 stammen aus den Abkürzungsverzeichnissen von AW 2025, AW KGSR 2025, Konzept Schutzbauten 2023, TSp-21, TWE 1994 (Anhang D) und TWP 1984 (A2); 324 sind aus dem Lauftext aller Normen erkannt (Muster „Explosionsschutzventil (ESV)“). Jede Bedeutung nennt Norm und Seite. Erfassen, bearbeiten, am Original prüfen, zurückziehen; alles versioniert.
+- **Index über alle Normen:** Jeder Glossarbegriff mit allen Fundstellen je PDF und Seite, dazu ein Sachregister aus den Überschriften aller Normen.
+- **Volltextsuche über alle Seiten:** Die Suche läuft über den Seitentext aller 2378 Seiten samt OCR-Korrekturen und springt auf die Seite.
+- **Prüfstatus und Erstfreigabe:** Jede Norm mit PDF hat einen Status der digitalen Fassung: Ungeprüft, In Bearbeitung, Zur Prüfung, Korrektur erforderlich, Freigegeben.
+  - Alle 74 Normen mit PDF beginnen als „Ungeprüft“ und sind auf Karte, Norm-Kopf, Druck, Word und PDF-Export so gekennzeichnet.
+  - Die erste OCR- oder Formatkorrektur setzt „In Bearbeitung“.
+  - Seiten lassen sich einzeln als „mit dem Original verglichen“ markieren.
+  - Freigeben darf nur, wer in der Prüferliste steht (unter „Daten“), mit ausdrücklicher Bestätigung. Prüfer und Datum bleiben an der Norm.
+  - Die Erstfreigabe erzeugt automatisch eine Version mit dem PDF, den OCR-Korrekturen und den Formatänderungen dieser Norm. Fachliche Änderungen und Regeln gehören nicht dazu.
+  - Neue Ansicht „Prüfungen“ mit allen Normen, ihrem Status, verglichenen Seiten, Seiten ohne Text und Korrekturen.
+- **Logo und Farben:** `marke/farben.css` nimmt die Hausfarben und ein Logo auf.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| J1 | Bearbeitet wird in einem lokalen Klon des Repos; der Ordner wird im Browser verbunden. Mehrere Personen arbeiten nacheinander, Git führt zusammen. Eine Sperre gegen gleichzeitiges Bearbeiten gibt es nicht. |
+| J2 | Der Bearbeitungsstand ist in drei Dateien geteilt: `bibliothek.json` (lesbar eingerückt, für Git-Vergleiche), `texte.json` (Seitentexte, Abschnitte, Struktur), `titelbilder.json`. |
+| J3 | Die Prüferliste ist eine Namensliste, kein Zugriffsschutz. Wer seinen Namen ändert, umgeht sie. Reicht dieselbe Person ein und gibt frei, steht im Verlauf „Selbstprüfung“. |
+| J4 | Die Erstfreigabe verlangt nicht, dass alle Seiten als verglichen markiert sind; der Stand („12 von 79 Seiten“) wird angezeigt und festgehalten. |
+| J5 | Der bisherige Status je Norm (Änderungen offen, Zu bestätigen) ist durch den Prüfstatus ersetzt; offene Änderungen stehen daneben. |
+| J6 | Glossareinträge aus dem Lauftext sind automatisch erkannt und nicht durchgesehen; sie tragen „aus dem Lauftext erkannt“ und „zu bestätigen“. Einzelne Fehltreffer sind zu erwarten. |
+| J7 | Die Listen von TWP 1984 und TWE 1994 sind aus dem OCR-Text von Hand übertragen. In der TWP fehlt im OCR die Abkürzung zu „Schleuse“; „S“ ist ergänzt. |
+| J8 | Der Index zählt einen Begriff nur als ganzes Wort und mit Gross- und Kleinschreibung. Zweibuchstabige Abkürzungen treffen auch zufällige Buchstabenpaare im OCR-Text. |
+| J9 | Die Kapiteldateien des BABS zu TWS 1982 und TWO 1977 liegen unter `pdf/2_Technische_Weisungen/kapiteldateien/`; die Bibliothek verwendet die zusammengefügten PDF. |
+
+### Nicht umgesetzt
+- **ANDAIR-Farben und Logo:** Die Vorgaben liegen mir nicht vor. `marke/farben.css` ist vorbereitet; es braucht die Logo-Datei und die Farbwerte.
+- **Automatische Texterkennung** für PDF ohne Text und ein **KI-Modell** für die Struktur: weiterhin nicht vorhanden. Die Prüfungsübersicht zeigt, wie viele Seiten keinen Text haben.
+- **Einlesen von Word-Dateien.**
+- **Rollen mit Anmeldung** (Gast, Autor, Prüfer, Admin): braucht einen Server.
+- Die Glossarbegriffe sind im Text noch nicht mit ihrer Bedeutung hinterlegt (Tooltip).
+
+### Offene Punkte
+- GitHub warnt bei `TWO_1977_Kap1-4.pdf` (57 MB) vor grossen Dateien; die Grenze liegt bei 100 MB.
+- Die Einzeldatei-Tests (`test.js`, `test_pdf.js`, `test_klein.js`) sind durch `test/test.js` ersetzt. Der Fall „Kanton und Hersteller regeln dasselbe“ ist dort nicht mehr abgedeckt.
+- Wer Inhalte in einer früheren Einzeldatei erfasst hat, übernimmt sie über „Daten“ → Datensicherung.
+
+### Geprüft
+`node test/test.js` gegen das ganze Repo: Laden über den Webserver, Ordner verbinden, Bibliothek mit 77 Karten, Bearbeitung der TWP (OCR-Korrektur, fachliche Änderung, Formatvorlage, Hybrid, Änderung im Scan), Druck, Word, PDF-Export, Protokoll, Teilfreigabe, Verwerfen, Vergleich, Prüfstatus bis zur Erstfreigabe (mit und ohne Eintrag in der Prüferliste), Glossar, Index, Volltextsuche, neues PDF hinzufügen, Speichern in den Ordner und erneutes Laden, schmale Ansicht, Startschirm ohne Webserver.
+
 ## 0.8.0 – 21.11.2026
 
 Format- und Strukturerkennung aus dem Auftrag „KI-gestützte Format- und Strukturerkennung“, soweit sie in einer Datei ohne Server geht.

@@ -1,0 +1,21 @@
+/* Farben und Logo des Hauses.
+   Diese Datei überschreibt die Vorgaben aus style.css. Werte anpassen, speichern, Seite neu laden.
+
+   Logo: Die Datei (SVG oder PNG, für dunklen Hintergrund) in diesen Ordner legen und die zwei Zeilen
+   --logo und --logo-hoehe unten aktivieren. Dann erscheint das Logo oben in der Seitenleiste
+   und der dreifarbige Balken entfällt. */
+:root {
+  /* --logo: url("logo.svg"); */
+  /* --logo-hoehe: 2.6rem; */
+
+  /* Seitenleiste */
+  --nacht: #15273B;        /* Hintergrund */
+  --nacht-linie: #2C4159;  /* Linien und Zähler */
+
+  /* Hauptfarbe: Knöpfe, Links, Kennungen */
+  --blau: #1D3F7A;
+  --blau-hell: #E4ECF8;
+
+  /* Akzent: aktive Einträge, Markierungen */
+  --signal: #F08A00;
+}

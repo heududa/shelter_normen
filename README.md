@@ -24,6 +24,24 @@ Alle Normen an einem Ort: Original-PDF, erkannter Text, Regeln, Änderungen und 
 
 Firefox und Safari können keine Ordner öffnen. Dort geht nur Ansehen über einen Webserver.
 
+## Was drin ist
+
+- **Bibliothek:** 77 Werke des BABS und die Schicht ANDAIR 2026, 99 Original-PDF mit 2378 Seiten.
+- **Prüfungen:** Stand der digitalen Fassung je Norm, von „Ungeprüft“ bis „Freigegeben“.
+- **Glossar und Index:** Abkürzungen mit Quelle und alle Fundstellen in den Normen.
+- **Änderungen und Versionen:** offene Änderungen freigeben oder verwerfen, Stände vergleichen.
+
+## Farben und Logo
+
+`marke/farben.css` enthält die Farben. Für ein Logo die Datei (SVG oder PNG, für dunklen Hintergrund) nach `marke/` legen und in `farben.css` die Zeilen `--logo` und `--logo-hoehe` aktivieren.
+
+## Entwickeln
+
+- `npm install` holt pdf.js und pdf-lib; die fertigen Dateien liegen bereits in `lib/`.
+- `node test/test.js` prüft den ganzen Ablauf im Browser (Playwright). Geschrieben wird dabei nur nach `test/tmp/`.
+- `node werkzeuge/ersterfassung.js --ueberschreiben` erzeugt `daten/` neu aus den PDF. **Das ersetzt den Bearbeitungsstand.**
+- `sh werkzeuge/zusammenfuegen.sh` fügt die Kapiteldateien von TWS 1982 und TWO 1977 zusammen (braucht qpdf).
+
 ## Grundsätze
 
 - Das Original-PDF bleibt unverändert.

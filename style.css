@@ -393,3 +393,20 @@ dialog .haken input{margin:0}
 .glossar tr.weg td{text-decoration:line-through;color:var(--leise)}
 .glossar td.tat{white-space:nowrap;text-align:right}
 .blatt>.filter{padding:.8rem 0}
+.volltreffer{border-bottom:1px solid var(--linie);padding:.3rem 0 .5rem}
+.treffer mark{background:var(--orange-hell);color:inherit;padding:0 .1rem}
+.treffer.mehr{display:block;font-size:.88rem;color:var(--leise)}
+.ixdetail td{background:var(--papier);font-size:.9rem}.ixdetail p{margin:.2rem 0}
+.sachliste{columns:22rem;column-gap:2rem}
+.sachliste li{break-inside:avoid;padding:.2rem 0;display:grid}
+.sachliste span{font-size:.8rem;color:var(--leise)}
+.pruefstand{display:inline-flex;align-items:center;gap:.3rem}
+.ungeprueft{margin:.6rem 0 0;padding:.45rem .75rem;background:var(--orange-hell);border-left:4px solid var(--signal);font-size:.92rem;max-width:60rem}
+.geprueft{margin:.6rem 0 0;padding:.45rem .75rem;background:var(--gruen-hell);border-left:4px solid var(--gruen);font-size:.92rem;max-width:60rem}
+button.klein.ok{color:var(--gruen);border-color:var(--gruen)}
+.bibtab .notiz{display:block;margin:0}
+
+/* Logo aus marke/farben.css */
+.leiste .logo{display:block;flex:none;width:100%;height:var(--logo-hoehe,0);background:var(--logo,none) left center/contain no-repeat}
+.leiste .app{flex-wrap:wrap}
+.leiste .app:has(.logo[style]),.leiste .app{row-gap:.6rem}
