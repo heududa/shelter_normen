@@ -207,6 +207,19 @@ const path0 = path.join(__dirname, 'daten');
   await p.evaluate(() => { window.print = () => {}; }); await p.click('[data-act=ed-druck]'); await p.selectOption('#dlg select[name=umfang]', 'seite'); await p.click('#dlg button.haupt');
   await p.waitForFunction(() => { const i = document.querySelector('#druck img.ausschnitt'); return i && i.src.startsWith('data:image/png'); }); assert.equal(await p.locator('#druck .uetools').count(), 0);
   await p.evaluate(() => window.dispatchEvent(new Event('afterprint')));
+  // Vergleich über das ganze Fenster: gleicher Zoom, gleiches Scrollen, Markierung im Text zeigt die Stelle im Scan
+  await p.evaluate(() => { const S = window.__nb.S; S.ed.ansicht = 'neu'; S.ed.dok = 'd-twp84-1'; S.ed.seite = 9; window.__nb.oeffne('twp84', 'edit'); }); await p.waitForSelector('.seite[data-fertig]');
+  await p.click('[data-act=vgl-an]'); await p.waitForSelector('#vgl .seite[data-fertig]');
+  const vm = () => p.evaluate(() => { const l = document.querySelector('#vgl-l .vglblatt'), r = document.querySelector('#vgl-r .vglblatt'), f = document.querySelector('#vgl-l'); return { lw: l.offsetWidth, rw: r.offsetWidth, lh: l.offsetHeight, feld: f.clientHeight, fs: parseFloat(getComputedStyle(r).fontSize) }; });
+  let v1 = await vm(); assert.equal(v1.lw, v1.rw); assert.ok(v1.lh <= v1.feld, 'die ganze Seite ist sichtbar'); assert.equal(await p.locator('#vgl-z').innerText(), '100 %');
+  await p.evaluate(() => { const tw = document.createTreeWalker(document.querySelector('.vgltext .lesetext'), NodeFilter.SHOW_TEXT); let k = 0, n; while ((n = tw.nextNode())) { let i = -1; while ((i = n.nodeValue.indexOf('Belastung', i + 1)) >= 0) { if (++k === 2) { const r = document.createRange(); r.setStart(n, i); r.setEnd(n, i + 9); const s = getSelection(); s.removeAllRanges(); s.addRange(r); return; } } } });
+  await p.waitForSelector('.seite .treffer.haupt'); assert.ok(await p.locator('.seite .treffer').count() >= 6); assert.equal(await p.locator('.seite .treffer.haupt').count(), 1);
+  const th = await p.evaluate(() => [...document.querySelectorAll('.seite .treffer')].map(x => parseFloat(x.style.top)).sort((a, b) => a - b).indexOf(parseFloat(document.querySelector('.treffer.haupt').style.top))); assert.equal(th, 1, 'die zweite Stelle im Text ist die zweite im Scan');
+  await p.screenshot({ path: D + 'l_vergleich.png' });
+  await p.click('[data-act=vgl-zoom][data-d="1"]'); await p.click('[data-act=vgl-zoom][data-d="1"]'); let v2 = await vm(); assert.equal(v2.lw, v2.rw); assert.ok(Math.abs(v2.lw / v1.lw - 1.5) < 0.02 && Math.abs(v2.fs / v1.fs - 1.5) < 0.02, 'Zoom gilt für beide Seiten');
+  await p.evaluate(() => { const r = document.querySelector('#vgl-r'); r.scrollTop = (r.scrollHeight - r.clientHeight) / 2; }); await p.waitForTimeout(250);
+  const sc = await p.evaluate(() => { const l = document.querySelector('#vgl-l'); return l.scrollTop / (l.scrollHeight - l.clientHeight); }); assert.ok(Math.abs(sc - 0.5) < 0.03, 'gleich scrollen');
+  await p.click('[data-act=ed-seite][data-d="1"]'); await p.waitForSelector('#vgl .seite[data-seite="10"][data-fertig]'); await p.keyboard.press('Escape'); await p.waitForSelector('.edgrid'); assert.equal(await p.locator('#vgl').count(), 0);
   // Ohne Webserver: Startschirm mit Ordnerwahl
   const p3 = await b.newPage(); p3.on('pageerror', e => errs.push('file: ' + e.message)); await p3.goto('file://' + R + '/index.html'); await p3.waitForSelector('.startschirm [data-act=ordner]');
   srv.close();

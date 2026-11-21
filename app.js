@@ -324,7 +324,7 @@ if (typeof document !== 'undefined') (function () {
   const layer0 = istSchicht;
   const ebeneVon = w => hg(w.herausgeberId).art === 'kanton' ? 'kanton' : 'hersteller';
   S.dokWahl = {}; S.auf = {};
-  S.ed = { dok: null, seite: 1, ansicht: 'hybrid', ebene: '', edit: false, entwurf: '', filter: 'alle', links: 'scan', transp: 60, zScan: true, zText: true, zMarken: true, such: '', ers: '' };
+  S.ed = { dok: null, seite: 1, ansicht: 'hybrid', ebene: '', edit: false, entwurf: '', filter: 'alle', links: 'scan', transp: 60, zScan: true, zText: true, zMarken: true, such: '', ers: '', vgl: false, vz: 'seite', vsync: true };
   S.wahlAus = new Set(); S.vgl = { a: '', b: 'jetzt' };
   S.bib = { q: '', gruppe: '', status: '', hg: '', liste: false };
   const R = { offen: [] };
@@ -594,6 +594,84 @@ if (typeof document !== 'undefined') (function () {
     else { S.tab = 'edit'; S.ed.dok = d && d.id; S.ed.seite = seite; S.ed.edit = false; }
     P.ziel = { seite, anm: anmId, dok: d && d.id }; if (anmId) P.aktiv = anmId;
   }
+  // ----- Markierung im Text zeigt die Stelle im Original: Wörter der PDF-Seite mit ihrer Lage
+  const wortNorm = t => String(t).toLowerCase().replace(/[äàâ]/g, 'a').replace(/[öô]/g, 'o').replace(/[üû]/g, 'u').replace(/[éèê]/g, 'e').replace(/ß/g, 'ss').replace(/[^a-z0-9]/g, '');
+  function seitenWorte(dId, n) {
+    P.worte = P.worte || new Map(); const key = dId + ':' + n; if (P.worte.has(key)) return P.worte.get(key);
+    const pr = (async () => {
+      try {
+        const doc = await pdfDoc(dId); if (!doc) return [];
+        const page = await doc.getPage(n), vp = page.getViewport({ scale: 1 }), c = await page.getTextContent(), ws = [];
+        c.items.forEach(it => {
+          if (!it.str || !it.str.trim() || !it.width) return;
+          const [x, y] = vp.convertToViewportPoint(it.transform[4], it.transform[5]), hh = it.height || 10; let pos = 0;
+          it.str.split(/(\s+)/).forEach(t => { if (t.trim()) { const k = wortNorm(t); if (k) ws.push({ t, k, x: (x + it.width * pos / it.str.length) / vp.width, y: (y - hh) / vp.height, w: it.width * t.length / it.str.length / vp.width, h: hh * 1.15 / vp.height, strich: /[-‐]$/.test(t) }); } pos += t.length; });
+        });
+        return ws;
+      } catch (e) { return []; }
+    })();
+    if (P.worte.size > 30) P.worte.delete(P.worte.keys().next().value);
+    P.worte.set(key, pr); return pr;
+  }
+  function fundstellen(ws, tok) { // alle Stellen, an denen die Wortfolge im PDF steht; ein getrenntes Wort («Belas-» «tung») zählt als eines
+    const out = [];
+    for (let i = 0; i < ws.length; i++) {
+      let j = i, ok = true; const teile = [];
+      for (const t of tok) {
+        if (j >= ws.length) { ok = false; break; }
+        if (ws[j].k === t) { teile.push(ws[j]); j++; }
+        else if (ws[j].strich && j + 1 < ws.length && ws[j].k + ws[j + 1].k === t) { teile.push(ws[j], ws[j + 1]); j += 2; }
+        else { ok = false; break; }
+      }
+      if (ok && teile.length) out.push(teile);
+    }
+    return out;
+  }
+  async function zeigeImOriginal(text, davor) {
+    const se = $('#pdfseiten .seite'); if (!se) return; se.querySelectorAll('.treffer').forEach(x => x.remove());
+    const tok = String(text).split(/\s+/).map(wortNorm).filter(Boolean); if (!tok.length || tok.length > 40) return;
+    const dId = se.dataset.dok, n = +se.dataset.seite, ws = await seitenWorte(dId, n); if (se !== $('#pdfseiten .seite')) return;
+    let fs = fundstellen(ws, tok); if (!fs.length && tok.length === 1 && tok[0].length >= 4) fs = ws.filter(w => w.k.startsWith(tok[0]) || (w.k.length >= 4 && tok[0].startsWith(w.k))).map(w => [w]);
+    if (!fs.length) return;
+    // die wievielte gleiche Stelle im Text ist markiert? Dieselbe Nummer im Original wird hervorgehoben.
+    const vor = String(davor).split(/\s+/).map(wortNorm).filter(Boolean); let nr = 0; for (let i = 0; i + tok.length <= vor.length; i++) if (tok.every((t, k) => vor[i + k] === t)) nr++;
+    const haupt = Math.min(nr, fs.length - 1); let ziel = null;
+    fs.forEach((teile, i) => teile.forEach(w => { const d = document.createElement('div'); d.className = 'treffer' + (i === haupt ? ' haupt' : ''); d.style.cssText = `left:${(w.x * 100).toFixed(2)}%;top:${(w.y * 100).toFixed(2)}%;width:${(w.w * 100).toFixed(2)}%;height:${(w.h * 100).toFixed(2)}%`; se.appendChild(d); if (i === haupt && !ziel) ziel = d; }));
+    if (ziel) { vglMount.still = $('#vgl-l'); clearTimeout(vglMount.t2); vglMount.t2 = setTimeout(() => { vglMount.still = null; }, 400); ziel.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+  }
+  let auswahlT = 0;
+  document.addEventListener('selectionchange', () => { clearTimeout(auswahlT); auswahlT = setTimeout(() => {
+    if (!S.lib || S.view.typ !== 'werk' || S.tab !== 'edit' || !$('#pdfseiten .seite')) return;
+    const ta = document.activeElement && document.activeElement.id === 'ed-text' ? document.activeElement : null;
+    if (ta) { const a = ta.selectionStart, b = ta.selectionEnd; return zeigeImOriginal(a === b ? '' : ta.value.slice(a, b), ta.value.slice(0, a)); }
+    const sel = document.getSelection(), feld = sel && sel.rangeCount && !sel.isCollapsed && sel.anchorNode && (sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement).closest('.lesetext');
+    if (!feld) { const se = $('#pdfseiten .seite'); if (se && !P.mark) se.querySelectorAll('.treffer').forEach(x => x.remove()); return; }
+    const r = sel.getRangeAt(0), vor = document.createRange(); vor.selectNodeContents(feld); vor.setEnd(r.startContainer, r.startOffset);
+    zeigeImOriginal(sel.toString(), vor.toString());
+  }, 160); });
+  const VGL_STUFEN = [50, 75, 100, 125, 150, 200, 250, 300, 400];
+  function vglMount() { // Grösse beider Blätter aus dem Zoom berechnen; 100 % heisst: die ganze Seite passt ins Feld
+    const v = $('#vgl'); document.body.classList.toggle('vglan', !!v); if (!v) return;
+    const E = S.ed, [a, b] = v.dataset.m.split('/').map(Number), li = $('#vgl-l'), re = $('#vgl-r');
+    const bw = li.clientWidth - 28, bh = li.clientHeight - 28, fit = Math.max(160, Math.min(bw, bh * a / b));
+    const W = Math.round(E.vz === 'breite' ? bw : fit * (E.vz === 'seite' ? 100 : E.vz) / 100); E.vzAkt = Math.round(W / fit * 100);
+    v.querySelectorAll('.vglblatt').forEach(x => { x.style.width = W + 'px'; });
+    const t = v.querySelector('.vgltext'); t.style.minHeight = Math.round(W * b / a) + 'px'; t.style.fontSize = Math.max(4, W * 0.0165).toFixed(2) + 'px'; t.style.padding = `${Math.round(W * 0.06)}px ${Math.round(W * 0.08)}px`;
+    $('#vgl-z').textContent = E.vzAkt + ' %'; $('#vgl-seite').setAttribute('aria-pressed', E.vz === 'seite'); $('#vgl-breite').setAttribute('aria-pressed', E.vz === 'breite');
+    clearTimeout(vglMount.t); vglMount.t = setTimeout(() => { const el = v.querySelector('.seite'); if (el) zeichne(el); }, 140);
+    if (li.dataset.gebunden) return; li.dataset.gebunden = '1';
+    [li, re].forEach((x, i) => x.addEventListener('scroll', () => {
+      if (!S.ed.vsync || vglMount.still === x) return; const y = i ? li : re; vglMount.still = y; clearTimeout(vglMount.t2); vglMount.t2 = setTimeout(() => { vglMount.still = null; }, 80);
+      y.scrollTop = x.scrollTop / Math.max(1, x.scrollHeight - x.clientHeight) * (y.scrollHeight - y.clientHeight); y.scrollLeft = x.scrollLeft / Math.max(1, x.scrollWidth - x.clientWidth) * (y.scrollWidth - y.clientWidth);
+    }, { passive: true }));
+    v.addEventListener('wheel', ev => { if (!ev.ctrlKey) return; ev.preventDefault(); vglZoom(ev.deltaY < 0 ? 1 : -1); }, { passive: false });
+  }
+  function vglZoom(d, v) {
+    const E = S.ed; if (v) E.vz = v; else { const jetzt = E.vzAkt || 100, st = d > 0 ? VGL_STUFEN.find(x => x > jetzt + 2) : VGL_STUFEN.slice().reverse().find(x => x < jetzt - 2); if (!st) return; E.vz = st; }
+    vglMount();
+  }
+  window.addEventListener('resize', () => { if ($('#vgl')) vglMount(); });
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && S.ed.vgl && !$('#dlg').open && !S.ed.edit) { S.ed.vgl = false; render(); } });
   function pdfMount() {
     const box = $('#pdfseiten'); if (!box) return;
     if (P.werkId !== box.dataset.werk) { pdfReset(); P.werkId = box.dataset.werk; }
@@ -1220,12 +1298,29 @@ if (typeof document !== 'undefined') (function () {
     const sicht = (k, t) => `<button data-act="ed-ansicht" data-v="${k}" aria-pressed="${E.ansicht === k}">${t}</button>`;
     const bl = bloeckeVon(dok.id), kap = bl.filter(b => /^u\d$/.test(b.typ) || b.typ === 'titel');
     const inhalt = `<details class="inhalt" ${E.inhaltAuf ? 'open' : ''}><summary data-act="ed-inhalt">Inhalt${kap.length ? ' (' + kap.length + ')' : ''}</summary><div class="inhaltliste">${L().struktur[dok.id] ? (kap.map(b => `<a href="#" data-act="ed-gehe" data-s="${b.s}" class="iv-${b.typ}${b.s === n ? ' hier' : ''}"><span>${h(b.t.slice(0, 80))}</span><i>${b.s}</i></a>`).join('') || '<p class="leer">In diesem PDF wurden keine Überschriften erkannt. Im Text lässt sich einer Zeile die Formatvorlage „Überschrift“ zuweisen.</p>') : `<p class="leer">Für dieses PDF ist die Struktur noch nicht erkannt.</p>`}<p class="feldfuss"><button data-act="struktur-neu" data-id="${h(w.id)}">Struktur neu erkennen</button></p></div></details>`;
+    if (E.vgl) { // Vergleich: Original und Text nebeneinander über das ganze Fenster, gleicher Zoom, gleiches Scrollen
+      const ok = (dok.geprueftSeiten || []).includes(n);
+      return `<div class="vgl" id="vgl" data-m="${m[0]}/${m[1]}">
+        <div class="vglleiste">
+          <b class="vglname">${h(w.kurz)}</b>
+          <span class="zoom"><button data-act="ed-seite" data-d="-1" aria-label="Vorherige Seite" ${n <= 1 ? 'disabled' : ''}>‹</button><label class="sprung">Seite<input type="number" id="ed-sprung" min="1" max="${N}" value="${n}"> von ${N}</label><button data-act="ed-seite" data-d="1" aria-label="Nächste Seite" ${n >= N ? 'disabled' : ''}>›</button></span>
+          <span class="zoom"><button data-act="vgl-zoom" data-d="-1" aria-label="Kleiner">−</button><output id="vgl-z" aria-label="Zoom"></output><button data-act="vgl-zoom" data-d="1" aria-label="Grösser">+</button></span>
+          <span class="umschalt"><button data-act="vgl-zoom" data-v="seite" id="vgl-seite">Ganze Seite</button><button data-act="vgl-zoom" data-v="breite" id="vgl-breite">Seitenbreite</button></span>
+          <label class="haken"><input type="checkbox" id="vgl-sync" ${E.vsync ? 'checked' : ''}> Gleich scrollen</label>
+          <span class="umschalt">${sicht('original', 'Grundtext')}${sicht('hybrid', 'Mit Änderungen')}${sicht('neu', 'Neu')}</span>
+          <span class="rechts"><button data-act="seite-ok" aria-pressed="${ok}" class="${ok ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${ok ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}">Norm freigeben</button>` : ''}${hat && !E.edit ? '<button data-act="ed-edit">Text bearbeiten</button>' : ''}<button class="haupt" data-act="vgl-aus" title="Esc">Vergleich beenden</button></span>
+        </div>
+        <div class="vglgrid">
+          <div class="vglfeld" id="vgl-l" tabindex="0" aria-label="Original, Seite ${n}"><div class="vglblatt">${links}</div></div>
+          <div class="vglfeld" id="vgl-r" tabindex="0" aria-label="Text der Seite ${n}"><div class="vglblatt vgltext${E.edit ? ' schreibt' : ''}">${mitte}</div></div>
+        </div></div>`;
+    }
     return `<div class="pdfleiste edleiste">
         ${inhalt}
         ${ds.length > 1 ? `<label class="sprung">Teil<select id="ed-dok">${opt(ds.map(d => [d.id, d.teil || d.datei]), dok.id)}</select></label>` : ''}
         <span class="zoom"><button data-act="ed-seite" data-d="-1" aria-label="Vorherige Seite" ${n <= 1 ? 'disabled' : ''}>‹</button><label class="sprung">Seite<input type="number" id="ed-sprung" min="1" max="${N}" value="${n}"> von ${N}</label><button data-act="ed-seite" data-d="1" aria-label="Nächste Seite" ${n >= N ? 'disabled' : ''}>›</button></span>
         <label class="sprung">Ich bearbeite<select id="ed-ebene">${opt([['', 'Grundtext (OCR-Korrektur)']].concat(schichten.map(x => [x.id, x.kurz + ' (fachlich)'])), E.ebene)}</select></label>
-        <span class="rechts"><button data-act="ed-druck">Drucken oder Word</button><button data-act="ed-pdf">PDF exportieren</button><button data-act="protokoll-csv" data-id="${h(w.id)}">Protokoll für Excel</button></span>
+        <span class="rechts"><button class="haupt" data-act="vgl-an" ${da && hat ? '' : 'disabled'}>Vergleichen: ganze Seite</button><button data-act="ed-druck">Drucken oder Word</button><button data-act="ed-pdf">PDF exportieren</button><button data-act="protokoll-csv" data-id="${h(w.id)}">Protokoll für Excel</button></span>
       </div>
       <div class="edgrid">
         <section class="edspalte" aria-label="Original"><header class="edkopf"><h3>Original</h3><span class="edtools"><button data-act="seite-ok" aria-pressed="${(dok.geprueftSeiten || []).includes(n)}" class="klein ${(dok.geprueftSeiten || []).includes(n) ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${(dok.geprueftSeiten || []).includes(n) ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}" class="klein" title="${seitenStand(w).ok} von ${seitenStand(w).alle} Seiten verglichen">Norm freigeben</button>` : ''}<span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span></span></header>
@@ -1468,7 +1563,7 @@ if (typeof document !== 'undefined') (function () {
     $('#rahmen').innerHTML = '<div class="spalten">' + leiste() + '<div class="arbeit">' + kopf() + '<main id="haupt" tabindex="-1">' + haupt() + '</main></div></div>';
     if ($('#pdfanm')) $('#pdfanm').scrollTop = st;
     if ($('#pdfseiten')) pdfMount();
-    schnitteMount(); mStatus();
+    schnitteMount(); mStatus(); vglMount();
     if ($('.deckel[data-fehlt]')) titelbilderNachholen();
     document.title = (S.dirty ? '• ' : '') + L().meta.titel;
   }
@@ -1737,6 +1832,9 @@ if (typeof document !== 'undefined') (function () {
     'pdf-laden': el => { const d = dokId(el.dataset.id); pdfBytes(d).then(b => herunterladenBlob(d.datei, new Blob([b], { type: 'application/pdf' })), e => meldung('Das PDF lässt sich nicht laden: ' + (e.message || e))); return false; },
     'pdf-text': el => mitName(() => { const w = werk(el.dataset.id); if (L().abschnitte.some(a => a.werkId === w.id)) dialog('Originaltext ersetzen?', `<p>Für ${h(w.kurz)} ist bereits ein Originaltext eingelesen. Der Text aus dem PDF ersetzt ihn vollständig.</p>`, () => { pdfText(w); }, 'Ersetzen'); else pdfText(w); }),
     'pdf-seite': el => { geheZu(el.dataset.id, +el.dataset.seite, null, el.dataset.dok); },
+    'vgl-an': () => { S.ed.vgl = true; },
+    'vgl-aus': () => { S.ed.vgl = false; },
+    'vgl-zoom': el => { vglZoom(+el.dataset.d || 0, el.dataset.v); return false; },
     'pdf-zoom': el => { P.zoom = Math.max(50, Math.min(250, P.zoom + (+el.dataset.d))); },
     'pdf-mark': el => mitName(() => { const art = el.dataset.art || 'kommentar'; P.mark = !(P.mark && P.markArt === art); P.markArt = art; render(); }),
     'anm-seite': el => mitName(() => anmForm(null, { werkId: el.dataset.werk, dokId: el.dataset.dok, seite: +el.dataset.seite, rect: null })),
@@ -1892,6 +1990,7 @@ if (typeof document !== 'undefined') (function () {
     else if (t.classList.contains('wahlbox')) { if (t.checked) S.wahlAus.delete(t.dataset.k); else S.wahlAus.add(t.dataset.k); render(); }
     else if (t.id === 'vgl-a' || t.id === 'vgl-b') { S.vgl[t.id.slice(4)] = t.value; render(); }
     else if (t.id === 'ed-fv') { mitName(() => { fvSetzen(werk(S.view.id), S.ed.dok, S.ed.seite, edZeile(), t.value); }); }
+    else if (t.id === 'vgl-sync') { S.ed.vsync = t.checked; }
     else if (t.id === 'ed-z-scan') { S.ed.zScan = t.checked; render(); }
     else if (t.id === 'ed-z-text') { S.ed.zText = t.checked; render(); }
     else if (t.id === 'ed-z-marken') { S.ed.zMarken = t.checked; render(); }

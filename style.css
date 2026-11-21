@@ -446,3 +446,30 @@ mark.unsicher{background:#FFE9A8;color:#4A3500;border-bottom:2px dotted #B07A00;
 /* Mehrnutzerbetrieb */
 .anmeldung{display:grid;gap:.7rem;max-width:22rem;margin:1rem auto 0;text-align:left}
 .ablage.besetzt{background:var(--orange-hell);color:var(--orange);border-color:transparent}
+
+/* Vergleich über das ganze Fenster */
+body.vglan{overflow:hidden}
+.vgl{position:fixed;inset:0;z-index:15;background:var(--papier);display:flex;flex-direction:column}
+.vglleiste{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .9rem;padding:.45rem .8rem;border-bottom:1px solid var(--linie);background:var(--blatt)}
+.vglleiste .rechts{margin-left:auto;display:flex;flex-wrap:wrap;gap:.4rem}
+.vglleiste #vgl-z{min-width:3.4rem;text-align:center;display:inline-block}
+.vglname{font-family:var(--ui)}
+.vglgrid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1px;background:var(--linie)}
+.vglfeld{overflow:auto;background:var(--papier);padding:14px}
+.vglfeld:focus-visible{outline:2px solid var(--blau);outline-offset:-2px}
+.vglblatt{margin:0 auto;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.18)}
+.vgl #pdfseiten.eine{padding:0;border:0;background:none}
+.vgl .seitenblock{width:100%!important;margin:0}
+.vgltext{box-sizing:border-box;color:#111}
+.vgltext .lesetext{font-size:1em;line-height:1.38;padding:0;max-width:none}
+.vgltext .hinweis,.vgltext .legende{font-size:max(11px,.8em)}
+.vgltext.schreibt{font-size:15px!important}
+.vgltext.schreibt textarea{min-height:60vh}
+.vgltext .ue figcaption{font-size:max(11px,.75em)}
+@media (max-width:820px){.vglgrid{grid-template-columns:minmax(0,1fr);grid-template-rows:1fr 1fr}}
+/* Markierung im Text zeigt die Stelle im Original */
+.seite .treffer{position:absolute;background:rgba(255,205,0,.32);outline:1px solid rgba(190,130,0,.7);border-radius:2px;pointer-events:none;z-index:1}
+.seite .treffer.haupt{background:rgba(255,120,0,.4);outline:2px solid #D96A00}
+.vglleiste .zoom,.vglleiste label.sprung,.vglleiste label.haken{display:inline-flex;flex-direction:row;align-items:center;gap:.35rem;margin:0;white-space:nowrap}
+.vglleiste input[type=number]{width:4.2rem;margin:0}
+.vglleiste input[type=checkbox]{margin:0}

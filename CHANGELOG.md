@@ -1,5 +1,18 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.11.1 – 21.11.2026
+
+### Neu
+- **Vergleichen über das ganze Fenster:** In der Bearbeitung öffnet «Vergleichen: ganze Seite» das Original links und den Text rechts über das ganze Fenster. Beide Blätter haben immer dieselbe Grösse. «Ganze Seite» zeigt die Seite vollständig, «Seitenbreite» füllt die Breite; Zoom mit − und + oder Ctrl und Mausrad gilt für beide Seiten zugleich. «Gleich scrollen» führt die andere Seite mit. «Seite als verglichen markieren», «Norm freigeben» und «Text bearbeiten» sind dort erreichbar; Esc beendet den Vergleich.
+- **Markierung zeigt die Stelle im Original:** Ein im Text markiertes Wort (oder mehrere) wird im Scan hervorgehoben, in der normalen Bearbeitung und im Vergleich, auch beim Bearbeiten im Textfeld. Kommt das Wort mehrfach vor, sind alle Stellen gelb und die entsprechende Stelle orange.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| M1 | Die Lage der Wörter im Scan stammt aus der Textebene des Original-PDF, also aus der früheren Texterkennung. Wo diese ein Wort anders gelesen hat als die neue, wird die Stelle nicht gefunden. |
+| M2 | Der Text rechts ist im Vergleich im selben Massstab wie die Seite gesetzt. Bei «Ganze Seite» ist er deshalb klein; zum Lesen vergrössern. |
+| M3 | Markieren im Scan hebt die Stelle im Text nicht hervor (nur Text → Scan). |
+
 ## 0.11.0 – 21.11.2026
 
 Mehrnutzerbetrieb mit Anmeldung und Rollen, Freigabe direkt beim Vergleichen, echte Word-Datei.
