@@ -1,0 +1,33 @@
+{
+ "datum": "2026-11-21",
+ "umlaute": 9,
+ "dokumente": [
+  {
+   "dok": "d-twp84-1",
+   "norm": "TWP 1984",
+   "teil": "",
+   "seiten": 79,
+   "sicherheit": 91.9,
+   "tabellen": 15,
+   "skizzen": 87,
+   "unsicher": 183,
+   "schwach": []
+  },
+  {
+   "dok": "d-twe94-1",
+   "norm": "TWE 1994",
+   "teil": "",
+   "seiten": 70,
+   "sicherheit": 76.8,
+   "tabellen": 11,
+   "skizzen": 66,
+   "unsicher": 154,
+   "schwach": [
+    43,
+    59,
+    61,
+    65
+   ]
+  }
+ ]
+}

@@ -38,13 +38,14 @@ for (const e of erfasst) {
   e.ocr = o; lib.elemente[e.id] = []; lib.unsicher[e.id] = {};
   o.seiten.forEach(p => { e.seitenT[p.s - 1] = p.text; e.zeilen[p.s - 1] = p.zeilen; e.roh[p.s - 1] = p.roh; });
 }
-// Wortschatz aus allen Texten: für Umlaute, die der Scan verschluckt hat (Oltank statt Öltank)
+// Wortschatz aus den digital entstandenen Normen: für Umlaute, die der Scan verschluckt hat (Oltank statt Öltank)
 const wortschatz = new Map(), RW = /([A-Za-zÄÖÜäöüß]+)/;
-erfasst.forEach(e => e.seitenT.forEach(t => t.split(RW).forEach((x, i) => { if (i % 2 && x.length >= 4) wortschatz.set(x, (wortschatz.get(x) || 0) + 1); })));
+erfasst.filter(e => !e.ocr).forEach(e => e.seitenT.forEach(t => t.split(RW).forEach((x, i) => { if (i % 2 && x.length >= 4) wortschatz.set(x, (wortschatz.get(x) || 0) + 1); })));
 const UML = { O: 'Ö', U: 'Ü', A: 'Ä', o: 'ö', u: 'ü', a: 'ä' }; let umlaute = 0; const umlautListe = new Map();
 function umlaut(wort) {
   if (wort.length < 4 || /[ÄÖÜäöü]/.test(wort)) return wort;
-  const n = wortschatz.get(wort) || 0; let best = wort, bn = Math.max(3, n * 6);
+  if (wortschatz.has(wort)) return wort; // das Wort gibt es so in den digital entstandenen Normen: nichts ändern
+  let best = wort, bn = 3;
   for (let i = 0; i < wort.length; i++) { const u = UML[wort[i]]; if (!u || (i > 0 && wort[i] === wort[i].toUpperCase())) continue; const k = wort.slice(0, i) + u + wort.slice(i + 1), kn = wortschatz.get(k) || 0; if (kn >= bn) { best = k; bn = kn; } }
   return best;
 }
@@ -53,7 +54,7 @@ const mitUmlaut = t => String(t).split(RW).map((x, i) => { if (!(i % 2)) return 
 const zahlen = t => { const m = new Map(); String(t).split(/\s+/).forEach(x => { const k = x.replace(/[^0-9A-Za-zÄÖÜäöü.,/\-]/g, '').replace(/^[.,\-]+|[.,\-]+$/g, ''); if (/\d/.test(k)) m.set(k, (m.get(k) || 0) + 1); }); return m; };
 for (const e of erfasst) {
   if (!e.ocr) continue;
-  let nT = 0, nS = 0, nU = 0, conf = 0;
+  let nT = 0, nS = 0, nU = 0, conf = 0, worte = 0;
   e.ocr.seiten.forEach(p => {
     const i = p.s - 1;
     e.seitenT[i] = mitUmlaut(e.seitenT[i]); e.roh[i] = mitUmlaut(e.roh[i]); e.zeilen[i].forEach(z => { z.t = mitUmlaut(z.t); });
@@ -63,9 +64,9 @@ for (const e of erfasst) {
     const neuT = e.seitenT[i].replace(/\[\[[^\]]*\]\]/g, ' ') + ' ' + els.map(x => x.typ === 'tabelle' ? x.zeilen.map(z => z.join(' ')).join(' ') : '').join(' ');
     if (e.alt[i].replace(/\s/g, '').length > 40) zahlen(neuT).forEach((n, k) => { if ((alt.get(k) || 0) < n) neuT.split(/\s+/).forEach(x => { if (x.replace(/[^0-9A-Za-zÄÖÜäöü.,/\-]/g, '').replace(/^[.,\-]+|[.,\-]+$/g, '') === k) un.add(x); }); });
     if (un.size) { lib.unsicher[e.id][p.s] = [...un].sort(); nU += un.size; }
-    conf += p.conf;
+    conf += p.conf * p.worte; worte += p.worte;
   });
-  lib.ocr[e.id] = { werkzeug: e.ocr.werkzeug, seiten: e.ocr.seiten.length, datum: '2026-11-21', sicherheit: +(conf / e.ocr.seiten.length).toFixed(1), tabellen: nT, skizzen: nS, unsicher: nU };
+  lib.ocr[e.id] = { werkzeug: e.ocr.werkzeug, seiten: e.ocr.seiten.length, datum: '2026-11-21', sicherheit: +(conf / Math.max(1, worte)).toFixed(1), tabellen: nT, skizzen: nS, unsicher: nU };
   bericht.push({ dok: e.id, norm: e.w.kurz, teil: e.q.teil || '', seiten: e.ocr.seiten.length, sicherheit: lib.ocr[e.id].sicherheit, tabellen: nT, skizzen: nS, unsicher: nU, schwach: e.ocr.seiten.filter(p => p.conf < 80 && p.worte > 20).map(p => p.s) });
 }
 console.log('Umlaute berichtigt:', umlaute, [...umlautListe].sort((a, b) => b[1] - a[1]).slice(0, 40).map(x => x[0] + ' (' + x[1] + ')').join(', '));

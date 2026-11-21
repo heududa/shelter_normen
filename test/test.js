@@ -13,12 +13,12 @@ const ORDNER = () => {
 const path0 = path.join(__dirname, 'daten');
 (async () => {
   fs.rmSync(TMP, { recursive: true, force: true }); fs.mkdirSync(path.join(TMP, 'daten'), { recursive: true });
-  fs.readdirSync(path.join(R, 'daten')).forEach(f => fs.copyFileSync(path.join(R, 'daten', f), path.join(TMP, 'daten', f)));
+  fs.readdirSync(path.join(R, 'daten')).filter(f => f.endsWith('.json')).forEach(f => fs.copyFileSync(path.join(R, 'daten', f), path.join(TMP, 'daten', f)));
   const srv = server(R, TMP).listen(0), URL0 = `http://localhost:${srv.address().port}/`;
   const b = await chromium.launch(), ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
   await ctx.exposeFunction('__schreibe', (pfad, b64) => { const f = path.join(TMP, pfad); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, Buffer.from(b64, 'base64')); });
   await ctx.addInitScript(ORDNER);
-  const p = await ctx.newPage(); const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => m.type() === 'error' && errs.push(m.text()));
+  const p = await ctx.newPage(); const errs = []; global.__errs = errs; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => m.type() === 'error' && errs.push(m.text()));
   await p.goto(URL0); await p.waitForSelector('.karte');
   // Ablage: zuerst nur lesen, dann Ordner verbinden
   assert.ok((await p.locator('.kopf .ablage').innerText()).includes('Nur lesen'));
@@ -103,7 +103,8 @@ const path0 = path.join(__dirname, 'daten');
   assert.ok(csvT.includes('Änderungs-ID') && csvT.includes('TWP1984-T2') && csvT.includes('Wert gemäss TPH-04') && csvT.split('\r\n').length >= 7, 'CSV');
   // Word
   await p.click('[data-act=ed-druck]'); await p.selectOption('#dlg select[name=ausgabe]', 'word'); await p.selectOption('#dlg select[name=umfang]', 'auswahl'); await p.fill('#dlg input[name=seiten]', '63-65');
-  const [doc] = await Promise.all([p.waitForEvent('download'), p.click('#dlg button.haupt')]); await doc.saveAs(D + 'a_word.doc'); const docT = fs.readFileSync(D + 'a_word.doc', 'utf8');
+  const [doc] = await Promise.all([p.waitForEvent('download'), p.click('#dlg button.haupt')]); await doc.saveAs(D + 'a_word.doc'); let docT = fs.readFileSync(D + 'a_word.doc', 'utf8');
+  if (docT.startsWith('MIME-Version')) { assert.ok(docT.includes('Content-Type: image/png') && docT.includes('bild1.png'), 'Word mit Bildern'); docT = Buffer.from(docT.split('dokument.htm\r\n\r\n')[1].split('\r\n--')[0].replace(/\r\n/g, ''), 'base64').toString('utf8'); assert.ok(docT.includes('<img src="bild1.png"')); }
   assert.ok(docT.includes('ENTWURF') && (docT.match(/class="dseite"/g) || []).length === 3 && docT.includes('Änderungsverzeichnis'), 'Word');
   // Drucken
   await p.evaluate(() => { window.print = () => { window.__gedruckt = true; }; });
@@ -186,7 +187,7 @@ const path0 = path.join(__dirname, 'daten');
   await p.waitForSelector('#dlg input[name=titel]'); await p.fill('#dlg input[name=titel]', 'Testskizze'); await p.click('#dlg button.haupt');
   assert.equal(await p.locator('.lesetext .ue').count(), vorher + 1); assert.ok((await p.locator('.lesetext .ue.hand figcaption').last().innerText()).includes('Testskizze'));
   await p.locator('.lesetext .ue.hand [data-act=ue-weg]').last().click(); await p.click('#dlg button.haupt'); assert.equal(await p.locator('.lesetext .ue').count(), vorher);
-  await geheSeite(64); await p.click('[data-act=pdf-mark][data-art=tabelle]'); bx = await p.locator('.seite').boundingBox();
+  await geheSeite(64); await p.click('[data-act=pdf-mark][data-art=tabelle]'); await p.locator('.seite').evaluate(el => el.scrollIntoView({ block: 'end' })); bx = await p.locator('.seite').boundingBox();
   await p.mouse.move(bx.x + bx.width * 0.06, bx.y + bx.height * 0.655); await p.mouse.down(); await p.mouse.move(bx.x + bx.width * 0.93, bx.y + bx.height * 0.71, { steps: 4 }); await p.mouse.up();
   await p.waitForSelector('#dlg .uegitter textarea'); assert.ok(await p.locator('#dlg .uegitter tr').count() >= 3, 'Zeilen aus dem Rechteck'); assert.ok(await p.locator('#dlg .uegitter tr:first-child td').count() >= 4, 'Spalten aus dem Rechteck');
   await p.click('#dlg button.haupt'); assert.equal(await p.locator('.lesetext .ue-tabelle').count(), 2);
@@ -209,4 +210,4 @@ const path0 = path.join(__dirname, 'daten');
   const p3 = await b.newPage(); p3.on('pageerror', e => errs.push('file: ' + e.message)); await p3.goto('file://' + R + '/index.html'); await p3.waitForSelector('.startschirm [data-act=ordner]');
   srv.close();
   console.log('Fehler:', errs); assert.equal(errs.length, 0); await b.close(); console.log('TEST OK');
-})().catch(e => { console.error(String(e.stack || e).slice(0, 1500)); process.exit(1); });
+})().catch(e => { console.error('Seitenfehler:', JSON.stringify(global.__errs || [])); console.error(String(e.stack || e).slice(0, 1500)); process.exit(1); });

@@ -136,7 +136,8 @@ def zeilen_bauen(worte, th):
             if i:
                 luecke = w['x'] - (ws[i - 1]['x'] + ws[i - 1]['w'])
                 t += '   ' if luecke > 2.2 * th else ' '
-                if luecke > 2.2 * th and re.match(r'^(\d{1,2}(\.\d{1,2}){0,3}\.?|[a-z]\)|[-–•])$', t.strip()) and len(seg) == 1: t = t.strip() + ' '; seg[-1].append(w)
+                if i == 1 and luecke > 0.8 * th and re.match(r'^(e|se|ee|eo|oe|o|®|©|°|\*|»|«|\+|@|0|O|9)$', t.strip()) and ws[0]['w'] < 1.6 * th and ws[0]['h'] < 1.3 * th: t = '• '; seg[-1].append(w)
+                elif luecke > 2.2 * th and re.match(r'^(\d{1,2}(\.\d{1,2}){0,3}\.?|[a-z]\)|[-–•])$', t.strip()) and len(seg) == 1: t = t.strip() + ' '; seg[-1].append(w)
                 elif luecke > 2.2 * th: seg.append([w])
                 else: seg[-1].append(w)
             t += w['t']
@@ -178,6 +179,56 @@ def spaltenbloecke(zeilen, th):
             b = [min(q['x0'] for q in zl), min(q['y0'] for q in zl), max(q['x1'] for q in zl), max(q['y1'] for q in zl)]
             bloecke.append(dict(typ='tabelle', b=b, zeilen=reihen, ohneKopf=True, worte=[w for q in zl for w in q['worte']])); i = j
         else: out.append(l); i += 1
+    return out, bloecke
+
+
+def formelbloecke(zeilen, th):
+    """Gesetzte Formeln liest die Texterkennung nicht zuverlässig: als Bild aus dem Original übernehmen."""
+    def f(l): return '=' in l['t'] and len(l['worte']) <= 12
+    def g(l, k): return f(l) or (len(l['t']) <= 16 and not KOPF.match(l['t']) and re.search(r'[\d+·/—-]', l['t']) is not None and not (k == 0 and re.match(r'^\d+$', l['t'])))
+    out, bloecke, i = [], [], 0
+    while i < len(zeilen):
+        if not g(zeilen[i], i): out.append(zeilen[i]); i += 1; continue
+        j = i
+        while j < len(zeilen) and g(zeilen[j], j) and (j == i or zeilen[j]['y0'] - zeilen[j - 1]['y1'] < 3.5 * th): j += 1
+        zl = zeilen[i:j]
+        if sum(1 for l in zl if f(l)) >= 2 or any(re.match(r'^\S{1,8}\s{2,}=', l['t']) or l['t'].count('=') >= 2 for l in zl):
+            m = int(0.4 * th)
+            b = [min(q['x0'] for q in zl) - m, min(q['y0'] for q in zl) - m, max(q['x1'] for q in zl) + m, max(q['y1'] for q in zl) + m]
+            bloecke.append(dict(typ='skizze', b=b, formel=True, text=' '.join(q['t'] for q in zl)[:600])); i = j
+        else: out.append(zeilen[i]); i += 1
+    return out, bloecke
+
+
+def rasterbloecke(zeilen, th):
+    """Tabellen ohne Linien: mehrere Zeilen hintereinander, deren Spalten an denselben Stellen beginnen."""
+    out, bloecke, i = [], [], 0
+    while i < len(zeilen):
+        j = i
+        def mehr(k): return k < len(zeilen) and len(zeilen[k].get('seg', [])) >= 2 and '=' not in zeilen[k]['t'] and not zeilen[k].get('kein')
+        while j < len(zeilen) and (j == i or zeilen[j]['y0'] - zeilen[j - 1]['y1'] < 2.2 * th) and (mehr(j) or (j > i and mehr(j + 1) and len(zeilen[j]['t']) < 45 and len(zeilen[j].get('seg', [])) == 1 and not KOPF.match(zeilen[j]['t']))): j += 1
+        zl = zeilen[i:j]
+        letzte = [q['seg'][-1] for q in zl if len(q['seg']) >= 2]
+        if sum(1 for sg in letzte if re.match(r'^\d{1,3}$', ' '.join(w['t'] for w in sg))) >= 0.6 * max(1, len(letzte)): out.append(zeilen[i]); i += 1; continue  # Inhaltsverzeichnis
+        if sum(1 for q in zl if len(q['seg']) >= 2) < 3: out.append(zeilen[i]); i += 1; continue
+        starts = sorted(sg[0]['x'] for q in zl for sg in q['seg'])
+        anker = []
+        for x in starts:
+            if anker and x - anker[-1][-1] < 1.2 * th: anker[-1].append(x)
+            else: anker.append([x])
+        gut = [float(np.mean(a)) for a in anker if len(a) >= max(2, 0.4 * len(zl))]
+        nah = sum(1 for x in starts if any(abs(x - a) < 1.5 * th for a in gut))
+        if not (2 <= len(gut) <= 8 and nah >= 0.85 * len(starts)): out.append(zeilen[i]); i += 1; continue
+        reihen = []
+        for q in zl:
+            z = [''] * len(gut)
+            for sg in q['seg']:
+                k = int(np.argmin([abs(sg[0]['x'] - a) for a in gut])); z[k] = (z[k] + ' ' if z[k] else '') + ' '.join(w['t'] for w in sg)
+            reihen.append(z)
+        b = [min(q['x0'] for q in zl), min(q['y0'] for q in zl), max(q['x1'] for q in zl), max(q['y1'] for q in zl)]
+        e = dict(typ='tabelle', b=b, zeilen=reihen, worte=[w for q in zl for w in q['worte']])
+        if not (all(reihen[0]) and not re.search(r'\d', ' '.join(reihen[0]))): e['ohneKopf'] = True
+        bloecke.append(e); i = j
     return out, bloecke
 
 
@@ -271,6 +322,15 @@ def seite(arg):
     klein = np.where(st0[:, cv2.CC_STAT_AREA] <= 7)[0]
     if len(klein) > 400:
         weg = np.isin(lab0, klein[klein > 0]); img = img.copy(); img[weg] = 255; bw[weg] = 0
+    # Punktlinien von Formularen und Verzeichnissen entfernen (werden sonst als Buchstabensalat gelesen)
+    kl = np.isin(lab0, np.where((st0[:, cv2.CC_STAT_AREA] <= 60) & (st0[:, cv2.CC_STAT_WIDTH] <= 12) & (st0[:, cv2.CC_STAT_HEIGHT] <= 12))[0]).astype(np.uint8)
+    kl[bw == 0] = 0
+    reihe = cv2.morphologyEx(kl, cv2.MORPH_CLOSE, np.ones((1, 45), np.uint8))
+    n1, lab1, st1, _ = cv2.connectedComponentsWithStats(reihe, connectivity=8)
+    lang = np.where((st1[:, cv2.CC_STAT_WIDTH] > 250) & (st1[:, cv2.CC_STAT_HEIGHT] <= 34) & (st1[:, cv2.CC_STAT_WIDTH] > 12 * st1[:, cv2.CC_STAT_HEIGHT]))[0]
+    lang = lang[lang > 0]
+    if len(lang):
+        weg = np.isin(lab1, lang) & (kl > 0); img = img.copy(); img[weg] = 255; bw[weg] = 0
     th, lab, st, gross = grafik(bw)
     rein = img.copy()
     elemente, hl_alle = [], []
@@ -332,6 +392,32 @@ def seite(arg):
     for e in elemente:
         if e['typ'] == 'skizze' and not e.get('offen'): b = e['b']; ocrbild[b[1]:b[3], b[0]:b[2]] = 255
     worte = tess(ocrbild, tessdata, 4)
+    # Zweiter Durchgang: Schrift, die der erste Durchgang ausgelassen hat, bereichsweise nachlesen
+    def ungelesen(ws):
+        frei = ((ocrbild < 150) & (schrift > 0)).astype(np.uint8)
+        for w in ws: frei[max(0, w['y'] - 4):w['y'] + w['h'] + 4, max(0, w['x'] - 4):w['x'] + w['w'] + 4] = 0
+        return frei
+    hs = st[:, cv2.CC_STAT_HEIGHT]; fl = st[:, cv2.CC_STAT_AREA]; brt = st[:, cv2.CC_STAT_WIDTH]
+    gut = np.where((hs > 0.45 * th) & (hs < 2.4 * th) & (brt < 5 * th) & (fl > 25))[0]; gut = gut[gut > 0]
+    schrift = np.isin(lab, gut).astype(np.uint8)
+    gesamt = max(1, int(((ocrbild < 150) & (schrift > 0)).sum()))
+    rest_ = ungelesen(worte)
+    if rest_.sum() > 0.02 * gesamt:
+        dil = cv2.dilate(rest_, np.ones((int(0.9 * th), int(2.5 * th)), np.uint8))
+        nr_, lr_, sr_, _ = cv2.connectedComponentsWithStats(dil, connectivity=8)
+        for k in range(1, nr_):
+            x, y, ww, hh, a = sr_[k]
+            if ww < 2.5 * th or int(rest_[y:y + hh, x:x + ww].sum()) < 120: continue
+            x0, y0, x1, y1 = max(0, x - 12), max(0, y - 12), min(W, x + ww + 12), min(H, y + hh + 12)
+            stueck = ocrbild[y0:y1, x0:x1].copy()
+            for w in worte:  # schon Gelesenes im Ausschnitt abdecken
+                if w['x'] < x1 and w['x'] + w['w'] > x0 and w['y'] < y1 and w['y'] + w['h'] > y0: stueck[max(0, w['y'] - y0):max(0, w['y'] + w['h'] - y0), max(0, w['x'] - x0):max(0, w['x'] + w['w'] - x0)] = 255
+            try: neu_ = tess(stueck, tessdata, 7 if hh < 2.6 * th else 6)
+            except Exception: neu_ = []
+            for w in neu_:
+                if w['c'] < 40: continue
+                w['x'] += x0; w['y'] += y0; w['l'] = ('n', k) + tuple(w['l']); worte.append(w)
+    luecke_ = round(float(ungelesen(worte).sum()) / gesamt, 3)
     for w in worte: hochzahl(img, bw, w, tessdata)
     worte = [w for w in worte if w.get('frag') or not ((w['c'] < 30 and not re.search(r'[A-Za-zÄÖÜäöü0-9]{2}', w['t'])) or re.match(r'^[_|~]+$', w['t']) or (w['c'] < 50 and re.match(r'^[-–—.,\'‘’"]+$', w['t'])))]
     for w in worte: w['t'] = re.sub(r'\bIll\b', 'III', re.sub(r'\bIl\b', 'II', w['t']))
@@ -387,8 +473,35 @@ def seite(arg):
             zu['b'] = [min(zu['b'][0], l['x0'] - 8), min(zu['b'][1], l['y0'] - 8), max(zu['b'][2], l['x1'] + 8), max(zu['b'][3], l['y1'] + 8)]
             zu['text'] = (zu.get('text', '') + ' ' + l['t']).strip()
         else: rest.append(l)
+    # Beschriftungen rund um Skizzen (wenige Wörter, nahe an der Zeichnung) gehören zur Skizze
+    def nahe(l, b, m): return schnitt([l['x0'] - m, l['y0'] - m, l['x1'] + m, l['y1'] + m], b) > 0
+    aend = True
+    while aend:
+        aend = False
+        for k, l in enumerate(rest):
+            if l is None or max(len(sg) for sg in l['seg']) > 5 or len(l['worte']) > 10 or KOPF.match(l['t']) or re.match(r'^\d{1,3}$', l['t']) or id(l) in {id(t) for t in titel.values()}: continue
+            vor = next((q for q in reversed(rest[:k]) if q is not None), None)
+            if vor is not None and len(vor['worte']) >= 6 and l['y0'] - vor['y1'] < 1.2 * th and abs(l['x0'] - vor['x0']) < 1.5 * th: continue  # letzte Zeile eines Absatzes
+            for e in elemente:
+                if e['typ'] == 'skizze' and nahe(l, e['b'], 2.5 * th):
+                    e['b'] = [min(e['b'][0], l['x0'] - 8), min(e['b'][1], l['y0'] - 8), max(e['b'][2], l['x1'] + 8), max(e['b'][3], l['y1'] + 8)]
+                    e['text'] = (e.get('text', '') + ' ' + l['t']).strip(); rest[k] = None; aend = True; break
+    rest = [l for l in rest if l is not None]
+    # Skizzen, die sich nach dem Wachsen überlappen, sind eine
+    sk = [e for e in elemente if e['typ'] == 'skizze']; neu = True
+    while neu:
+        neu = False
+        for a in sk:
+            for c in sk:
+                if a is not c and a.get('b') and c.get('b') and (schnitt(a['b'], c['b']) > 0 or (min(a['b'][3], c['b'][3]) - max(a['b'][1], c['b'][1]) > 0.5 * min(a['b'][3] - a['b'][1], c['b'][3] - c['b'][1]) and max(a['b'][0], c['b'][0]) - min(a['b'][2], c['b'][2]) < 6 * th)):
+                    a['b'] = [min(a['b'][0], c['b'][0]), min(a['b'][1], c['b'][1]), max(a['b'][2], c['b'][2]), max(a['b'][3], c['b'][3])]; a['text'] = (a.get('text', '') + ' ' + c.get('text', '')).strip(); c['b'] = None; neu = True
+    elemente = [e for e in elemente if e.get('b')]
+    for e in elemente: e['b'] = [max(0, int(e['b'][0])), max(0, int(e['b'][1])), min(W, int(e['b'][2])), min(H, int(e['b'][3]))]
     zeilen, bloecke = spaltenbloecke(rest, th)
-    for bl in bloecke: elemente.append(bl)
+    zeilen, b2 = formelbloecke(zeilen, th)
+    zeilen, b3 = rasterbloecke(zeilen, th)
+    for bl in bloecke + b2 + b3:
+        bl['b'] = [max(0, int(bl['b'][0])), max(0, int(bl['b'][1])), min(W, int(bl['b'][2])), min(H, int(bl['b'][3]))]; elemente.append(bl)
     for t in titel.values(): t['y0'] = t['e']['b'][3] + 1; t['y1'] = t['y0'] + th; zeilen.append(t)
     # Marken für Tabellen und Skizzen in die Lesereihenfolge setzen
     elemente.sort(key=lambda e: (e['b'][1], e['b'][0]))
@@ -414,9 +527,10 @@ def seite(arg):
         else:
             o['text'] = e.get('text', '')
             if e.get('tab'): o['tab'] = True
+            if e.get('formel'): o['formel'] = True
         el.append(o)
     conf = float(np.mean([w['c'] for w in alle])) if alle else 0
-    return dict(s=i, text=text, roh='\n'.join(l['t'] for l in echte), zeilen=zl, elemente=el, unsicher=unsicher, conf=round(conf, 1), worte=len(alle))
+    return dict(s=i, luecke=luecke_, text=text, roh='\n'.join(l['t'] for l in echte), zeilen=zl, elemente=el, unsicher=unsicher, conf=round(conf, 1), worte=len(alle))
 
 
 def main():
