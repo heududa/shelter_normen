@@ -38,6 +38,26 @@ Firefox und Safari können keine Ordner öffnen. Dort geht nur Ansehen über ein
 
 `marke/farben.css` enthält die Farben. Für ein Logo die Datei (SVG oder PNG, für dunklen Hintergrund) nach `marke/` legen und in `farben.css` die Zeilen `--logo` und `--logo-hoehe` aktivieren.
 
+## Mehrere Nutzer
+
+```
+node werkzeuge/mehrnutzer.js --port 8080 --git
+```
+
+Beim ersten Start legt der Server den Benutzer `admin` an und zeigt dessen Passwort einmal in der Konsole. Danach im Browser anmelden, das Passwort ändern und unter «Konto → Benutzer verwalten» die weiteren Benutzer anlegen.
+
+| Rolle | Darf |
+|---|---|
+| Gast | lesen, suchen, drucken |
+| Autor | bearbeiten, speichern, zur Prüfung einreichen |
+| Prüfer | zusätzlich: Seiten vergleichen und die Norm freigeben, zurückgeben, Versionen freigeben |
+| Admin | zusätzlich: Benutzer verwalten, Bearbeitungssperre aufheben |
+
+- Es bearbeitet immer nur eine Person gleichzeitig. Die anderen lesen und sehen neue Stände von selbst.
+- Benutzer und Stand liegen im Ordner `server/` (nicht im Repo). Diesen Ordner sichern.
+- `--git` legt nach jedem Speichern einen Commit an. `--sicher` setzt das Cookie nur über HTTPS; dafür den Server hinter den HTTPS-Proxy der Firma stellen.
+- Braucht Node.js ab Version 18, sonst nichts.
+
 ## Entwickeln
 
 - `npm install` holt pdf.js und pdf-lib; die fertigen Dateien liegen bereits in `lib/`.

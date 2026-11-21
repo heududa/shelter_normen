@@ -442,3 +442,7 @@ mark.unsicher{background:#FFE9A8;color:#4A3500;border-bottom:2px dotted #B07A00;
 @media (hover:none){.lesetext .ue figcaption{position:static;transform:none;opacity:1;pointer-events:auto;border:0;box-shadow:none;padding:.25rem 0 0}}
 .uetab,.uegitter{overflow-wrap:normal;word-break:normal;hyphens:auto}
 .uetab th,.uetab td{min-width:3.2rem}
+
+/* Mehrnutzerbetrieb */
+.anmeldung{display:grid;gap:.7rem;max-width:22rem;margin:1rem auto 0;text-align:left}
+.ablage.besetzt{background:var(--orange-hell);color:var(--orange);border-color:transparent}

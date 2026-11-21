@@ -103,9 +103,10 @@ const path0 = path.join(__dirname, 'daten');
   assert.ok(csvT.includes('Änderungs-ID') && csvT.includes('TWP1984-T2') && csvT.includes('Wert gemäss TPH-04') && csvT.split('\r\n').length >= 7, 'CSV');
   // Word
   await p.click('[data-act=ed-druck]'); await p.selectOption('#dlg select[name=ausgabe]', 'word'); await p.selectOption('#dlg select[name=umfang]', 'auswahl'); await p.fill('#dlg input[name=seiten]', '63-65');
-  const [doc] = await Promise.all([p.waitForEvent('download'), p.click('#dlg button.haupt')]); await doc.saveAs(D + 'a_word.doc'); let docT = fs.readFileSync(D + 'a_word.doc', 'utf8');
-  if (docT.startsWith('MIME-Version')) { assert.ok(docT.includes('Content-Type: image/png') && docT.includes('bild1.png'), 'Word mit Bildern'); docT = Buffer.from(docT.split('dokument.htm\r\n\r\n')[1].split('\r\n--')[0].replace(/\r\n/g, ''), 'base64').toString('utf8'); assert.ok(docT.includes('<img src="bild1.png"')); }
-  assert.ok(docT.includes('ENTWURF') && (docT.match(/class="dseite"/g) || []).length === 3 && docT.includes('Änderungsverzeichnis'), 'Word');
+  const [doc] = await Promise.all([p.waitForEvent('download'), p.click('#dlg button.haupt')]); await doc.saveAs(D + 'a_word.docx'); assert.ok(doc.suggestedFilename().endsWith('.docx'));
+  const docB = fs.readFileSync(D + 'a_word.docx'), docT = docB.toString('utf8'); assert.equal(docB.readUInt32LE(0), 0x04034b50, 'Word-Datei ist ein ZIP');
+  assert.ok(docT.includes('word/document.xml') && docT.includes('ENTWURF') && (docT.match(/>Seite 6[345]</g) || []).length === 3 && docT.includes('Änderungsverzeichnis'), 'Word');
+  assert.ok(docT.includes('word/media/bild1.png') && docT.includes('<w:tbl>') && docT.includes('r:embed="rId1"'), 'Word mit Tabelle und Bild');
   // Drucken
   await p.evaluate(() => { window.print = () => { window.__gedruckt = true; }; });
   await p.selectOption('#ed-ebene', 'andair26');

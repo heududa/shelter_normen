@@ -1,5 +1,42 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.11.0 – 21.11.2026
+
+Mehrnutzerbetrieb mit Anmeldung und Rollen, Freigabe direkt beim Vergleichen, echte Word-Datei.
+
+### Neu
+- **Mehrnutzerbetrieb:** `node werkzeuge/mehrnutzer.js` startet einen kleinen Server für das Firmennetz. Er braucht nur Node.js, keine Datenbank und keine weiteren Pakete. Die Bibliothek bleibt derselbe Ordner; der Betrieb ohne Server (Ordner verbinden) geht unverändert weiter.
+  - **Anmeldung** mit Name und Passwort. Daten und PDF gibt der Server nur an angemeldete Benutzer aus.
+  - **Rollen:** Gast (lesen), Autor (bearbeiten, speichern, zur Prüfung einreichen), Prüfer (zusätzlich Erstfreigabe, Rückgabe, Versionen freigeben), Admin (zusätzlich Benutzer verwalten, Sperre aufheben).
+  - **Der Server setzt die Rollen durch**, nicht nur die Oberfläche: Er lehnt einen gespeicherten Stand ab, in dem ein Autor freigibt oder eine Version anlegt, in dem eine freigegebene Version geändert oder der Verlauf gekürzt oder umgeschrieben ist. Der Name im Verlauf kommt aus der Anmeldung.
+  - **Bearbeitungssperre:** Es bearbeitet immer nur eine Person. Wer «Bearbeiten» wählt oder eine Änderung beginnt, hält die Bearbeitung; alle anderen lesen, sehen im Kopf, wer bearbeitet, und bekommen gespeicherte Stände von selbst. Die Sperre endet mit «Bearbeitung beenden», beim Abmelden oder nach zehn Minuten ohne Eingabe (ohne ungesicherte Änderungen).
+  - **Benutzerverwaltung** für den Admin: anlegen, Rolle ändern, Passwort neu setzen, sperren. Wer ein vom Admin gesetztes Passwort hat, wird beim Anmelden aufgefordert, ein eigenes zu wählen.
+  - **Schutz:** Passwörter als scrypt-Hash mit Salz, Sitzungs-Cookie HttpOnly und SameSite=Strict, Pause nach fünf Fehlversuchen, schreibende Aufrufe nur von derselben Herkunft, neue PDF nur nach `pdf/eigene/` und ohne Überschreiben.
+  - **Sicherung:** Mit `--git` legt der Server nach jedem Speichern einen Commit mit dem Namen des Benutzers an.
+- **Freigabe beim Vergleichen:** In der Bearbeitung steht neben «Seite als verglichen markieren» der Knopf «Norm freigeben». Er erscheint nur für Prüfer und erteilt die Erstfreigabe aus jedem Status direkt; die Norm muss nicht zuerst eingereicht sein. Ohne Server gilt das für die Namen der Prüferliste.
+- **Word-Datei als echtes .docx:** Überschriften, Absätze, markierte Änderungen, Tabellen und Skizzen. Geprüft durch Öffnen und Umwandeln in LibreOffice; in Microsoft Word selbst konnte ich sie nicht öffnen. Die bisherige .doc-Datei mit Bildern liess sich in LibreOffice nicht lesen und ist ersetzt.
+
+### Prüflauf
+- `node test/mehrnutzer.js`: Schnittstelle (Anmeldung, Rollen, Sperre, veralteter Stand, unveränderliche Versionen und Verlauf, Fehlversuche) und Ablauf im Browser mit vier Benutzern: Autorin reicht ein, Prüfer vergleicht und gibt frei, Gast kann nichts ändern, Admin verwaltet Benutzer.
+- `node test/test.js`: ohne Fehler, Word-Datei jetzt als .docx geprüft.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| L1 | Anmeldung mit eigenen Passwörtern. Eine Anbindung an das Firmenkonto (Microsoft, LDAP) ist nicht gebaut. |
+| L2 | Vier Rollen: Gast, Autor, Prüfer, Admin. Prüfer und Admin dürfen auch bearbeiten. |
+| L3 | Ein Prüfer darf eigene Korrekturen freigeben; der Verlauf vermerkt das als «Selbstprüfung». Ein erzwungenes Vier-Augen-Prinzip ist nicht eingebaut. |
+| L4 | Eine Person bearbeitet gleichzeitig. Gleichzeitiges Bearbeiten verschiedener Normen ist nicht möglich, weil der Bearbeitungsstand eine Datei ist. |
+| L5 | Verschlüsselung (HTTPS) übernimmt ein vorgeschalteter Proxy der Firma; dann mit `--sicher` starten. Ohne HTTPS gehen Passwörter unverschlüsselt durchs Netz. |
+| L6 | Sitzungen liegen im Arbeitsspeicher: Nach einem Neustart des Servers melden sich alle neu an. |
+| L7 | Der Admin kann eine fremde Sperre aufheben; ungesicherte Änderungen der anderen Person gehen dabei verloren. |
+
+### Nicht umgesetzt
+- **Vollständiger Vergleich aller 721 gescannten Seiten mit dem Original.** Das ist die Aufgabe der Prüfer; die Werkzeuge dafür sind da (unsichere Stellen, «Seite verglichen», «Norm freigeben»).
+- **ANDAIR-Farben und Logo:** Die Vorgaben fehlen weiterhin; die Website liess sich von hier nicht abrufen.
+- **Entscheid 125 oder 150 Pa** (ÜV/ESV 75/150): liegt bei ANDAIR.
+- Tabellen und Skizzen in digital entstandenen PDF automatisch erkennen; Zellen verbinden im Tabelleneditor.
+
 ## 0.10.0 – 21.11.2026
 
 Die gescannten Normen sind neu eingelesen. Tabellen und Skizzen stehen jetzt als eigene Elemente im Text.
@@ -50,11 +87,9 @@ Die gescannten Normen sind neu eingelesen. Tabellen und Skizzen stehen jetzt als
 - **Glossar:** 511 statt 518 Einträge. 13 Einträge aus dem Lauftext sind entfallen, weil die Stelle jetzt in einem Bild liegt (u. a. TPH-01 und TPH-02); wenige neue kamen dazu.
 
 ### Nicht umgesetzt
-- **Mehrnutzerversion mit Anmeldung und Rollen** (im Gespräch gewünscht): noch nicht begonnen. Sie braucht einen Server.
 - **Tabellen und Skizzen in den digital entstandenen PDF** werden nicht automatisch erkannt; die Übernahme von Hand geht bei jedem PDF.
 - **Texterkennung im Programm:** Sie läuft als Werkzeug ausserhalb (`werkzeuge/ocr.py`), nicht im Browser.
 - **Zellen verbinden** im Tabelleneditor.
-- **Word-Datei mit Bildern:** als Webarchiv (.doc) gebaut, in Word selbst nicht geprüft.
 - **ANDAIR-Farben und Logo:** weiterhin offen, die Vorgaben fehlen.
 
 ## 0.9.0 – 21.11.2026

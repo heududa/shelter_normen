@@ -2,3 +2,5 @@ node_modules
 test/tmp/
 *.png
 __pycache__/
+test/tmp_m/
+server/

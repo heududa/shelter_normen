@@ -6,7 +6,7 @@ const d = require('./ersterfassung_daten.js'), app = require('../app.js'), crypt
 if (fs.existsSync('daten/bibliothek.json') && !process.argv.includes('--ueberschreiben')) { console.error('daten/bibliothek.json ist vorhanden. Mit --ueberschreiben wird der Bearbeitungsstand ersetzt.'); process.exit(1); }
 const pdfjsNode = require('pdfjs-dist/legacy/build/pdf.js');
 (async () => {
-const VERSION = '0.10.0';
+const VERSION = '0.11.0';
 const lib = {
   schema: 1, meta: { titel: 'Normenbibliothek Schutzraum', programm: VERSION, erstellt: '2026-11-20', bearbeiter: '' },
   themen: d.THEMEN, herausgeber: d.herausgeber, werke: d.werke, verknuepfungen: d.verknuepfungen, regeln: d.regeln, anmerkungen: [], dokumente: [], titelbilder: {}, seitentext: {}, elemente: {}, unsicher: {}, ocr: {}, aenderungen: [], struktur: {}, formate: [], uebernahmen: [], glossar: [], abschnitte: [], versionen: [], verlauf: [],

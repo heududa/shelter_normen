@@ -5,6 +5,7 @@ const TYP = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; char
 function server(wurzel, ueberlagerung) { // ueberlagerung: Ordner, dessen Dateien Vorrang haben (für Tests)
   return http.createServer((req, res) => {
     let p; try { p = decodeURIComponent(req.url.split('?')[0]); } catch (e) { res.writeHead(400); return res.end(); }
+    if (p === '/api/ich') { res.writeHead(200, { 'Content-Type': 'application/json' }); return res.end('{"modus":"lesen"}'); } // kein Mehrnutzerbetrieb
     if (p.endsWith('/')) p += 'index.html';
     const rel = path.normalize(p).replace(/^([/\\]|\.\.[/\\])+/, '');
     let datei = ueberlagerung && fs.existsSync(path.join(ueberlagerung, rel)) ? path.join(ueberlagerung, rel) : path.join(wurzel, rel);

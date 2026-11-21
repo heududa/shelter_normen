@@ -276,6 +276,42 @@ if (typeof document !== 'undefined') (function () {
   const $ = (s, el) => (el || document).querySelector(s);
   const h = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const S = { lib: null, view: { typ: 'start' }, tab: 'regeln', dirty: false, handle: null, q: '', kontext: null, mitEntwurf: false, offen: {} };
+  // ----- Mehrnutzerbetrieb (nur wenn werkzeuge/mehrnutzer.js die Seite ausliefert): Anmeldung, Rolle, Bearbeitungssperre
+  const M = { an: false, ich: null, revision: 0, sperre: null, hat: false, geladen: {}, aktiv: Date.now(), holt: null, fehler: '' };
+  const ROLLE = { gast: 'Gast', autor: 'Autor', pruefer: 'Prüfer', admin: 'Admin' };
+  const darfFreigeben = () => M.an ? !!M.ich && (M.ich.rolle === 'pruefer' || M.ich.rolle === 'admin') : (S.lib.meta.pruefer || []).includes(S.lib.meta.bearbeiter);
+  async function ruf(pfad, methode, daten) {
+    try { const r = await fetch(pfad, { method: methode || 'GET', headers: daten !== undefined ? { 'Content-Type': 'application/json' } : {}, body: daten !== undefined ? JSON.stringify(daten) : undefined, cache: 'no-store', credentials: 'same-origin' }); let j = {}; try { j = await r.json(); } catch (e) { /* ohne Inhalt */ } return { ok: r.ok, status: r.status, j }; }
+    catch (e) { return { ok: false, status: 0, j: { fehler: 'Der Server ist nicht erreichbar.' } }; }
+  }
+  { let d = false; Object.defineProperty(S, 'dirty', { enumerable: true, get: () => d, set: v => { const neu = !!v && !d; d = !!v; if (neu && M.an && !M.hat) sperreHolen(true); } }); }
+  function sperreHolen(nach) { // nach: eine Änderung ist schon gemacht; ohne Sperre wird sie verworfen
+    if (M.holt) return M.holt;
+    return (M.holt = (async () => {
+      const r = await ruf('api/sperre', 'POST', { aktion: 'nehmen', revision: M.revision }); M.holt = null;
+      if (r.ok) { M.hat = true; M.sperre = r.j.sperre; mStatus(); return true; }
+      if (r.j.sperre !== undefined) M.sperre = r.j.sperre;
+      const warum = r.status === 403 ? 'Als Gast lässt sich die Bibliothek lesen, aber nicht bearbeiten.' : r.status === 409 ? 'Auf dem Server liegt ein neuerer Stand.' : r.status === 401 ? 'Die Anmeldung ist abgelaufen.' : (r.j.fehler || 'Die Bearbeitung ist gesperrt.');
+      if (nach || r.status === 409) { await neuLaden(); meldung(warum + (nach ? ' Die Änderung wurde nicht übernommen.' : ' Er ist jetzt geladen.')); } else { mStatus(); meldung(warum); }
+      return false;
+    })());
+  }
+  function mStatus() { // Anzeige der Sperre im Kopf, ohne die Seite neu aufzubauen
+    const el = document.getElementById('mstatus'); if (!el) return;
+    el.textContent = M.hat ? 'Sie bearbeiten' : M.sperre ? `${M.sperre.name} bearbeitet seit ${new Date(M.sperre.seit).toLocaleTimeString('de-CH', { hour: '2-digit', minute: '2-digit' })}` : 'Niemand bearbeitet';
+    el.className = 'ablage' + (M.hat ? '' : M.sperre ? ' besetzt' : ' nurlesen');
+    const b = document.getElementById('msperre'); if (b) { b.textContent = M.hat ? 'Bearbeitung beenden' : 'Bearbeiten'; b.hidden = !M.ich || M.ich.rolle === 'gast'; b.disabled = !M.hat && !!M.sperre; }
+  }
+  async function neuLaden() { const v = S.view, tab = S.tab, ed = Object.assign({}, S.ed); await ladeBibliothek(); if (v.typ !== 'werk' || S.lib.werke.some(w => w.id === v.id)) { S.view = v; S.tab = tab; Object.assign(S.ed, ed, { edit: false }); } render(); }
+  async function takt() { // alle 15 Sekunden: Sperre halten oder Stand abfragen
+    if (!M.an || !M.ich || !S.lib) return;
+    const ruhig = Date.now() - M.aktiv > 10 * 60 * 1000;
+    const r = M.hat ? await ruf('api/sperre', 'POST', { aktion: S.dirty || !ruhig ? 'nehmen' : 'geben' }) : await ruf('api/stand');
+    if (r.status === 401) { M.ich = null; M.hat = false; if (!S.dirty) { S.lib = null; A.laedt = false; render(); } else meldung('Die Anmeldung ist abgelaufen. Bitte unter „Daten“ die Datensicherung herunterladen und neu anmelden.'); return; }
+    if (r.status === 423 && M.hat) { M.hat = false; M.sperre = r.j.sperre || null; meldung('Die Bearbeitungssperre liegt nicht mehr bei Ihnen. Vor dem Weiterarbeiten bitte „Bearbeiten“ wählen.'); }
+    else if (r.ok) { M.hat = !!r.j.ich; M.sperre = r.j.sperre || null; if (r.j.revision !== M.revision && !S.dirty && !(document.getElementById('dlg') || {}).open && !(S.ed.edit && S.tab === 'edit')) { await neuLaden(); meldung('Ein neuer Stand vom Server ist geladen.'); } }
+    mStatus();
+  }
   const L = () => S.lib;
   const werk = id => L().werke.find(w => w.id === id);
   const hg = id => L().herausgeber.find(x => x.id === id) || { kurz: '?', name: '?', art: '' };
@@ -308,6 +344,11 @@ if (typeof document !== 'undefined') (function () {
 
   function log(aktion, ziel, detail) { L().verlauf.push({ zeit: new Date().toISOString(), name: L().meta.bearbeiter || '', aktion, ziel, detail: detail || '' }); S.dirty = true; }
   function mitName(dann) {
+    if (M.an) {
+      if (!M.ich || M.ich.rolle === 'gast') return meldung('Als Gast lässt sich die Bibliothek lesen, aber nicht bearbeiten.');
+      if (M.hat) return dann();
+      sperreHolen(false).then(ok => { if (ok) { dann(); if (!$('#dlg').open) render(); } }); return false;
+    }
     if (L().meta.bearbeiter) return dann();
     dialog('Wer bearbeitet?', `<p class="hinweis">Der Name steht bei jeder Änderung im Verlauf.</p><label>Name<input name="name" required autocomplete="name"></label>`, d => { L().meta.bearbeiter = d.name.trim(); dann(); }, 'Weiter');
   }
@@ -383,10 +424,10 @@ if (typeof document !== 'undefined') (function () {
         <p class="stand">${v ? `Version ${v.nr} vom ${datumCH(v.datum)}` : 'Noch keine Version freigegeben'}${n ? `, ${n} ${n === 1 ? 'Änderung' : 'Änderungen'} nicht freigegeben` : ''}</p></div>
       <label class="suche"><span class="sr">Suchen</span><input type="search" id="q" value="${h(S.q)}" placeholder="In Regeln, Texten und Anmerkungen suchen"></label>
       <div class="werkzeug">
-        <button data-act="name">${L().meta.bearbeiter ? 'Bearbeitet von ' + h(L().meta.bearbeiter) : 'Namen angeben'}</button>
-        <button data-act="freigeben" ${n ? '' : 'disabled'}>Änderungen freigeben</button>
-        ${A.dir ? `<span class="ablage" title="Gelesen und gespeichert wird in diesem Ordner">Ordner „${h(A.dir.name)}“</span>` : `<span class="ablage nurlesen" title="Ohne verbundenen Ordner lässt sich nicht direkt speichern">Nur lesen</span>${kannOrdner ? '<button data-act="ordner">Ordner verbinden</button>' : ''}`}
-        <button class="haupt" data-act="speichern">${S.dirty ? 'Speichern •' : 'Speichern'}</button>
+        ${M.an ? `<button data-act="m-konto" aria-haspopup="dialog">${h(M.ich.anzeige)} · ${ROLLE[M.ich.rolle]}</button>` : `<button data-act="name">${L().meta.bearbeiter ? 'Bearbeitet von ' + h(L().meta.bearbeiter) : 'Namen angeben'}</button>`}
+        <button data-act="freigeben" ${n && (!M.an || darfFreigeben()) ? '' : 'disabled'} ${M.an && !darfFreigeben() ? 'title="Versionen freigeben dürfen nur Prüfer"' : ''}>Änderungen freigeben</button>
+        ${M.an ? `<span class="ablage" id="mstatus" role="status"></span><button id="msperre" data-act="m-sperre">Bearbeiten</button>` : A.dir ? `<span class="ablage" title="Gelesen und gespeichert wird in diesem Ordner">Ordner „${h(A.dir.name)}“</span>` : `<span class="ablage nurlesen" title="Ohne verbundenen Ordner lässt sich nicht direkt speichern">Nur lesen</span>${kannOrdner ? '<button data-act="ordner">Ordner verbinden</button>' : ''}`}
+        ${M.an && M.ich.rolle === 'gast' ? '' : `<button class="haupt" data-act="speichern">${S.dirty ? 'Speichern •' : 'Speichern'}</button>`}
         <button data-act="mehr" aria-haspopup="dialog">Daten</button>
       </div></header>`;
   }
@@ -722,19 +763,22 @@ if (typeof document !== 'undefined') (function () {
     w.digital = Object.assign({}, w.digital, { status: 'bearbeitung' }); log('Prüfstatus: In Bearbeitung', w.id, 'erste Korrektur');
   }
   const seitenStand = w => { const ds = dokus(w.id); return { alle: ds.reduce((n, x) => n + x.seiten, 0), ok: ds.reduce((n, x) => n + (x.geprueftSeiten || []).length, 0), leer: ds.reduce((n, x) => n + (L().seitentext[x.id] || []).filter(t => !String(t).trim()).length, 0) }; };
-  function digitalForm(w) {
+  function digitalForm(w, wunsch) {
     const k = dstat(w), d = w.digital || {}, st = seitenStand(w), pr = L().meta.pruefer || [];
-    const ziele = { ungeprueft: ['bearbeitung', 'pruefung'], bearbeitung: ['pruefung'], pruefung: ['freigegeben', 'korrektur'], korrektur: ['bearbeitung', 'pruefung'], freigegeben: ['bearbeitung'] }[k];
+    const ziele = { ungeprueft: ['bearbeitung', 'pruefung'], bearbeitung: ['pruefung'], pruefung: ['freigegeben', 'korrektur'], korrektur: ['bearbeitung', 'pruefung'], freigegeben: ['bearbeitung'] }[k].slice();
+    if (darfFreigeben() && k !== 'freigegeben' && !ziele.includes('freigegeben')) ziele.unshift('freigegeben'); // Prüfer geben direkt frei, wenn sie verglichen haben
+    if (M.an && !darfFreigeben()) ['freigegeben', 'korrektur'].forEach(z => { const i = ziele.indexOf(z); if (i >= 0) ziele.splice(i, 1); });
+    if (!ziele.length) return meldung('Die Norm wartet auf die Prüfung. Freigeben oder zurückgeben dürfen nur Prüfer.');
     const TXT = { bearbeitung: k === 'freigegeben' ? 'Wieder öffnen: In Bearbeitung' : 'In Bearbeitung: OCR- und Formatkorrekturen laufen', pruefung: 'Zur Prüfung einreichen', freigegeben: 'Freigeben: digitale Fassung stimmt mit dem Original überein', korrektur: 'Zurückgeben: Korrektur erforderlich' };
     dialog('Prüfstatus von ' + w.kurz, `<p>Jetzt: <b>${DSTAT[k][0]}</b>${d.pruefer ? `, geprüft von ${h(d.pruefer)} am ${datumCH(d.datum)}` : ''}${d.notiz ? `. Bemerkung: ${h(d.notiz)}` : ''}</p>
       <p>${st.ok} von ${st.alle} Seiten sind als verglichen markiert${st.leer ? `, ${st.leer} ${st.leer === 1 ? 'Seite hat' : 'Seiten haben'} keinen erkannten Text` : ''}.</p>
-      <label>Neuer Status<select name="ziel">${opt(ziele.map(z => [z, TXT[z]]), ziele[0])}</select></label>
+      <label>Neuer Status<select name="ziel">${opt(ziele.map(z => [z, TXT[z]]), ziele.includes(wunsch) ? wunsch : ziele[0])}</select></label>
       ${bereich('notiz', 'Bemerkung (bei Rückgabe und beim Wiederöffnen nötig)', '')}
       <label class="haken"><input type="checkbox" name="ok"> Ich habe Text und Struktur mit dem Original verglichen (für die Freigabe)</label>
-      <p class="hinweis">Die Freigabe bestätigt die Übereinstimmung der digitalen Fassung mit dem Original, nicht die fachliche Gültigkeit der Norm. Freigeben dürfen nur eingetragene Prüfer: ${pr.length ? h(pr.join(', ')) : 'noch niemand eingetragen (unter „Daten“)'}.</p>`, dd => {
+      <p class="hinweis">Die Freigabe bestätigt die Übereinstimmung der digitalen Fassung mit dem Original, nicht die fachliche Gültigkeit der Norm. ${M.an ? 'Freigeben und zurückgeben dürfen nur Benutzer mit der Rolle Prüfer.' : `Freigeben dürfen nur eingetragene Prüfer: ${pr.length ? h(pr.join(', ')) : 'noch niemand eingetragen (unter „Daten“)'}.`}</p>`, dd => {
       const name = L().meta.bearbeiter, notiz = dd.notiz.trim();
       if (dd.ziel === 'freigegeben') {
-        if (!pr.includes(name)) return `Nur eingetragene Prüfer dürfen freigeben. „${name}“ steht nicht in der Prüferliste (unter „Daten“).`;
+        if (!darfFreigeben()) return M.an ? 'Die Erstfreigabe dürfen nur Benutzer mit der Rolle Prüfer erteilen.' : `Nur eingetragene Prüfer dürfen freigeben. „${name}“ steht nicht in der Prüferliste (unter „Daten“).`;
         if (!dd.ok) return 'Für die Freigabe den Vergleich mit dem Original bestätigen.';
         const selbst = d.eingereichtVon === name;
         w.digital = { status: 'freigegeben', pruefer: name, datum: heute(), notiz, eingereichtVon: d.eingereichtVon || '', verglichen: `${st.ok} von ${st.alle} Seiten` };
@@ -1184,7 +1228,7 @@ if (typeof document !== 'undefined') (function () {
         <span class="rechts"><button data-act="ed-druck">Drucken oder Word</button><button data-act="ed-pdf">PDF exportieren</button><button data-act="protokoll-csv" data-id="${h(w.id)}">Protokoll für Excel</button></span>
       </div>
       <div class="edgrid">
-        <section class="edspalte" aria-label="Original"><header class="edkopf"><h3>Original</h3><span class="edtools"><button data-act="seite-ok" aria-pressed="${(dok.geprueftSeiten || []).includes(n)}" class="klein ${(dok.geprueftSeiten || []).includes(n) ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${(dok.geprueftSeiten || []).includes(n) ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button><span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span></span></header>
+        <section class="edspalte" aria-label="Original"><header class="edkopf"><h3>Original</h3><span class="edtools"><button data-act="seite-ok" aria-pressed="${(dok.geprueftSeiten || []).includes(n)}" class="klein ${(dok.geprueftSeiten || []).includes(n) ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${(dok.geprueftSeiten || []).includes(n) ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}" class="klein" title="${seitenStand(w).ok} von ${seitenStand(w).alle} Seiten verglichen">Norm freigeben</button>` : ''}<span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span></span></header>
           <p class="edzeile">${['aenderung', 'kommentar'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? 'Jetzt die Stelle im Scan einrahmen' : k === 'aenderung' ? 'Änderung im Scan vorschlagen' : 'Stelle kommentieren'}</button>`; }).join('')}<button data-act="anm-seite" data-werk="${h(w.id)}" data-dok="${h(dok.id)}" data-seite="${n}">Ganze Seite kommentieren</button></p>
           <p class="edzeile">${['tabelle', 'skizze'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? 'Jetzt den Bereich im Scan einrahmen' : k === 'tabelle' ? 'Tabelle übernehmen' : 'Skizze übernehmen'}</button>`; }).join('')}</p>
           <p class="edzeile ebenen"><span class="umschalt"><button data-act="ed-links" data-v="scan" aria-pressed="${E.links === 'scan'}">Scan</button><button data-act="ed-links" data-v="hybrid" aria-pressed="${E.links === 'hybrid'}">Hybrid</button></span>
@@ -1255,15 +1299,81 @@ if (typeof document !== 'undefined') (function () {
   }
   async function wordExport(w, opt) {
     await schnitteLaden(...druckUmfang(opt));
-    const bilder = [], html = druckHtml(w, opt, true).html.replace(/<img class="ausschnitt"[^>]*?data-w="(\d+)"[^>]*?src="data:image\/png;base64,([^"]+)"[^>]*>/g, (m, bw, b64) => { bilder.push(b64); return `<img src="bild${bilder.length}.png" width="${Math.round(+bw * 6.2)}">`; });
-    const doc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${h(w.kurz)}</title><style>body{font-family:Cambria,Georgia,serif;font-size:11pt}h1{font-family:Calibri,Arial,sans-serif;font-size:22pt}h2{font-family:Calibri,Arial,sans-serif;font-size:14pt}h3{font-family:Calibri,Arial,sans-serif;font-size:9pt;color:#555;font-weight:normal;border-top:1px solid #999}header p,table{font-family:Calibri,Arial,sans-serif;font-size:9pt}.entwurf{color:#A8261D;font-size:12pt}ins{background:#CFEFD8;color:#0E4D27;text-decoration:underline}del{background:#F9D5D1;color:#8A1C14;text-decoration:line-through}ins.ocr{background:#D7E5FB;color:#173B7A}del.ocr{background:#EDF1F7;color:#5E6E88}table{border-collapse:collapse;width:100%}td,th{border:1px solid #888;vertical-align:top;text-align:left}</style></head><body>${html}</body></html>`;
-    herunterladenBlob(`${w.kurz.replace(/[^A-Za-z0-9äöüÄÖÜ-]+/g, '_')}_${opt.ansicht === 'neu' ? 'Fassung' : opt.ansicht === 'hybrid' ? 'mit_Aenderungen' : 'Grundtext'}.doc`, new Blob(bilder.length ? [mht(doc, bilder)] : ['﻿', doc], { type: 'application/msword' }));
+    const blob = docxAus(druckHtml(w, opt, true).html, w.kurz);
+    herunterladenBlob(`${w.kurz.replace(/[^A-Za-z0-9äöüÄÖÜ-]+/g, '_')}_${opt.ansicht === 'neu' ? 'Fassung' : opt.ansicht === 'hybrid' ? 'mit_Aenderungen' : 'Grundtext'}.docx`, blob);
   }
-  // Word-Datei mit Bildern: eine Webarchiv-Datei (MHTML), die Word als .doc öffnet
-  function mht(doc, bilder) {
-    const g = '----=_NB_Teil', b64 = btoa(unescape(encodeURIComponent(doc))).replace(/(.{76})/g, '$1\r\n');
-    return `MIME-Version: 1.0\r\nContent-Type: multipart/related; boundary="${g}"; type="text/html"\r\n\r\n--${g}\r\nContent-Type: text/html; charset="utf-8"\r\nContent-Transfer-Encoding: base64\r\nContent-Location: file:///C:/nb/dokument.htm\r\n\r\n${b64}\r\n`
-      + bilder.map((b, i) => `--${g}\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: base64\r\nContent-Location: file:///C:/nb/bild${i + 1}.png\r\n\r\n${b.replace(/(.{76})/g, '$1\r\n')}\r\n`).join('') + `--${g}--\r\n`;
+  // ----- Word-Datei (.docx) ohne Zusatzbibliothek: die Druckansicht wird in WordprocessingML übersetzt und als ZIP (ohne Kompression) verpackt
+  function zipOhneKompression(dateien) { // dateien: [{ name, bytes }]
+    const T = zipOhneKompression.t || (zipOhneKompression.t = Array.from({ length: 256 }, (_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; return c >>> 0; }));
+    const crc = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = T[(c ^ b[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+    const enc = new TextEncoder(), teile = [], zentral = []; let pos = 0;
+    const kopf = (sig, f, extra) => { const n = enc.encode(f.name), k = new DataView(new ArrayBuffer(extra ? 46 : 30)); let o = 0; const u16 = v => { k.setUint16(o, v, true); o += 2; }, u32 = v => { k.setUint32(o, v, true); o += 4; };
+      u32(sig); if (extra) u16(20); u16(20); u16(0x0800); u16(0); u16(0); u16(0x21); u32(f.crc); u32(f.bytes.length); u32(f.bytes.length); u16(n.length); u16(0); if (extra) { u16(0); u16(0); u16(0); u32(0); u32(f.pos); } return [new Uint8Array(k.buffer), n]; };
+    dateien.forEach(f => { f.crc = crc(f.bytes); f.pos = pos; const [k, n] = kopf(0x04034b50, f, false); teile.push(k, n, f.bytes); pos += k.length + n.length + f.bytes.length; });
+    const start = pos; dateien.forEach(f => { const [k, n] = kopf(0x02014b50, f, true); zentral.push(k, n); pos += k.length + n.length; });
+    const e = new DataView(new ArrayBuffer(22)); e.setUint32(0, 0x06054b50, true); e.setUint16(8, dateien.length, true); e.setUint16(10, dateien.length, true); e.setUint32(12, pos - start, true); e.setUint32(16, start, true);
+    return new Blob(teile.concat(zentral, [new Uint8Array(e.buffer)]), { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  }
+  function docxAus(html, titel) {
+    const wurzel = new DOMParser().parseFromString('<div id="r">' + html + '</div>', 'text/html').getElementById('r'), enc = new TextEncoder();
+    const x = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'), medien = [];
+    const BLOCK = new Set(['H1', 'H2', 'H3', 'H4', 'P', 'DIV', 'SECTION', 'HEADER', 'UL', 'OL', 'LI', 'FIGURE', 'FIGCAPTION', 'DL', 'DT', 'DD']);
+    const rPr = f => `<w:rPr>${f.sans ? '<w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/>' : ''}${f.b ? '<w:b/>' : ''}${f.i ? '<w:i/>' : ''}${f.strike ? '<w:strike/>' : ''}${f.farbe ? `<w:color w:val="${f.farbe}"/>` : ''}${f.gr ? `<w:sz w:val="${f.gr}"/><w:szCs w:val="${f.gr}"/>` : ''}${f.u ? '<w:u w:val="single"/>' : ''}${f.hg ? `<w:shd w:val="clear" w:color="auto" w:fill="${f.hg}"/>` : ''}</w:rPr>`;
+    const lauf = (t, f) => t ? `<w:r>${rPr(f)}<w:t xml:space="preserve">${x(t)}</w:t></w:r>` : '';
+    function stil(k, f) { // Format eines Elements
+      const T = k.tagName, c = k.className || '', g = Object.assign({}, f);
+      if (T === 'H1') Object.assign(g, { b: true, gr: 44, sans: true, pPr: '<w:pPr><w:spacing w:after="60"/></w:pPr>' });
+      else if (T === 'H2') Object.assign(g, { b: true, gr: 28, sans: true, pPr: '<w:pPr><w:keepNext/><w:spacing w:before="240" w:after="80"/></w:pPr>' });
+      else if (T === 'H3') Object.assign(g, { gr: 18, sans: true, farbe: '555555', pPr: '<w:pPr><w:keepNext/><w:pBdr><w:top w:val="single" w:sz="4" w:space="4" w:color="999999"/></w:pBdr><w:spacing w:before="240" w:after="60"/></w:pPr>' });
+      else if (T === 'HEADER' || T === 'FIGCAPTION') Object.assign(g, { sans: true, gr: 18 });
+      else if (T === 'B' || T === 'STRONG' || T === 'TH') g.b = true;
+      else if (T === 'I' || T === 'EM') g.i = true;
+      else if (T === 'INS') Object.assign(g, /\bocr\b/.test(c) ? { farbe: '173B7A', hg: 'D7E5FB', u: true } : { farbe: '0E4D27', hg: 'CFEFD8', u: true });
+      else if (T === 'DEL') Object.assign(g, /\bocr\b/.test(c) ? { farbe: '5E6E88', hg: 'EDF1F7', strike: true } : { farbe: '8A1C14', hg: 'F9D5D1', strike: true });
+      else if (T === 'MARK') g.hg = 'FFE9A8';
+      if (/\bentwurf\b/.test(c)) Object.assign(g, { farbe: 'A8261D', gr: 24 });
+      if (/\bdtitel\b/.test(c)) g.gr = 26;
+      const m = /\bfv-(\w+)/.exec(c);
+      if (m) { const rel = parseFloat((k.style && k.style.fontSize) || '1') || 1; if (/^(titel|u1|u2|u3)$/.test(m[1])) Object.assign(g, { b: true, sans: true, gr: Math.round(22 * rel), pPr: '<w:pPr><w:keepNext/><w:spacing w:before="160" w:after="60"/></w:pPr>' }); else if (m[1] === 'tabelle' || m[1] === 'bild') Object.assign(g, { i: true, b: true }); else if (m[1] === 'fussnote') Object.assign(g, { gr: 18, farbe: '555555' }); else if (m[1] === 'liste') g.pPr = '<w:pPr><w:ind w:left="284"/></w:pPr>'; }
+      return g;
+    }
+    function inline(k, f) { if (k.nodeType === 3) return lauf(k.nodeValue.replace(/\s+/g, ' '), f); if (k.nodeType !== 1) return ''; if (k.tagName === 'BR') return '<w:r><w:br/></w:r>'; if (k.tagName === 'BUTTON') return ''; const g = stil(k, f); return [...k.childNodes].map(c => inline(c, g)).join('') + (k.tagName === 'SPAN' && k.nextSibling && k.nextSibling.nodeType === 1 ? lauf('  ', f) : ''); }
+    function tabelle(t) {
+      const zeile = tr => `<w:tr>${[...tr.cells].map(c => `<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/>${c.colSpan > 1 ? `<w:gridSpan w:val="${c.colSpan}"/>` : ''}${c.tagName === 'TH' ? '<w:shd w:val="clear" w:color="auto" w:fill="EEF1F5"/>' : ''}</w:tcPr>${block(c, { sans: true, gr: 18, b: c.tagName === 'TH', zelle: true }) || '<w:p/>'}</w:tc>`).join('')}</w:tr>`;
+      return `<w:tbl><w:tblPr><w:tblW w:w="5000" w:type="pct"/><w:tblBorders>${['top', 'left', 'bottom', 'right', 'insideH', 'insideV'].map(n => `<w:${n} w:val="single" w:sz="4" w:space="0" w:color="888888"/>`).join('')}</w:tblBorders><w:tblCellMar><w:left w:w="80" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr>${[...t.rows].map(zeile).join('')}</w:tbl><w:p><w:pPr><w:spacing w:after="0"/></w:pPr></w:p>`;
+    }
+    function bild(img) {
+      const m = /^data:image\/png;base64,(.+)$/.exec(img.getAttribute('src') || ''); if (!m) return `<w:p>${lauf('[' + (img.alt || 'Skizze') + ': im Original-PDF]', { i: true, farbe: '555555' })}</w:p>`;
+      const bin = atob(m[1]), bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      const dv = new DataView(bytes.buffer), pw = dv.getUint32(16), ph = dv.getUint32(20), VOLL = 5760000, HOCH = 7700000; // 16 cm breit, höchstens 21,4 cm hoch
+      let cx = Math.round(VOLL * Math.min(1, Math.max(0.25, (+img.dataset.w || 88) / 88))), cy = Math.round(cx * ph / pw); if (cy > HOCH) { cx = Math.round(cx * HOCH / cy); cy = HOCH; }
+      medien.push({ name: `word/media/bild${medien.length + 1}.png`, bytes }); const n = medien.length;
+      return `<w:p><w:pPr><w:keepNext/><w:spacing w:before="80" w:after="40"/></w:pPr><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${n}" name="Bild ${n}" descr="${x((img.alt || '').slice(0, 250))}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
+    }
+    function block(el, f) { // Kinder eines Elements: Zeilen und Blöcke werden Absätze
+      let out = '', buf = ''; const ab = () => { if (buf) out += `<w:p>${f.pPr || (f.zelle ? '<w:pPr><w:spacing w:after="0"/></w:pPr>' : '')}${buf}</w:p>`; buf = ''; };
+      [...el.childNodes].forEach(k => {
+        if (k.nodeType === 3) { buf += lauf(k.nodeValue.replace(/\s+/g, ' '), f); return; }
+        if (k.nodeType !== 1) return; const T = k.tagName;
+        if (T === 'BR') return ab();
+        if (T === 'TABLE') { ab(); out += tabelle(k); return; }
+        if (T === 'IMG') { ab(); out += bild(k); return; }
+        if (BLOCK.has(T) || (T === 'SPAN' && /\bfv\b/.test(k.className))) { ab(); out += block(k, Object.assign(stil(k, Object.assign({}, f, { pPr: '' })), {})); return; }
+        buf += inline(k, f);
+      });
+      ab(); return out;
+    }
+    const koerper = block(wurzel, {});
+    const NS = 'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"', X = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+    const dateien = [
+      ['[Content_Types].xml', `${X}<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`],
+      ['_rels/.rels', `${X}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`],
+      ['docProps/core.xml', `${X}<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:title>${x(titel)}</dc:title><dc:creator>Normenbibliothek</dc:creator></cp:coreProperties>`],
+      ['word/styles.xml', `${X}<w:styles ${NS}><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Cambria" w:hAnsi="Cambria" w:cs="Cambria"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="de-CH"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="100" w:line="264" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Standard"><w:name w:val="Normal"/></w:style></w:styles>`],
+      ['word/_rels/document.xml.rels', `${X}<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${medien.map((m, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/bild${i + 1}.png"/>`).join('')}<Relationship Id="rIdS" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
+      ['word/document.xml', `${X}<w:document ${NS}><w:body>${koerper}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1417" w:right="1417" w:bottom="1134" w:left="1417" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>`],
+    ].map(([name, t]) => ({ name, bytes: enc.encode(t) }));
+    return zipOhneKompression(dateien.concat(medien));
   }
   window.addEventListener('afterprint', () => { const el = document.getElementById('druck'); if (el) el.remove(); document.body.classList.remove('druckt'); });
   async function pdfExport(w, opt) {
@@ -1358,7 +1468,7 @@ if (typeof document !== 'undefined') (function () {
     $('#rahmen').innerHTML = '<div class="spalten">' + leiste() + '<div class="arbeit">' + kopf() + '<main id="haupt" tabindex="-1">' + haupt() + '</main></div></div>';
     if ($('#pdfanm')) $('#pdfanm').scrollTop = st;
     if ($('#pdfseiten')) pdfMount();
-    schnitteMount();
+    schnitteMount(); mStatus();
     if ($('.deckel[data-fehlt]')) titelbilderNachholen();
     document.title = (S.dirty ? '• ' : '') + L().meta.titel;
   }
@@ -1468,6 +1578,15 @@ if (typeof document !== 'undefined') (function () {
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
   async function speichern() {
+    if (M.an) {
+      if (!M.hat && !(await sperreHolen(false))) return;
+      for (const [id, bytes] of A.neuPdf) { const d = dokId(id); if (!d) continue; const r = await fetch('api/pdf?pfad=' + encodeURIComponent(d.pfad), { method: 'PUT', body: bytes, credentials: 'same-origin' }); if (!r.ok && r.status !== 409) { let j = {}; try { j = await r.json(); } catch (e) { /* leer */ } return meldung('Das PDF liess sich nicht ablegen: ' + (j.fehler || r.status)); } }
+      A.neuPdf.clear();
+      const t = teileDaten(), dateien = {}; Object.keys(t).forEach(p => { if (t[p] !== M.geladen[p]) dateien[p] = t[p]; });
+      const r = await ruf('api/daten', 'PUT', { revision: M.revision, dateien });
+      if (!r.ok) { if (r.status === 423) { M.hat = false; mStatus(); } return meldung('Nicht gespeichert: ' + (r.j.fehler || 'Fehler ' + r.status) + (r.status === 409 || r.status === 423 ? ' Unter „Daten“ lässt sich der eigene Stand als Datensicherung herunterladen.' : '')); }
+      M.revision = r.j.revision; Object.assign(M.geladen, dateien); S.dirty = false; render(); return meldung(`Gespeichert auf dem Server (Stand ${M.revision}).`);
+    }
     if (!A.dir) { herunterladen('bibliothek.json', teileDaten()['daten/bibliothek.json'], 'application/json'); return meldung('Ohne verbundenen Ordner lässt sich nicht direkt speichern. Die Datei bibliothek.json wurde heruntergeladen; sie gehört in den Ordner „daten“.' + (A.neuPdf.size ? ' Neu hinzugefügte PDF und neu gelesene Texte sind darin nicht enthalten.' : '')); }
     try {
       for (const [id, bytes] of A.neuPdf) { const d = dokId(id); if (d) await schreibe(d.pfad, bytes); }
@@ -1477,9 +1596,12 @@ if (typeof document !== 'undefined') (function () {
     } catch (e) { meldung('Speichern fehlgeschlagen: ' + (e.message || e)); }
   }
   async function ladeBibliothek() {
-    const bib = JSON.parse(await liesText('daten/bibliothek.json')); let texte = {}, bilder = {};
-    try { texte = JSON.parse(await liesText('daten/texte.json')); } catch (e) { /* ohne Texte weiter */ }
-    try { bilder = JSON.parse(await liesText('daten/titelbilder.json')); } catch (e) { /* werden nachgeholt */ }
+    const roh = {}, lies = async p => (roh[p] = await liesText(p));
+    let st = M.an ? await ruf('api/stand') : null;
+    const bib = JSON.parse(await lies('daten/bibliothek.json')); let texte = {}, bilder = {};
+    try { texte = JSON.parse(await lies('daten/texte.json')); } catch (e) { /* ohne Texte weiter */ }
+    try { bilder = JSON.parse(await lies('daten/titelbilder.json')); } catch (e) { /* werden nachgeholt */ }
+    if (M.an) { const danach = await ruf('api/stand'); if (st.ok && danach.ok && st.j.revision !== danach.j.revision) return ladeBibliothek(); st = danach.ok ? danach : st; M.revision = st.j.revision; M.sperre = st.j.sperre || null; M.hat = !!st.j.ich; M.geladen = roh; bib.meta = bib.meta || {}; bib.meta.bearbeiter = M.ich.anzeige; }
     S.lib = Object.assign(bib, { seitentext: texte.seitentext || {}, abschnitte: texte.abschnitte || [], struktur: texte.struktur || {}, elemente: texte.elemente || {}, unsicher: texte.unsicher || {}, ocr: texte.ocr || {}, titelbilder: bilder || {} });
     nachLaden();
   }
@@ -1500,6 +1622,9 @@ if (typeof document !== 'undefined') (function () {
     } catch (e) { if (e && e.name === 'AbortError') return; A.fehler = 'Der Ordner lässt sich nicht öffnen: ' + (e.message || e); if (S.lib) meldung(A.fehler); render(); }
   }
   function startschirm() {
+    if (M.an && !M.ich) return `<div class="startschirm"><span class="zeichen" aria-hidden="true"></span><h1>Normenbibliothek</h1><p class="lead">Bitte anmelden.</p>
+      ${M.fehler ? `<p class="fehler-fest" role="alert">${h(M.fehler)}</p>` : ''}
+      <form id="anmeldung" class="anmeldung"><label>Anmeldename<input name="name" autocomplete="username" required autofocus></label><label>Passwort<input name="passwort" type="password" autocomplete="current-password" required></label><p class="aktionen"><button class="haupt">Anmelden</button></p></form></div>`;
     return `<div class="startschirm"><span class="zeichen" aria-hidden="true"></span><h1>Normenbibliothek</h1>
       ${A.laedt ? '<p class="lead">Die Bibliothek wird geladen …</p>' : `<p class="lead">Die Bibliothek liegt als Ordner vor: Programm, Daten und Original-PDF nebeneinander. Wähle den Ordner des Repos, dann liest und speichert das Programm direkt darin.</p>
       ${A.fehler ? `<p class="fehler-fest">${h(A.fehler)}</p>` : ''}
@@ -1507,9 +1632,43 @@ if (typeof document !== 'undefined') (function () {
   }
   async function hochfahren() {
     render();
-    if (webModus) { try { await ladeBibliothek(); return; } catch (e) { A.fehler = 'Die Bibliothek lässt sich nicht laden: ' + (e.message || e); } }
+    if (webModus) { const r = await ruf('api/ich'); if (r.ok && r.j.modus === 'mehrnutzer') { M.an = true; M.ich = r.j.angemeldet ? r.j : null; if (!M.ich) { A.laedt = false; return render(); } } }
+    if (webModus) { try { await ladeBibliothek(); if (M.an && M.ich.neuSetzen) passwortForm(true); return; } catch (e) { A.fehler = 'Die Bibliothek lässt sich nicht laden: ' + (e.message || e); } }
     A.alt = await idb('get'); A.laedt = false; render();
   }
+  // ----- Konto und Benutzer (Mehrnutzerbetrieb)
+  function passwortForm(pflicht) {
+    dialog('Passwort ändern', `${pflicht ? '<p class="hinweis">Das Passwort wurde vom Admin gesetzt. Bitte jetzt ein eigenes wählen.</p>' : ''}<label>Bisheriges Passwort<input name="alt" type="password" autocomplete="current-password" required></label><label>Neues Passwort (mindestens 10 Zeichen)<input name="neu" type="password" autocomplete="new-password" minlength="10" required></label><label>Neues Passwort wiederholen<input name="neu2" type="password" autocomplete="new-password" minlength="10" required></label>`, d => {
+      if (d.neu !== d.neu2) return 'Die beiden neuen Passwörter sind nicht gleich.';
+      ruf('api/passwort', 'POST', { alt: d.alt, neu: d.neu }).then(r => { if (r.ok) { M.ich.neuSetzen = false; meldung('Das Passwort ist geändert.'); } else { meldung(r.j.fehler || 'Das Passwort liess sich nicht ändern.'); passwortForm(pflicht); } });
+    }, 'Ändern');
+  }
+  function benutzerForm(wahl) {
+    ruf('api/benutzer').then(r => {
+      if (!r.ok) return meldung(r.j.fehler || 'Die Benutzer lassen sich nicht laden.');
+      const b = r.j.benutzer.find(x => x.name === wahl) || { name: '', anzeige: '', rolle: 'autor', aktiv: true };
+      dialog('Benutzer verwalten', `<div class="uerahmen"><table class="tabelle"><thead><tr><th>Anmeldename</th><th>Name</th><th>Rolle</th><th>Stand</th><th></th></tr></thead><tbody>${r.j.benutzer.map(x => `<tr><td>${h(x.name)}</td><td>${h(x.anzeige)}</td><td>${ROLLE[x.rolle]}</td><td>${x.aktiv ? 'aktiv' : 'gesperrt'}</td><td><button type="button" class="klein" data-act="m-benutzer" data-name="${h(x.name)}">Ändern</button></td></tr>`).join('')}</tbody></table></div>
+        <h3>${b.name ? 'Benutzer ändern: ' + h(b.name) : 'Neuer Benutzer'}</h3>
+        ${b.name ? `<input type="hidden" name="name" value="${h(b.name)}">` : feld('name', 'Anmeldename (Kleinbuchstaben, Ziffern, Punkt)', '', 'required autocomplete="off"')}
+        ${feld('anzeige', 'Name, wie er im Verlauf steht', b.anzeige, 'required')}
+        <label>Rolle<select name="rolle">${opt(Object.keys(ROLLE).map(k => [k, ROLLE[k] + ({ gast: ': lesen', autor: ': bearbeiten und speichern', pruefer: ': zusätzlich vergleichen und freigeben', admin: ': zusätzlich Benutzer verwalten' })[k]]), b.rolle)}</select></label>
+        <label>${b.name ? 'Neues Passwort (leer lassen, um es zu behalten)' : 'Passwort für die erste Anmeldung (mindestens 10 Zeichen)'}<input name="passwort" type="text" autocomplete="off" ${b.name ? '' : 'required minlength="10"'}></label>
+        <label class="haken"><input type="checkbox" name="aktiv" ${b.aktiv ? 'checked' : ''}> Darf sich anmelden</label>
+        ${b.name ? '<p class="reihe"><button type="button" data-act="m-benutzer" data-name="">Stattdessen neuen Benutzer anlegen</button></p>' : ''}`, d => {
+        ruf('api/benutzer', 'POST', { name: d.name, anzeige: d.anzeige, rolle: d.rolle, passwort: d.passwort || undefined, aktiv: !!d.aktiv }).then(x => { meldung(x.ok ? 'Benutzer gespeichert.' : x.j.fehler || 'Der Benutzer liess sich nicht speichern.'); benutzerForm(x.ok ? '' : d.name); });
+      }, 'Speichern', true);
+    });
+  }
+  document.addEventListener('submit', ev => {
+    if (ev.target.id !== 'anmeldung') return; ev.preventDefault();
+    const f = ev.target; ruf('api/anmelden', 'POST', { name: f.elements.name.value, passwort: f.elements.passwort.value }).then(async r => {
+      if (!r.ok) { M.fehler = r.j.fehler || 'Die Anmeldung ist fehlgeschlagen.'; return render(); }
+      M.fehler = ''; M.ich = r.j; A.laedt = true; render();
+      try { await ladeBibliothek(); if (M.ich.neuSetzen) passwortForm(true); } catch (e) { A.laedt = false; A.fehler = 'Die Bibliothek lässt sich nicht laden: ' + (e.message || e); render(); }
+    });
+  });
+  ['pointerdown', 'keydown'].forEach(t => document.addEventListener(t, () => { M.aktiv = Date.now(); }, true));
+  setInterval(takt, 15000);
   function meldung(t) { const m = document.createElement('p'); m.className = 'meldung'; m.setAttribute('role', 'status'); m.textContent = t; $('#app').appendChild(m); setTimeout(() => m.remove(), 6000); }
   function datenImport(file) {
     file.text().then(t => {
@@ -1546,7 +1705,7 @@ if (typeof document !== 'undefined') (function () {
       <p class="hinweis">Ausgegeben wird der erkannte Text der Ebene „${h(S.ed.ebene && werk(S.ed.ebene) ? werk(S.ed.ebene).kurz : 'Grundtext')}“. Nicht freigegebene Stände werden als Entwurf gekennzeichnet. Die Originalseiten selbst liefert „PDF exportieren“.</p>`, d => {
       const o = { umfang: d.umfang, seiten: d.seiten, ansicht: d.ansicht, verzeichnis: !!d.verzeichnis, kommentare: !!d.kommentare }, w = werk(S.view.id);
       if (d.umfang === 'auswahl' && !seitenListe(d.seiten, dokId(S.ed.dok).seiten).length) return 'Seiten angeben, zum Beispiel 60-66, 70.';
-      if (d.ausgabe === 'word') wordExport(w, o).then(() => meldung('Word-Datei gespeichert.')); else drucken(w, o);
+      if (d.ausgabe === 'word') wordExport(w, o).then(() => meldung('Word-Datei (.docx) gespeichert.')); else drucken(w, o);
     }, 'Ausgeben'),
     'ed-pdf': () => dialog('PDF exportieren', `<p class="hinweis">Erzeugt ein PDF aus den unveränderten Originalseiten. Änderungen und Anmerkungen kommen als eigene Blätter dazu.</p>
       <label class="haken"><input type="checkbox" name="deckblatt" checked> Deckblatt mit Änderungsverzeichnis</label>
@@ -1593,6 +1752,19 @@ if (typeof document !== 'undefined') (function () {
     'werk-text': el => { S.view = { typ: 'werk', id: el.dataset.id }; S.tab = 'text'; },
     tab: el => { if (edGesperrt()) return false; S.tab = el.dataset.tab; },
     'zeige-regel': el => { const r = regel(el.dataset.id); S.view = { typ: 'werk', id: r.werkId }; S.tab = 'regeln'; render(); const z = document.getElementById('r-' + r.id); if (z) z.scrollIntoView({ block: 'center' }); return false; },
+    'm-konto': () => dialog('Konto', `<p>Angemeldet als <b>${h(M.ich.anzeige)}</b> (${h(M.ich.name)}), Rolle ${ROLLE[M.ich.rolle]}.</p>
+      <p class="reihe"><button type="button" data-act="m-passwort">Passwort ändern</button><button type="button" data-act="m-abmelden">Abmelden</button></p>
+      ${M.ich.rolle === 'admin' ? `<p class="reihe"><button type="button" data-act="m-benutzer" data-name="">Benutzer verwalten</button>${M.sperre && !M.hat ? '<button type="button" data-act="m-aufheben">Bearbeitungssperre aufheben</button>' : ''}</p>` : ''}
+      <p class="hinweis">Es bearbeitet immer nur eine Person gleichzeitig. Wer „Bearbeiten“ wählt oder eine Änderung beginnt, hält die Bearbeitung, bis er sie beendet oder zehn Minuten nichts tut. Alle anderen lesen und sehen gespeicherte Stände von selbst.</p>`),
+    'm-passwort': () => { passwortForm(false); return false; },
+    'm-benutzer': el => { benutzerForm(el.dataset.name || ''); return false; },
+    'm-aufheben': () => { ruf('api/sperre', 'POST', { aktion: 'aufheben' }).then(r => { if (r.ok) { M.sperre = null; $('#dlg').close(); mStatus(); meldung('Die Bearbeitungssperre ist aufgehoben. Ungesicherte Änderungen der anderen Person gehen dabei verloren.'); } else meldung(r.j.fehler || 'Die Sperre liess sich nicht aufheben.'); }); return false; },
+    'm-abmelden': () => { if (S.dirty) { meldung('Zuerst speichern. Es gibt ungesicherte Änderungen.'); return false; } ruf('api/abmelden', 'POST', {}).then(() => { M.ich = null; M.hat = false; S.lib = null; A.laedt = false; $('#dlg').close(); render(); }); return false; },
+    'm-sperre': () => {
+      if (M.hat) { if (S.dirty) { meldung('Zuerst speichern. Es gibt ungesicherte Änderungen.'); return false; } ruf('api/sperre', 'POST', { aktion: 'geben' }).then(() => { M.hat = false; M.sperre = null; mStatus(); }); }
+      else sperreHolen(false);
+      return false;
+    },
     name: () => dialog('Wer bearbeitet?', feld('name', 'Name', L().meta.bearbeiter || '', 'required'), d => { L().meta.bearbeiter = d.name.trim(); }),
     'regel-neu': el => mitName(() => { const a = el.dataset.abs && L().abschnitte.find(x => x.id === el.dataset.abs); regelForm(null, { werkId: el.dataset.werk, dokId: a ? a.dokId : '', abschnitt: a ? a.nr : '', pdfSeite: a ? a.pdfSeite : '', titel: a ? a.titel : '', params: [] }); }),
     'regel-edit': el => mitName(() => regelForm(regel(el.dataset.id))),
@@ -1608,7 +1780,7 @@ if (typeof document !== 'undefined') (function () {
     'link-neu': el => mitName(() => linkForm(werk(el.dataset.id))),
     'link-weg': el => mitName(() => { L().verknuepfungen = L().verknuepfungen.filter(v => v.id !== el.dataset.id); log('Verknüpfung entfernt', el.dataset.id); render(); }),
     import: el => mitName(() => importForm(werk(el.dataset.id))),
-    freigeben: () => mitName(() => dialog('Änderungen freigeben', `<p>${offeneAenderungen(L())} Änderungen werden zur Version ${L().versionen.length + 1}. Freigegebene Versionen lassen sich nicht mehr ändern.</p>${bereich('notiz', 'Was wurde geändert?', '', 'required')}<p class="hinweis">Solange nur eine Person arbeitet, gibt dieselbe Person frei. Eine Zweitprüfung ist noch nicht eingebaut.</p>`, d => { const v = neueVersion(L(), L().meta.bearbeiter, d.notiz.trim(), heute()); S.wahlAus.clear(); log('Version freigegeben', 'Version ' + v.nr, d.notiz.trim()); meldung('Version ' + v.nr + ' freigegeben. Jetzt speichern.'); }, 'Freigeben')),
+    freigeben: () => M.an && !darfFreigeben() ? meldung('Versionen freigeben dürfen nur Prüfer.') : mitName(() => dialog('Änderungen freigeben', `<p>${offeneAenderungen(L())} Änderungen werden zur Version ${L().versionen.length + 1}. Freigegebene Versionen lassen sich nicht mehr ändern.</p>${bereich('notiz', 'Was wurde geändert?', '', 'required')}${M.an ? '' : '<p class="hinweis">Solange nur eine Person arbeitet, gibt dieselbe Person frei.</p>'}`, d => { const v = neueVersion(L(), L().meta.bearbeiter, d.notiz.trim(), heute()); S.wahlAus.clear(); log('Version freigegeben', 'Version ' + v.nr, d.notiz.trim()); meldung('Version ' + v.nr + ' freigegeben. Jetzt speichern.'); }, 'Freigeben')),
     'wahl-alle': el => { S.wahlAus.clear(); if (el.dataset.v === '0') R.offen.forEach(e => S.wahlAus.add(eKey(e))); },
     'freigeben-wahl': () => mitName(() => {
       const gew = new Set(R.offen.filter(e => !S.wahlAus.has(eKey(e))).map(eKey)), vorher = gew.size, offenNeu = k => R.offen.some(e => eKey(e) === k && e.stand === 'neu');
@@ -1630,6 +1802,7 @@ if (typeof document !== 'undefined') (function () {
     'protokoll-csv': el => { const ws = el.dataset.id ? [werk(el.dataset.id)] : L().werke, c = protokollCsv(ws); if (!c.zeilen) { meldung('Es gibt noch keine Textänderungen oder Anmerkungen.'); return false; } herunterladen((el.dataset.id ? werk(el.dataset.id).kurz.replace(/[^A-Za-z0-9äöüÄÖÜ-]+/g, '_') + '_' : 'Normenbibliothek_') + 'Aenderungsprotokoll_' + heute() + '.csv', c.text, 'text/csv'); meldung(`Protokoll mit ${c.zeilen} Einträgen gespeichert. Die Datei öffnet sich in Excel.`); return false; },
     'ed-links': el => { S.ed.links = el.dataset.v; },
     digital: el => mitName(() => digitalForm(werk(el.dataset.id))),
+    'digital-frei': el => mitName(() => digitalForm(werk(el.dataset.id), 'freigegeben')),
     'seite-ok': () => mitName(() => { const d = dokId(S.ed.dok), n = S.ed.seite, set = new Set(d.geprueftSeiten || []); if (set.has(n)) set.delete(n); else set.add(n); d.geprueftSeiten = [...set].sort((a, b) => a - b); log(set.has(n) ? 'Seite mit dem Original verglichen' : 'Vergleichsvermerk entfernt', d.werkId, `${d.teil ? d.teil + ', ' : ''}Seite ${n}`); render(); }),
     'pruefer-speichern': () => { L().meta.pruefer = $('#pruefer-liste').value.split('\n').map(x => x.trim()).filter(Boolean); S.dirty = true; meldung(`Prüferliste übernommen: ${L().meta.pruefer.length} ${L().meta.pruefer.length === 1 ? 'Name' : 'Namen'}.`); return false; },
     'ix-tab': el => { S.ixTab = el.dataset.v; },
@@ -1687,7 +1860,7 @@ if (typeof document !== 'undefined') (function () {
     'ordner-alt': () => { ordnerVerbinden(A.alt); return false; },
     mehr: () => dialog('Daten', `<p class="hinweis">Programmversion ${h(PROGRAMM)}. Die Datensicherung enthält den ganzen Bearbeitungsstand und die Texte in einer Datei, ohne die PDF. Damit lassen sich die Inhalte in eine neuere Programmdatei übernehmen.</p>
       <p class="reihe"><button type="button" data-act="daten-export">Datensicherung herunterladen</button></p>
-      <label>Prüfer: wer die digitale Fassung einer Norm freigeben darf (ein Name je Zeile)<textarea id="pruefer-liste" rows="3">${h((L().meta.pruefer || []).join('\n'))}</textarea></label><p class="reihe"><button type="button" data-act="pruefer-speichern">Prüferliste übernehmen</button></p>
+      ${M.an ? '<p class="hinweis">Wer freigeben darf, bestimmt die Rolle des Benutzers (Konto → Benutzer verwalten).</p>' : `<label>Prüfer: wer die digitale Fassung einer Norm freigeben darf (ein Name je Zeile)<textarea id="pruefer-liste" rows="3">${h((L().meta.pruefer || []).join('\n'))}</textarea></label><p class="reihe"><button type="button" data-act="pruefer-speichern">Prüferliste übernehmen</button></p>`}
       <label>Datensicherung laden (ersetzt den ganzen Bearbeitungsstand)<input type="file" id="daten-datei" accept=".json,application/json"></label>`),
     'daten-export': () => { herunterladen('Normenbibliothek_Daten_' + heute() + '.json', JSON.stringify(L()), 'application/json'); return false; },
     regelwerk: () => { const k = S.kontext, x = regelwerkExport(L(), k, S.mitEntwurf); herunterladen(`Regelwerk_${(x.kontext.basis || '').replace(/\s/g, '')}_v${x.version}${S.mitEntwurf ? '_Entwurf' : ''}.json`, JSON.stringify(x, null, 1), 'application/json'); return false; },
@@ -1731,6 +1904,6 @@ if (typeof document !== 'undefined') (function () {
     else if (t.id === 'daten-datei' && t.files[0]) datenImport(t.files[0]);
   });
   window.addEventListener('beforeunload', ev => { if (S.dirty || (S.ed.edit && S.tab === 'edit')) { ev.preventDefault(); ev.returnValue = ''; } });
-  window.__nb = { S, A, teileDaten, oeffne: (id, tab) => { S.view = { typ: 'werk', id }; S.tab = tab || 'regeln'; S.ed.edit = false; render(); } };
+  window.__nb = { S, A, M, takt, teileDaten, oeffne: (id, tab) => { S.view = { typ: 'werk', id }; S.tab = tab || 'regeln'; S.ed.edit = false; render(); } };
   hochfahren();
 })();
