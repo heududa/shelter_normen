@@ -163,6 +163,48 @@ const path0 = path.join(__dirname, 'daten');
   assert.equal(await p2.evaluate(() => window.__nb.S.lib.aenderungen.length), 4); assert.equal(await p2.evaluate(() => window.__nb.S.lib.werke.find(w => w.id === 'twp84').digital.status), 'freigegeben');
   assert.ok(await p2.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'kein Querscrollen Start');
   await p2.evaluate(() => window.__nb.oeffne('twp66', 'edit')); await p2.locator('.seite').scrollIntoViewIfNeeded(); await p2.waitForSelector('.seite[data-fertig]'); assert.ok(await p2.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'kein Querscrollen Bearbeitung');
+  // Tabellen und Skizzen aus der Texterkennung
+  const geheSeite = async n => { await p.fill('#ed-sprung', String(n)); await p.press('#ed-sprung', 'Enter'); await p.waitForSelector(`.seite[data-seite="${n}"][data-fertig]`); };
+  await p.evaluate(() => { const S = window.__nb.S; S.ed.ebene = ''; S.ed.ansicht = 'neu'; S.ed.dok = 'd-twp84-1'; S.ed.seite = 1; window.__nb.oeffne('twp84', 'edit'); });
+  await geheSeite(64); await p.waitForSelector('.lesetext .ue-tabelle table');
+  let tab = await p.locator('.lesetext .ue-tabelle table').first().innerText(); assert.ok(tab.includes('VA 150') && tab.includes('300'), 'Tabelle 3.1-3: ' + tab);
+  assert.ok(await p.locator('.lesetext .ue-tabelle thead th').count() >= 5); assert.ok(!(await p.locator('.lesetext').innerText()).includes('[[Tabelle'));
+  await p.screenshot({ path: D + 'k_tabelle.png' });
+  await p.click('.ue-tabelle [data-act=ue-bearbeiten]'); await p.waitForSelector('#dlg .uegitter textarea'); await p.waitForFunction(() => { const i = document.querySelector('#dlg .uevorschau img'); return i && i.naturalWidth > 300; });
+  const zellen = await p.locator('#dlg .uegitter textarea').count(); await p.click('#dlg [data-act=ue-gitter][data-op="z+"]'); assert.ok(await p.locator('#dlg .uegitter textarea').count() > zellen);
+  await p.fill('#dlg textarea[name=c_1_0]', 'bis 13 SP'); await p.screenshot({ path: D + 'k_tabelle_dialog.png' }); await p.click('#dlg button.haupt');
+  assert.ok((await p.locator('.lesetext .ue-tabelle.hand table').innerText()).includes('bis 13 SP'));
+  assert.equal(await p.evaluate(() => window.__nb.S.lib.uebernahmen.length), 1);
+  await p.click('.ue-tabelle [data-act=ue-typ]'); await p.waitForFunction(() => { const i = document.querySelector('.lesetext .ue-skizze img.ausschnitt'); return i && i.naturalWidth > 300; });
+  await p.click('.ue-skizze [data-act=ue-typ]'); await p.waitForSelector('#dlg .uegitter textarea'); assert.equal(await p.inputValue('#dlg textarea[name=c_1_0]'), 'bis 13 SP'); await p.click('#dlg button.haupt'); await p.waitForSelector('.lesetext .ue-tabelle.hand table');
+  await geheSeite(38); await p.waitForFunction(() => { const i = document.querySelector('.lesetext .ue-skizze img.ausschnitt'); return i && i.complete && i.naturalWidth > 500; });
+  assert.ok((await p.locator('.lesetext').innerText()).includes('Grundrissbeispiele')); await p.screenshot({ path: D + 'k_skizze.png' });
+  // Skizze und Tabelle von Hand aus dem Scan übernehmen
+  const vorher = await p.locator('.lesetext .ue').count();
+  await p.click('[data-act=pdf-mark][data-art=skizze]'); bx = await p.locator('.seite').boundingBox();
+  await p.mouse.move(bx.x + bx.width * 0.3, bx.y + bx.height * 0.05); await p.mouse.down(); await p.mouse.move(bx.x + bx.width * 0.9, bx.y + bx.height * 0.12, { steps: 4 }); await p.mouse.up();
+  await p.waitForSelector('#dlg input[name=titel]'); await p.fill('#dlg input[name=titel]', 'Testskizze'); await p.click('#dlg button.haupt');
+  assert.equal(await p.locator('.lesetext .ue').count(), vorher + 1); assert.ok((await p.locator('.lesetext .ue.hand figcaption').last().innerText()).includes('Testskizze'));
+  await p.locator('.lesetext .ue.hand [data-act=ue-weg]').last().click(); await p.click('#dlg button.haupt'); assert.equal(await p.locator('.lesetext .ue').count(), vorher);
+  await geheSeite(64); await p.click('[data-act=pdf-mark][data-art=tabelle]'); bx = await p.locator('.seite').boundingBox();
+  await p.mouse.move(bx.x + bx.width * 0.06, bx.y + bx.height * 0.655); await p.mouse.down(); await p.mouse.move(bx.x + bx.width * 0.93, bx.y + bx.height * 0.71, { steps: 4 }); await p.mouse.up();
+  await p.waitForSelector('#dlg .uegitter textarea'); assert.ok(await p.locator('#dlg .uegitter tr').count() >= 3, 'Zeilen aus dem Rechteck'); assert.ok(await p.locator('#dlg .uegitter tr:first-child td').count() >= 4, 'Spalten aus dem Rechteck');
+  await p.click('#dlg button.haupt'); assert.equal(await p.locator('.lesetext .ue-tabelle').count(), 2);
+  await p.click('.leiste [data-typ=offen]'); assert.ok(await p.locator('.wahlliste li:has-text("Tabelle/Skizze")').count() >= 2);
+  // Suche findet den Inhalt von Tabellen
+  await p.fill('#q', 'bis 13 SP'); await p.waitForSelector('#haupt'); assert.ok((await p.locator('#haupt').innerText()).includes('TWP'), 'Suche in Tabellen');
+  await p.fill('#q', '');
+  // unsicher gelesene Stellen: markiert, bis die Seite verglichen ist
+  const us = await p.evaluate(() => { const u = window.__nb.S.lib.unsicher['d-twe94-1'] || {}; const n = Object.keys(u).find(k => u[k].length >= 2 && !/^\[\[/.test(u[k][0])); return n ? +n : 0; });
+  assert.ok(us > 0, 'TWE 1994 hat unsicher gelesene Stellen');
+  await p.evaluate(n => { const S = window.__nb.S; S.ed.dok = 'd-twe94-1'; S.ed.seite = n; S.ed.ansicht = 'neu'; window.__nb.oeffne('twe94', 'edit'); }, us);
+  await p.waitForSelector('.seite[data-fertig]'); assert.ok(await p.locator('mark.unsicher').count() >= 1); await p.screenshot({ path: D + 'k_unsicher.png' });
+  await p.click('[data-act=seite-ok]'); assert.equal(await p.locator('.lesetext mark.unsicher').count(), 0); await p.click('[data-act=seite-ok]');
+  // Druckansicht mit Tabellen und Skizzen
+  await p.evaluate(() => { const S = window.__nb.S; S.ed.dok = 'd-twp84-1'; S.ed.seite = 38; window.__nb.oeffne('twp84', 'edit'); }); await p.waitForSelector('.seite[data-fertig]');
+  await p.evaluate(() => { window.print = () => {}; }); await p.click('[data-act=ed-druck]'); await p.selectOption('#dlg select[name=umfang]', 'seite'); await p.click('#dlg button.haupt');
+  await p.waitForFunction(() => { const i = document.querySelector('#druck img.ausschnitt'); return i && i.src.startsWith('data:image/png'); }); assert.equal(await p.locator('#druck .uetools').count(), 0);
+  await p.evaluate(() => window.dispatchEvent(new Event('afterprint')));
   // Ohne Webserver: Startschirm mit Ordnerwahl
   const p3 = await b.newPage(); p3.on('pageerror', e => errs.push('file: ' + e.message)); await p3.goto('file://' + R + '/index.html'); await p3.waitForSelector('.startschirm [data-act=ordner]');
   srv.close();

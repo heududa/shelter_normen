@@ -38,8 +38,8 @@ const TYPEN = {
 };
 const ARTEN = { regel: 'Regel', aendern: 'ändern', ergaenzen: 'ergänzen', aufheben: 'aufheben', kommentar: 'Kommentar' };
 
-const LISTEN = ['herausgeber', 'werke', 'verknuepfungen', 'regeln', 'anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar'];
-const leererInhalt = () => ({ herausgeber: [], werke: [], verknuepfungen: [], regeln: [], anmerkungen: [], dokumente: [], aenderungen: [], formate: [], glossar: [] });
+const LISTEN = ['herausgeber', 'werke', 'verknuepfungen', 'regeln', 'anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar', 'uebernahmen'];
+const leererInhalt = () => ({ herausgeber: [], werke: [], verknuepfungen: [], regeln: [], anmerkungen: [], dokumente: [], aenderungen: [], formate: [], glossar: [], uebernahmen: [] });
 function inhalt(lib) { const o = {}; LISTEN.forEach(k => { o[k] = lib[k] || []; }); return o; }
 
 function neueVersion(lib, name, notiz, datum, inh) {
@@ -242,13 +242,34 @@ function fliesstext(t) {
   }
   return out.replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
 }
+// Tabellen und Skizzen einer Seite: automatisch erkannte Elemente, überlagert mit den Übernahmen von Hand
+function elementeVon(lib, dokId, seite) {
+  const out = ((lib.elemente || {})[dokId] || []).filter(e => e.s === seite).map(e => Object.assign({ dokId }, e));
+  (lib.uebernahmen || []).filter(u => u.dokId === dokId && u.seite === seite).forEach(u => {
+    const i = out.findIndex(e => e.nr === u.nr);
+    const o = { nr: u.nr, s: seite, dokId, typ: u.typ, box: u.box, titel: u.titel || '', zeilen: u.zeilen, ohneKopf: !!u.ohneKopf, hand: true, uid: u.id, text: i >= 0 ? out[i].text || '' : '' };
+    if (u.weg) { if (i >= 0) out.splice(i, 1); } else if (i >= 0) out[i] = o; else out.push(o);
+  });
+  return out.sort((a, b) => a.box[1] - b.box[1] || a.box[0] - b.box[0]);
+}
+// Wörter mit Lage (Anteile der Seite) zu Zeilen und Spalten einer Tabelle ordnen
+function gitterAus(ws) {
+  if (!ws.length) return [];
+  const hs = ws.map(w => w.h).sort((a, b) => a - b), hm = hs[Math.floor(hs.length / 2)] || 0.012, reihen = [];
+  ws.slice().sort((a, b) => a.y - b.y).forEach(w => { const r = reihen[reihen.length - 1]; if (r && Math.abs(w.y - r.y) < hm * 0.6) { r.w.push(w); r.y = r.w.reduce((q, x) => q + x.y, 0) / r.w.length; } else reihen.push({ y: w.y, w: [w] }); });
+  const x0 = Math.min(...ws.map(w => w.x)), x1 = Math.max(...ws.map(w => w.x + w.w)), N = 1000, frei = new Array(N).fill(true), pos = x => Math.max(0, Math.min(N - 1, Math.round((x - x0) / Math.max(1e-6, x1 - x0) * (N - 1))));
+  ws.forEach(w => { for (let i = pos(w.x); i <= pos(w.x + w.w); i++) frei[i] = false; });
+  const min = Math.max(4, Math.round(0.014 / Math.max(1e-6, x1 - x0) * N)), grenzen = []; let a = -1;
+  for (let i = 0; i < N; i++) { if (frei[i] && a < 0) a = i; if (!frei[i] && a >= 0) { if (i - a >= min) grenzen.push(x0 + (a + i) / 2 / (N - 1) * (x1 - x0)); a = -1; } }
+  return reihen.map(r => { const z = new Array(grenzen.length + 1).fill(''); r.w.sort((p, q) => p.x - q.x).forEach(w => { const k = grenzen.filter(g => w.x + w.w / 2 > g).length; z[k] += (z[k] ? ' ' : '') + w.t; }); return z; });
+}
 // Seitentext: Grundtext aus dem PDF, darüber OCR-Korrekturen, darüber fachliche Änderungen einer Schicht
 function seitenBasis(lib, dokId, seite) { const t = (lib.seitentext || {})[dokId]; return (t && t[seite - 1]) || ''; }
 function kette(lib, dokId, seite, schichtId) { return (lib.aenderungen || []).filter(a => a.dokId === dokId && a.seite === seite && !a.zurueckgezogen && (schichtId ? a.art === 'fachlich' && a.schichtId === schichtId : a.art === 'ocr')); }
 function textOcr(lib, dokId, seite) { const k = kette(lib, dokId, seite, ''); return k.length ? k[k.length - 1].nachher : seitenBasis(lib, dokId, seite); }
 function textSchicht(lib, dokId, seite, schichtId) { const k = schichtId ? kette(lib, dokId, seite, schichtId) : []; return k.length ? k[k.length - 1].nachher : textOcr(lib, dokId, seite); }
 
-if (typeof module !== 'undefined') module.exports = { zeilenAus, erkenneStruktur, fvSchluessel, teilInhalt, artVorschlag, fliesstext, diffWorte, stellen, seitenBasis, textOcr, textSchicht, sha256, neueVersion, freigegeben, standVon, offeneAenderungen, fassung, regelwerkExport, teileText, inhalt };
+if (typeof module !== 'undefined') module.exports = { elementeVon, gitterAus, zeilenAus, erkenneStruktur, fvSchluessel, teilInhalt, artVorschlag, fliesstext, diffWorte, stellen, seitenBasis, textOcr, textSchicht, sha256, neueVersion, freigegeben, standVon, offeneAenderungen, fassung, regelwerkExport, teileText, inhalt };
 
 // ---------- Oberfläche ----------
 if (typeof document !== 'undefined') (function () {
@@ -277,13 +298,13 @@ if (typeof document !== 'undefined') (function () {
   const dokVon = id => dokus(id)[0];
   const istGanz = w => dokus(w.id).length > 1 && (!S.dokWahl[w.id] || S.dokWahl[w.id] === '*');
   function migriere() { // fehlende Felder älterer Stände ergänzen
-    const l = S.lib; ['anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar', 'abschnitte', 'versionen', 'verlauf'].forEach(k => { l[k] = l[k] || []; }); ['titelbilder', 'seitentext', 'struktur'].forEach(k => { l[k] = l[k] || {}; });
+    const l = S.lib; ['anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar', 'abschnitte', 'versionen', 'verlauf'].forEach(k => { l[k] = l[k] || []; }); ['titelbilder', 'seitentext', 'struktur', 'elemente', 'unsicher', 'ocr'].forEach(k => { l[k] = l[k] || {}; }); l.uebernahmen = l.uebernahmen || [];
     l.dokumente.forEach(d => { if (d.teil == null) d.teil = ''; });
     l.anmerkungen.forEach(a => { if (!a.dokId) { const d = l.dokumente.find(x => x.werkId === a.werkId); if (d) a.dokId = d.id; } });
   }
   const FV = { text: 'Fliesstext', titel: 'Normtitel', u1: 'Überschrift 1', u2: 'Überschrift 2', u3: 'Überschrift 3', tabelle: 'Tabellentitel', bild: 'Bildbeschriftung', fussnote: 'Fussnote', liste: 'Aufzählung', formel: 'Formel' };
   const ANM = { kommentar: 'Kommentar', aenderung: 'Änderungsvorschlag', frage: 'Offene Frage' };
-  const P = { werkId: null, docs: new Map(), gen: 0, canvases: new Map(), obs: null, zoom: 100, ziel: null, mark: false, markArt: 'kommentar', aktiv: null };
+  const P = { werkId: null, docs: new Map(), gen: 0, canvases: new Map(), obs: null, zoom: 100, ziel: null, mark: false, markArt: 'kommentar', aktiv: null, schnitte: new Map(), kette: Promise.resolve(), seitenbild: null };
 
   function log(aktion, ziel, detail) { L().verlauf.push({ zeit: new Date().toISOString(), name: L().meta.bearbeiter || '', aktion, ziel, detail: detail || '' }); S.dirty = true; }
   function mitName(dann) {
@@ -306,6 +327,7 @@ if (typeof document !== 'undefined') (function () {
       el.close(); render();
     };
     if (!el.open) el.showModal();
+    schnitteMount();
     const erstes = $('input,select,textarea', form); if (erstes) erstes.focus();
   }
   const opt = (liste, wert) => liste.map(([v, t]) => `<option value="${h(v)}"${v === wert ? ' selected' : ''}>${h(t)}</option>`).join('');
@@ -661,7 +683,8 @@ if (typeof document !== 'undefined') (function () {
       let q = rect(e); if (q.w < 0.012 && q.h < 0.008) q = { x: Math.max(0, Math.min(0.94, x0 - 0.03)), y: Math.max(0, Math.min(0.97, y0 - 0.012)), w: 0.06, h: 0.024 };
       q = { x: +q.x.toFixed(4), y: +q.y.toFixed(4), w: +q.w.toFixed(4), h: +q.h.toFixed(4) };
       P.mark = false; const vg = { werkId: $('#pdfseiten').dataset.werk, dokId: s.dataset.dok, seite: +s.dataset.seite, rect: q, art: P.markArt };
-      textImRechteck(vg.dokId, vg.seite, q).then(t => { vg.alt = t; if (P.markArt === 'aenderung') vg.neu = t; anmForm(null, vg); });
+      if (P.markArt === 'tabelle' || P.markArt === 'skizze') uebernahmeNeu(vg);
+      else textImRechteck(vg.dokId, vg.seite, q).then(t => { vg.alt = t; if (P.markArt === 'aenderung') vg.neu = t; anmForm(null, vg); });
       document.querySelectorAll('.seite.mark').forEach(n => n.classList.remove('mark'));
     };
     const ab = () => { s.removeEventListener('pointermove', mv); s.removeEventListener('pointerup', ende); s.removeEventListener('pointercancel', ab); band.remove(); };
@@ -754,7 +777,7 @@ if (typeof document !== 'undefined') (function () {
     if (!S.bib.liste) return `<ul class="karten">${ws.map(werkKarte).join('')}</ul>`;
     return `<div class="rollen"><table class="tabelle bibtab"><thead><tr><th>Norm</th><th>Titel</th><th>Gruppe</th><th>Seiten</th><th>Regeln</th><th>Status</th></tr></thead><tbody>${ws.map(w => { const st = werkStatus(w), ds = dokus(w.id); return `<tr><td><a href="#" data-act="werk-pdf" data-id="${h(w.id)}"><b>${h(w.kurz)}</b></a></td><td>${h(w.titel)}</td><td>${h(w.gruppe || hg(w.herausgeberId).kurz)}</td><td>${ds.length ? ds.reduce((x, y) => x + y.seiten, 0) : ''}</td><td>${L().regeln.filter(r => r.werkId === w.id).length || ''}</td><td>${marke(st.pill, st.art)}</td></tr>`; }).join('')}</tbody></table></div>`;
   }
-  const LNAME = { herausgeber: 'Herausgeber', werke: 'Norm', verknuepfungen: 'Verknüpfung', regeln: 'Regel', anmerkungen: 'Anmerkung', dokumente: 'PDF', aenderungen: 'Textänderung', formate: 'Formatänderung', glossar: 'Glossar' };
+  const LNAME = { herausgeber: 'Herausgeber', werke: 'Norm', verknuepfungen: 'Verknüpfung', regeln: 'Regel', anmerkungen: 'Anmerkung', dokumente: 'PDF', aenderungen: 'Textänderung', formate: 'Formatänderung', glossar: 'Glossar', uebernahmen: 'Tabelle/Skizze' };
   function eintragText(e) {
     const x = e.obj;
     switch (e.liste) {
@@ -763,6 +786,7 @@ if (typeof document !== 'undefined') (function () {
       case 'aenderungen': return `${x.id}, Seite ${x.seite}: ${x.begruendung}`;
       case 'glossar': return `${x.begriff}: ${x.bedeutung}`;
       case 'formate': return `Seite ${x.seite}: „${x.text.slice(0, 60)}“ ist ${FV[x.typ]}`;
+      case 'uebernahmen': return `Seite ${x.seite}: ${x.typ === 'tabelle' ? 'Tabelle' : 'Skizze'} ${x.nr}${x.weg ? ' entfernt' : x.titel ? ' ' + x.titel : ''}`;
       case 'dokumente': return x.datei;
       case 'werke': return x.kurz + ' ' + x.titel;
       case 'herausgeber': return x.kurz;
@@ -770,7 +794,7 @@ if (typeof document !== 'undefined') (function () {
     }
   }
   function eintragZeile(e) {
-    const act = e.stand === 'entfernt' ? '' : e.liste === 'regeln' ? 'zeige-regel' : e.liste === 'anmerkungen' ? 'anm-zeige' : e.liste === 'aenderungen' ? 'aend-zeige' : e.liste === 'formate' ? 'fv-zeige' : e.liste === 'glossar' ? 'glossar-zeige' : werk(e.werkId) ? 'werk' : '';
+    const act = e.stand === 'entfernt' ? '' : e.liste === 'regeln' ? 'zeige-regel' : e.liste === 'anmerkungen' ? 'anm-zeige' : e.liste === 'aenderungen' ? 'aend-zeige' : e.liste === 'formate' ? 'fv-zeige' : e.liste === 'uebernahmen' ? 'ue-zeige' : e.liste === 'glossar' ? 'glossar-zeige' : werk(e.werkId) ? 'werk' : '';
     const id = act === 'werk' ? e.werkId : e.obj.id, t = h(eintragText(e).slice(0, 140));
     return `<li><span class="lart">${LNAME[e.liste]}</span>${act ? `<a href="#" data-act="${act}" data-id="${h(id)}">${t}</a>` : `<span>${t}</span>`}${marke(e.stand, e.stand === 'entfernt' ? 'weg' : 'entwurf')}</li>`;
   }
@@ -947,11 +971,16 @@ if (typeof document !== 'undefined') (function () {
   }
   // ----- Volltext und Index über alle Normen
   const VT = { stand: '', seiten: null, klein: null }, IX = { stand: '', map: null };
+  const hatEl = dId => !!(L().elemente[dId] || L().uebernahmen.some(u => u.dokId === dId));
+  function elementText(dId, n) { // Inhalt der Tabellen und Beschriftungen der Skizzen, für Suche und Index
+    if (!hatEl(dId)) return '';
+    return elementeVon(L(), dId, n).map(e => '\n' + (e.titel ? e.titel + ' ' : '') + (e.typ === 'tabelle' ? (e.zeilen || []).map(z => z.join(' | ')).join('\n') : e.text || '')).join('');
+  }
   function volltext() { // Seitentexte aller PDF, mit den OCR-Korrekturen
-    const stand = L().aenderungen.length + ':' + L().aenderungen.filter(a => a.zurueckgezogen).length + ':' + L().dokumente.map(d => d.pruefsumme.slice(0, 4)).join('') + ':' + Object.keys(L().seitentext).length;
+    const stand = L().aenderungen.length + ':' + L().aenderungen.filter(a => a.zurueckgezogen).length + ':' + L().dokumente.map(d => d.pruefsumme.slice(0, 4)).join('') + ':' + Object.keys(L().seitentext).length + ':' + L().uebernahmen.length + JSON.stringify(L().uebernahmen).length;
     if (VT.stand !== stand) {
       const korr = new Set(L().aenderungen.filter(a => a.art === 'ocr' && !a.zurueckgezogen).map(a => a.dokId + '|' + a.seite));
-      VT.seiten = L().dokumente.map(d => ({ d, t: (L().seitentext[d.id] || []).map((x, i) => korr.has(d.id + '|' + (i + 1)) ? textOcr(L(), d.id, i + 1) : x) }));
+      VT.seiten = L().dokumente.map(d => ({ d, t: (L().seitentext[d.id] || []).map((x, i) => (korr.has(d.id + '|' + (i + 1)) ? textOcr(L(), d.id, i + 1) : x) + elementText(d.id, i + 1)) }));
       VT.klein = VT.seiten.map(x => x.t.map(t => t.toLowerCase())); VT.stand = stand;
     }
     return VT.seiten;
@@ -1010,9 +1039,99 @@ if (typeof document !== 'undefined') (function () {
     });
     return html + geist;
   }
-  function seitenHtml(dok, n, ansicht, ebene) {
+  function seitenHtml(dok, n, ansicht, ebene, druck) {
     const basis = seitenBasis(L(), dok.id, n), ocr = textOcr(L(), dok.id, n), eff = textSchicht(L(), dok.id, n, ebene);
-    return formatiert(ansicht === 'original' ? h(basis) : ansicht === 'neu' ? h(eff) : hybridHtml(basis, ocr, eff), dok.id, n);
+    let html = ansicht === 'original' ? h(basis) : ansicht === 'neu' ? h(eff) : hybridHtml(basis, ocr, eff);
+    if (!druck && ansicht !== 'hybrid') html = unsicherMark(html, dok, n);
+    return mitElementen(formatiert(html, dok.id, n), dok, n, druck);
+  }
+  const unsicherVon = (dok, n) => (dok.geprueftSeiten || []).includes(n) ? [] : ((L().unsicher[dok.id] || {})[n] || []);
+  function unsicherMark(html, dok, n) { // Wörter, die die Texterkennung unsicher gelesen hat, bis die Seite verglichen ist
+    const ws = unsicherVon(dok, n); if (!ws.length) return html;
+    const re = new RegExp('(^|[\\s(\\[„])(' + ws.map(w => h(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).sort((a, b) => b.length - a.length).join('|') + ')(?=$|[\\s)\\]“])', 'g');
+    return html.replace(re, '$1<mark class="unsicher" title="Unsicher gelesen. Bitte mit dem Original vergleichen.">$2</mark>');
+  }
+  const schnittKey = (dId, n, box) => dId + ':' + n + ':' + box.join(',');
+  function ausschnitt(dId, n, box) { // Bereich einer Originalseite als Bild; das PDF bleibt die Quelle
+    const key = schnittKey(dId, n, box); if (P.schnitte.has(key)) return Promise.resolve(P.schnitte.get(key));
+    return (P.kette = P.kette.then(async () => {
+      if (P.schnitte.has(key)) return P.schnitte.get(key);
+      try {
+        const doc = await pdfDoc(dId); if (!doc) return '';
+        const page = await doc.getPage(n), v1 = page.getViewport({ scale: 1 }), sk = 2.4, sb = dId + ':' + n;
+        let c = P.seitenbild && P.seitenbild.key === sb ? P.seitenbild.c : null;
+        if (!c) { const vp = page.getViewport({ scale: sk }); c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height); const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); await page.render({ canvasContext: ctx, viewport: vp }).promise; P.seitenbild = { key: sb, c }; }
+        const x = Math.round(box[0] * c.width), y = Math.round(box[1] * c.height), bw = Math.max(1, Math.round(box[2] * c.width)), bh = Math.max(1, Math.round(box[3] * c.height)), o = document.createElement('canvas');
+        o.width = bw; o.height = bh; o.getContext('2d').drawImage(c, x, y, bw, bh, 0, 0, bw, bh);
+        const url = o.toDataURL('image/png'); P.schnitte.set(key, url);
+        if (P.schnitte.size > 400) P.schnitte.delete(P.schnitte.keys().next().value);
+        return url;
+      } catch (e) { return ''; }
+    }));
+  }
+  function schnitteMount() { document.querySelectorAll('img.ausschnitt[data-box]').forEach(img => { const b = img.dataset.box.split(',').map(Number); img.removeAttribute('data-box'); ausschnitt(img.dataset.dok, +img.dataset.seite, b).then(u => { if (u) img.src = u; else img.alt = 'Das PDF liegt nicht in der Ablage; der Ausschnitt lässt sich nicht zeigen.'; }); }); }
+  function schnittImg(dId, n, box, alt, kl) {
+    const d = dokId(dId), m = (d && d.masse[n - 1]) || [210, 297], src = P.schnitte.get(schnittKey(dId, n, box));
+    return `<img class="ausschnitt${kl ? ' ' + kl : ''}" alt="${h(alt)}" data-w="${Math.round(box[2] * 100)}" style="aspect-ratio:${(box[2] * m[0]).toFixed(1)}/${(box[3] * m[1]).toFixed(1)}" ${src ? `src="${src}"` : `data-dok="${h(dId)}" data-seite="${n}" data-box="${box.join(',')}"`}>`;
+  }
+  function tabelleHtml(e, druck) {
+    const Z = e.zeilen || [], dk = druck ? null : dokId(e.dokId), zelle = (t, tag) => `<${tag}>${(dk ? unsicherMark(h(t), dk, e.s) : h(t)).replace(/\n/g, '<br>')}</${tag}>`;
+    const kopf = e.ohneKopf || Z.length < 2 ? '' : `<thead><tr>${Z[0].map(c => zelle(c, 'th')).join('')}</tr></thead>`;
+    return `<div class="uerahmen"><table class="uetab${e.ohneKopf ? ' ohnekopf' : ''}">${kopf}<tbody>${(kopf ? Z.slice(1) : Z).map(z => `<tr>${z.map((c, i) => zelle(c, e.ohneKopf && i === 0 ? 'th' : 'td')).join('')}</tr>`).join('')}</tbody></table></div>`;
+  }
+  function elementHtml(e, druck) {
+    const name = (e.typ === 'tabelle' ? 'Tabelle ' : 'Skizze ') + e.nr, nr = `data-nr="${h(e.nr)}"`;
+    const tools = druck ? '' : `<span class="uetools"><button class="klein" data-act="ue-bearbeiten" ${nr}>Bearbeiten</button><button class="klein" data-act="ue-typ" ${nr}>${e.typ === 'tabelle' ? 'Als Bild zeigen' : 'Als Tabelle erfassen'}</button><button class="klein" data-act="ue-weg" ${nr}>Entfernen</button></span>`;
+    const innen = e.typ === 'tabelle' ? tabelleHtml(e, druck) : schnittImg(e.dokId, e.s, e.box, `${name} aus dem Original, Seite ${e.s}${e.text ? '. Beschriftungen: ' + e.text.slice(0, 200) : ''}`);
+    return `<figure class="ue ue-${e.typ}${e.hand ? ' hand' : ''}" id="ue-${h(e.nr.replace('.', '-'))}">${innen}<figcaption><span>${h(name)}${e.titel ? ': ' + h(e.titel) : ''}${druck ? '' : e.hand ? ' · von Hand übernommen' : ' · automatisch erkannt'}</span>${tools}</figcaption></figure>`;
+  }
+  function mitElementen(html, dok, n, druck) { // Platzhalter [[Tabelle 12.1]] und [[Skizze 12.2]] durch das Element ersetzen
+    if (!hatEl(dok.id)) return html;
+    const els = elementeVon(L(), dok.id, n), da = new Set();
+    html = html.replace(/\n?\[\[(?:Tabelle|Skizze) (\d+\.\d+)\]\]\n?/g, (m, nr) => { const e = els.find(x => x.nr === nr); if (!e || da.has(nr)) return m[0] === '\n' && m.slice(-1) === '\n' ? '\n' : ''; da.add(nr); return elementHtml(e, druck); });
+    return html + els.filter(e => !da.has(e.nr)).map(e => elementHtml(e, druck)).join('');
+  }
+  async function schnitteLaden(ds, wahl) { for (const d of ds) { if (!hatEl(d.id) || !pdfDa(d)) continue; for (const n of (wahl || Array.from({ length: d.seiten }, (_, i) => i + 1))) for (const e of elementeVon(L(), d.id, n)) if (e.typ === 'skizze') await ausschnitt(d.id, n, e.box); } }
+  async function tabelleImRechteck(dId, seite, box) { // Text des PDF im Rechteck als Zeilen und Spalten
+    try {
+      const doc = await pdfDoc(dId); if (!doc) return [];
+      const page = await doc.getPage(seite), vp = page.getViewport({ scale: 1 }), c = await page.getTextContent(), ws = [];
+      c.items.forEach(it => {
+        if (!it.str || !it.str.trim() || !it.width) return;
+        const [x, y] = vp.convertToViewportPoint(it.transform[4], it.transform[5]), hh = it.height || 10, cy = (y - hh / 2) / vp.height; if (cy < box[1] || cy > box[1] + box[3]) return;
+        let pos = 0; it.str.split(/(\s+)/).forEach(t => { if (t.trim()) { const wx = (x + it.width * pos / it.str.length) / vp.width, ww = it.width * t.length / it.str.length / vp.width; if (wx + ww / 2 >= box[0] && wx + ww / 2 <= box[0] + box[2]) ws.push({ t, x: wx, w: ww, y: cy, h: hh / vp.height }); } pos += t.length; });
+      });
+      return gitterAus(ws);
+    } catch (e) { return []; }
+  }
+  const ueNrNeu = (dId, n) => n + '.' + (Math.max(0, ...((L().elemente[dId] || []).filter(e => e.s === n).map(e => +e.nr.split('.')[1])), ...L().uebernahmen.filter(u => u.dokId === dId && u.seite === n).map(u => +u.nr.split('.')[1])) + 1);
+  function ueSetzen(w, e, felder, was) { // Übernahme anlegen oder ändern; ein automatisch erkanntes Element wird dabei überlagert
+    let u = L().uebernahmen.find(x => x.dokId === e.dokId && x.nr === e.nr);
+    if (!u) { u = { id: uid('u'), werkId: w.id, dokId: e.dokId, seite: e.s, nr: e.nr, typ: e.typ, box: e.box, titel: e.titel || '', zeilen: e.zeilen || null, ohneKopf: !!e.ohneKopf, weg: false }; L().uebernahmen.push(u); }
+    Object.assign(u, felder, { autor: L().meta.bearbeiter, datum: heute() }); log(was, w.id, `Seite ${e.s}, ${u.typ === 'tabelle' ? 'Tabelle' : 'Skizze'} ${e.nr}`); digitalBeruehrt(w);
+  }
+  let UE = null;
+  const ueLesen = form => UE.zeilen.map((z, i) => z.map((c, j) => (form.elements[`c_${i}_${j}`] || { value: c }).value.replace(/\r/g, '').trim()));
+  function ueForm(w, st) {
+    UE = st; const tab = st.typ === 'tabelle';
+    if (tab) { if (!st.zeilen || !st.zeilen.length) st.zeilen = [['', ''], ['', '']]; const nc = Math.max(1, ...st.zeilen.map(z => z.length)); st.zeilen = st.zeilen.map(z => Array.from({ length: nc }, (_, j) => z[j] || '')); }
+    const op = (k, t) => `<button type="button" data-act="ue-gitter" data-op="${k}">${t}</button>`;
+    const gitter = !tab ? '' : `<p class="hinweis">Die Zellen stammen aus dem erkannten Text und können falsch zugeordnet sein. Bitte mit dem Ausschnitt oben vergleichen.</p>
+      <p class="aktionen">${op('z+', 'Zeile anfügen')}${op('z-', 'Letzte Zeile entfernen')}${op('s+', 'Spalte anfügen')}${op('s-', 'Letzte Spalte entfernen')}${op('zu', 'Leere Zeilen und Spalten entfernen')}</p>
+      <div class="uerahmen"><table class="uegitter">${st.zeilen.map((z, i) => `<tr>${z.map((c, j) => `<td><textarea name="c_${i}_${j}" rows="${Math.max(1, c.split('\n').length, Math.ceil(c.length / 22))}" aria-label="Zeile ${i + 1}, Spalte ${j + 1}">${h(c)}</textarea></td>`).join('')}</tr>`).join('')}</table></div>
+      <label class="haken"><input type="checkbox" name="kopf" ${st.ohneKopf ? '' : 'checked'}> Die erste Zeile ist die Kopfzeile</label>`;
+    dialog(`${tab ? 'Tabelle' : 'Skizze'} ${st.nr} ${st.neu ? 'übernehmen' : 'bearbeiten'}`, `<div class="uevorschau">${schnittImg(st.dokId, st.s, st.box, 'Ausschnitt aus dem Original')}</div>
+      ${feld('titel', tab ? 'Titel der Tabelle (optional)' : 'Titel der Skizze (optional)', st.titel || '')}${gitter}
+      ${st.neu ? `<p class="hinweis">Das Element erscheint am Ende der Seite. Mit der Marke <code>[[${tab ? 'Tabelle' : 'Skizze'} ${h(st.nr)}]]</code> im Text der Seite lässt es sich an die richtige Stelle setzen.</p>` : ''}`, (d, form) => {
+      const felder = { typ: st.typ, box: st.box, titel: d.titel.trim(), weg: false };
+      if (tab) { let Z = ueLesen(form); Z = Z.filter(z => z.some(c => c)); if (!Z.length) return 'Die Tabelle ist leer.'; felder.zeilen = Z; felder.ohneKopf = !d.kopf; }
+      ueSetzen(w, st, felder, st.neu ? (tab ? 'Tabelle übernommen' : 'Skizze übernommen') : (tab ? 'Tabelle geändert' : 'Skizze geändert'));
+    }, 'Übernehmen', true);
+  }
+  function uebernahmeNeu(vg) {
+    const w = werk(vg.werkId), box = [vg.rect.x, vg.rect.y, vg.rect.w, vg.rect.h], st = { dokId: vg.dokId, s: vg.seite, nr: ueNrNeu(vg.dokId, vg.seite), typ: vg.art, box, titel: '', neu: true };
+    document.querySelectorAll('.seite.mark').forEach(n => n.classList.remove('mark'));
+    if (vg.art === 'tabelle') tabelleImRechteck(vg.dokId, vg.seite, box).then(z => { st.zeilen = z; ueForm(w, st); }); else ueForm(w, st);
   }
   const LEGENDE = '<p class="legende"><span><ins class="fach">Ergänzung</ins></span><span><del class="fach">Löschung</del></span><span><ins class="ocr">OCR-Korrektur</ins></span><span><del class="ocr">vom OCR falsch gelesen</del></span></p>';
   function aendKarte(a) {
@@ -1046,8 +1165,9 @@ if (typeof document !== 'undefined') (function () {
         <div class="edwerkzeug"><label class="fvwahl">Formatvorlage der Zeile<select id="ed-fv">${opt(Object.keys(FV).map(k => [k, FV[k]]), 'text')}</select></label></div>
         <div class="edwerkzeug suchen"><label><span class="sr">Suchen</span><input id="ed-such" value="${h(E.such)}" placeholder="Suchen"></label><label><span class="sr">Ersetzen durch</span><input id="ed-ers" value="${h(E.ers)}" placeholder="Ersetzen durch"></label><button data-act="ed-such-next">Weitersuchen</button><button data-act="ed-ers-eins">Ersetzen</button><button data-act="ed-ers-alle">Alle ersetzen</button></div>
         <label class="sr" for="ed-text">Text der Seite ${n}</label><textarea id="ed-text" spellcheck="false">${h(E.entwurf)}</textarea>
+        ${/\[\[(Tabelle|Skizze) /.test(E.entwurf) ? '<p class="hinweis edhinweis">Zeilen wie <code>[[Tabelle 12.1]]</code> und <code>[[Skizze 12.2]]</code> sind Platzhalter: An dieser Stelle steht in der Leseansicht die Tabelle oder die Skizze. Die Zeile lässt sich verschieben.</p>' : ''}
         <p class="aktionen edaktionen"><button class="haupt" data-act="ed-speichern">Änderung übernehmen</button><button data-act="ed-abbruch">Abbrechen</button></p>`;
-    else { const html = seitenHtml(dok, n, E.ansicht, E.ebene); mitte = (html.trim() ? `<div class="lesetext">${html}</div>` : '<p class="leer edleer">Auf dieser Seite wurde kein Text erkannt. Über „Text bearbeiten“ lässt er sich von Hand erfassen.</p>') + (E.ansicht === 'hybrid' ? LEGENDE : ''); }
+    else { const html = seitenHtml(dok, n, E.ansicht, E.ebene); const un = E.ansicht === 'hybrid' ? [] : unsicherVon(dok, n), oc = L().ocr[dok.id]; mitte = (un.length ? `<p class="hinweis edhinweis"><mark class="unsicher">${un.length} ${un.length === 1 ? 'Stelle' : 'Stellen'}</mark> auf dieser Seite hat die Texterkennung unsicher gelesen. Die Markierung verschwindet, sobald die Seite als verglichen markiert ist.</p>` : '') + (html.trim() ? `<div class="lesetext">${html}</div>` : '<p class="leer edleer">Auf dieser Seite wurde kein Text erkannt. Über „Text bearbeiten“ lässt er sich von Hand erfassen.</p>') + (E.ansicht === 'hybrid' ? LEGENDE : ''); }
     const zeigA = E.filter !== 'kommentar', zeigK = E.filter === 'alle' || E.filter === 'kommentar';
     const aL = zeigA ? aes.filter(a => E.filter === 'alle' || a.art === E.filter) : [], kL = zeigK ? anms : [];
     const teil = (titel, f) => { const x = aL.filter(f).sort((a, b) => a.seite - b.seite || a.nr - b.nr).map(aendKarte).join('') + kL.filter(f).sort((a, b) => a.seite - b.seite || a.nr - b.nr).map(anmKarte).join(''); return x ? `<h4>${titel}</h4>${x}` : ''; };
@@ -1066,6 +1186,7 @@ if (typeof document !== 'undefined') (function () {
       <div class="edgrid">
         <section class="edspalte" aria-label="Original"><header class="edkopf"><h3>Original</h3><span class="edtools"><button data-act="seite-ok" aria-pressed="${(dok.geprueftSeiten || []).includes(n)}" class="klein ${(dok.geprueftSeiten || []).includes(n) ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${(dok.geprueftSeiten || []).includes(n) ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button><span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span></span></header>
           <p class="edzeile">${['aenderung', 'kommentar'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? 'Jetzt die Stelle im Scan einrahmen' : k === 'aenderung' ? 'Änderung im Scan vorschlagen' : 'Stelle kommentieren'}</button>`; }).join('')}<button data-act="anm-seite" data-werk="${h(w.id)}" data-dok="${h(dok.id)}" data-seite="${n}">Ganze Seite kommentieren</button></p>
+          <p class="edzeile">${['tabelle', 'skizze'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? 'Jetzt den Bereich im Scan einrahmen' : k === 'tabelle' ? 'Tabelle übernehmen' : 'Skizze übernehmen'}</button>`; }).join('')}</p>
           <p class="edzeile ebenen"><span class="umschalt"><button data-act="ed-links" data-v="scan" aria-pressed="${E.links === 'scan'}">Scan</button><button data-act="ed-links" data-v="hybrid" aria-pressed="${E.links === 'hybrid'}">Hybrid</button></span>
             ${E.links === 'hybrid' ? `<label class="regler">Text deckend<input type="range" id="ed-transp" min="0" max="100" step="5" value="${E.transp}"><output>${E.transp} %</output></label><label class="haken"><input type="checkbox" id="ed-z-scan" ${E.zScan ? 'checked' : ''}> Scan</label><label class="haken"><input type="checkbox" id="ed-z-text" ${E.zText ? 'checked' : ''}> Text</label>` : ''}<label class="haken"><input type="checkbox" id="ed-z-marken" ${E.zMarken ? 'checked' : ''}> Markierungen</label></p>
           ${links}</section>
@@ -1121,19 +1242,28 @@ if (typeof document !== 'undefined') (function () {
     const namen = { original: 'Grundtext aus dem PDF', hybrid: 'Mit markierten Änderungen', neu: 'Neu (geltender Text)' }, entwurf = istEntwurf(w, sch);
     let html = `<header><h1>${h(w.kurz)}</h1><p class="dtitel">${h(w.titel)}</p>${entwurf && opt.ansicht !== 'original' ? '<p class="entwurf"><b>ENTWURF.</b> Enthält nicht freigegebene Änderungen.</p>' : `<p><b>${opt.ansicht === 'original' ? 'Grundtext ohne Änderungen.' : 'Freigegebene Fassung.'}</b></p>`}<p>Ansicht: ${namen[opt.ansicht]}. Ebene: ${sch ? h(sch.kurz) : 'Grundtext'}. Bibliothek ${v ? 'Version ' + v.nr + ' vom ' + datumCH(v.datum) : 'ohne Version'}. Ausgegeben am ${datumCH(heute())}${L().meta.bearbeiter ? ' von ' + h(L().meta.bearbeiter) : ''}.</p>${sch && ebeneVon(sch) === 'hersteller' && opt.ansicht !== 'original' ? '<p class="vermerk">Herstellernorm – keine behördliche Norm</p>' : ''}<p>${dstat(w) === 'freigegeben' ? `Digitale Fassung mit dem Original verglichen und freigegeben von ${h(w.digital.pruefer)} am ${datumCH(w.digital.datum)}.` : '<b>Ungeprüfte digitale Fassung:</b> noch nicht mit dem Original verglichen.'} Massgebend ist das Original-PDF.</p>${opt.ansicht === 'hybrid' ? LEGENDE : ''}</header>`;
     let anzahl = 0;
-    ds.forEach(d => { const liste = wahl || Array.from({ length: d.seiten }, (_, i) => i + 1); if (ds.length > 1) html += `<h2 class="dteil">${h(d.teil || d.datei)}</h2>`; liste.forEach(n => { let t = seitenHtml(d, n, opt.ansicht, E.ebene); if (fuerWord) t = t.replace(/\n/g, '<br>'); anzahl++; html += `<section class="dseite"><h3>Seite ${n}</h3><div class="lesetext">${t.trim() ? t : '<i>kein erkannter Text</i>'}</div></section>`; }); });
+    ds.forEach(d => { const liste = wahl || Array.from({ length: d.seiten }, (_, i) => i + 1); if (ds.length > 1) html += `<h2 class="dteil">${h(d.teil || d.datei)}</h2>`; liste.forEach(n => { let t = seitenHtml(d, n, opt.ansicht, E.ebene, true); if (fuerWord) t = t.replace(/\n/g, '<br>'); anzahl++; html += `<section class="dseite"><h3>Seite ${n}</h3><div class="lesetext">${t.trim() ? t : '<i>kein erkannter Text</i>'}</div></section>`; }); });
     if (opt.verzeichnis) html += `<section class="dverz"><h2>Änderungsverzeichnis</h2>${verzeichnisHtml(w, ds, a => !wahl || wahl.includes(a.seite), opt.kommentare)}</section>`;
     return { html, anzahl };
   }
-  function drucken(w, opt) {
+  const druckUmfang = opt => { const akt = dokId(S.ed.dok); return [opt.umfang === 'alles' ? dokus(akt.werkId) : [akt], opt.umfang === 'seite' ? [S.ed.seite] : opt.umfang === 'auswahl' ? seitenListe(opt.seiten, akt.seiten) : null]; };
+  async function drucken(w, opt) {
+    await schnitteLaden(...druckUmfang(opt));
     const { html } = druckHtml(w, opt, false), alt = document.getElementById('druck'); if (alt) alt.remove();
     const el = document.createElement('div'); el.id = 'druck'; el.innerHTML = html; document.body.appendChild(el); document.body.classList.add('druckt');
     setTimeout(() => window.print(), 60);
   }
-  function wordExport(w, opt) {
-    const { html } = druckHtml(w, opt, true);
+  async function wordExport(w, opt) {
+    await schnitteLaden(...druckUmfang(opt));
+    const bilder = [], html = druckHtml(w, opt, true).html.replace(/<img class="ausschnitt"[^>]*?data-w="(\d+)"[^>]*?src="data:image\/png;base64,([^"]+)"[^>]*>/g, (m, bw, b64) => { bilder.push(b64); return `<img src="bild${bilder.length}.png" width="${Math.round(+bw * 6.2)}">`; });
     const doc = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${h(w.kurz)}</title><style>body{font-family:Cambria,Georgia,serif;font-size:11pt}h1{font-family:Calibri,Arial,sans-serif;font-size:22pt}h2{font-family:Calibri,Arial,sans-serif;font-size:14pt}h3{font-family:Calibri,Arial,sans-serif;font-size:9pt;color:#555;font-weight:normal;border-top:1px solid #999}header p,table{font-family:Calibri,Arial,sans-serif;font-size:9pt}.entwurf{color:#A8261D;font-size:12pt}ins{background:#CFEFD8;color:#0E4D27;text-decoration:underline}del{background:#F9D5D1;color:#8A1C14;text-decoration:line-through}ins.ocr{background:#D7E5FB;color:#173B7A}del.ocr{background:#EDF1F7;color:#5E6E88}table{border-collapse:collapse;width:100%}td,th{border:1px solid #888;vertical-align:top;text-align:left}</style></head><body>${html}</body></html>`;
-    herunterladenBlob(`${w.kurz.replace(/[^A-Za-z0-9äöüÄÖÜ-]+/g, '_')}_${opt.ansicht === 'neu' ? 'Fassung' : opt.ansicht === 'hybrid' ? 'mit_Aenderungen' : 'Grundtext'}.doc`, new Blob(['﻿', doc], { type: 'application/msword' }));
+    herunterladenBlob(`${w.kurz.replace(/[^A-Za-z0-9äöüÄÖÜ-]+/g, '_')}_${opt.ansicht === 'neu' ? 'Fassung' : opt.ansicht === 'hybrid' ? 'mit_Aenderungen' : 'Grundtext'}.doc`, new Blob(bilder.length ? [mht(doc, bilder)] : ['﻿', doc], { type: 'application/msword' }));
+  }
+  // Word-Datei mit Bildern: eine Webarchiv-Datei (MHTML), die Word als .doc öffnet
+  function mht(doc, bilder) {
+    const g = '----=_NB_Teil', b64 = btoa(unescape(encodeURIComponent(doc))).replace(/(.{76})/g, '$1\r\n');
+    return `MIME-Version: 1.0\r\nContent-Type: multipart/related; boundary="${g}"; type="text/html"\r\n\r\n--${g}\r\nContent-Type: text/html; charset="utf-8"\r\nContent-Transfer-Encoding: base64\r\nContent-Location: file:///C:/nb/dokument.htm\r\n\r\n${b64}\r\n`
+      + bilder.map((b, i) => `--${g}\r\nContent-Type: image/png\r\nContent-Transfer-Encoding: base64\r\nContent-Location: file:///C:/nb/bild${i + 1}.png\r\n\r\n${b.replace(/(.{76})/g, '$1\r\n')}\r\n`).join('') + `--${g}--\r\n`;
   }
   window.addEventListener('afterprint', () => { const el = document.getElementById('druck'); if (el) el.remove(); document.body.classList.remove('druckt'); });
   async function pdfExport(w, opt) {
@@ -1228,6 +1358,7 @@ if (typeof document !== 'undefined') (function () {
     $('#rahmen').innerHTML = '<div class="spalten">' + leiste() + '<div class="arbeit">' + kopf() + '<main id="haupt" tabindex="-1">' + haupt() + '</main></div></div>';
     if ($('#pdfanm')) $('#pdfanm').scrollTop = st;
     if ($('#pdfseiten')) pdfMount();
+    schnitteMount();
     if ($('.deckel[data-fehlt]')) titelbilderNachholen();
     document.title = (S.dirty ? '• ' : '') + L().meta.titel;
   }
@@ -1329,8 +1460,8 @@ if (typeof document !== 'undefined') (function () {
 
   // ----- Datei
   function teileDaten() { // drei Dateien: Bearbeitungsstand, Texte aus den PDF, Titelbilder
-    const l = L(), kern = {}; Object.keys(l).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder'].includes(k)) kern[k] = l[k]; });
-    return { 'daten/bibliothek.json': JSON.stringify(kern, null, 1), 'daten/texte.json': JSON.stringify({ seitentext: l.seitentext, abschnitte: l.abschnitte, struktur: l.struktur }), 'daten/titelbilder.json': JSON.stringify(l.titelbilder) };
+    const l = L(), kern = {}; Object.keys(l).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder', 'elemente', 'unsicher', 'ocr'].includes(k)) kern[k] = l[k]; });
+    return { 'daten/bibliothek.json': JSON.stringify(kern, null, 1), 'daten/texte.json': JSON.stringify({ seitentext: l.seitentext, abschnitte: l.abschnitte, struktur: l.struktur, elemente: l.elemente, unsicher: l.unsicher, ocr: l.ocr }), 'daten/titelbilder.json': JSON.stringify(l.titelbilder) };
   }
   function herunterladen(name, text, typ) {
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: typ })); a.download = name;
@@ -1349,7 +1480,7 @@ if (typeof document !== 'undefined') (function () {
     const bib = JSON.parse(await liesText('daten/bibliothek.json')); let texte = {}, bilder = {};
     try { texte = JSON.parse(await liesText('daten/texte.json')); } catch (e) { /* ohne Texte weiter */ }
     try { bilder = JSON.parse(await liesText('daten/titelbilder.json')); } catch (e) { /* werden nachgeholt */ }
-    S.lib = Object.assign(bib, { seitentext: texte.seitentext || {}, abschnitte: texte.abschnitte || [], struktur: texte.struktur || {}, titelbilder: bilder || {} });
+    S.lib = Object.assign(bib, { seitentext: texte.seitentext || {}, abschnitte: texte.abschnitte || [], struktur: texte.struktur || {}, elemente: texte.elemente || {}, unsicher: texte.unsicher || {}, ocr: texte.ocr || {}, titelbilder: bilder || {} });
     nachLaden();
   }
   function nachLaden() {
@@ -1415,7 +1546,7 @@ if (typeof document !== 'undefined') (function () {
       <p class="hinweis">Ausgegeben wird der erkannte Text der Ebene „${h(S.ed.ebene && werk(S.ed.ebene) ? werk(S.ed.ebene).kurz : 'Grundtext')}“. Nicht freigegebene Stände werden als Entwurf gekennzeichnet. Die Originalseiten selbst liefert „PDF exportieren“.</p>`, d => {
       const o = { umfang: d.umfang, seiten: d.seiten, ansicht: d.ansicht, verzeichnis: !!d.verzeichnis, kommentare: !!d.kommentare }, w = werk(S.view.id);
       if (d.umfang === 'auswahl' && !seitenListe(d.seiten, dokId(S.ed.dok).seiten).length) return 'Seiten angeben, zum Beispiel 60-66, 70.';
-      if (d.ausgabe === 'word') { wordExport(w, o); meldung('Word-Datei gespeichert.'); } else drucken(w, o);
+      if (d.ausgabe === 'word') wordExport(w, o).then(() => meldung('Word-Datei gespeichert.')); else drucken(w, o);
     }, 'Ausgeben'),
     'ed-pdf': () => dialog('PDF exportieren', `<p class="hinweis">Erzeugt ein PDF aus den unveränderten Originalseiten. Änderungen und Anmerkungen kommen als eigene Blätter dazu.</p>
       <label class="haken"><input type="checkbox" name="deckblatt" checked> Deckblatt mit Änderungsverzeichnis</label>
@@ -1510,6 +1641,31 @@ if (typeof document !== 'undefined') (function () {
     'glossar-zeige': el => { const g = L().glossar.find(x => x.id === el.dataset.id); S.view = { typ: 'glossar' }; S.gq = g ? g.begriff : ''; },
     'ed-inhalt': () => { S.ed.inhaltAuf = !S.ed.inhaltAuf; return false; },
     'ed-gehe': el => { if (edGesperrt()) return false; S.ed.seite = +el.dataset.s; S.ed.inhaltAuf = false; },
+    'ue-zeige': el => { const u = L().uebernahmen.find(x => x.id === el.dataset.id); S.view = { typ: 'werk', id: u.werkId }; S.tab = 'edit'; S.ed.dok = u.dokId; S.ed.seite = u.seite; S.ed.edit = false; },
+    'ue-bearbeiten': el => mitName(() => { const e = elementeVon(L(), S.ed.dok, S.ed.seite).find(x => x.nr === el.dataset.nr); if (e) ueForm(werk(S.view.id), Object.assign({}, e, { zeilen: e.zeilen ? e.zeilen.map(z => z.slice()) : null })); }),
+    'ue-typ': el => mitName(() => {
+      const w = werk(S.view.id), e = elementeVon(L(), S.ed.dok, S.ed.seite).find(x => x.nr === el.dataset.nr); if (!e) return;
+      if (e.typ === 'tabelle') { ueSetzen(w, e, { typ: 'skizze' }, 'Tabelle als Bild gezeigt'); render(); }
+      else if (e.zeilen && e.zeilen.length) ueForm(w, Object.assign({}, e, { typ: 'tabelle', zeilen: e.zeilen.map(z => z.slice()) }));
+      else tabelleImRechteck(e.dokId, e.s, e.box).then(z => ueForm(w, Object.assign({}, e, { typ: 'tabelle', zeilen: z })));
+    }),
+    'ue-weg': el => mitName(() => {
+      const w = werk(S.view.id), e = elementeVon(L(), S.ed.dok, S.ed.seite).find(x => x.nr === el.dataset.nr); if (!e) return;
+      const name = (e.typ === 'tabelle' ? 'Tabelle ' : 'Skizze ') + e.nr;
+      dialog(name + ' entfernen', `<p>${h(name)} wird aus dem Text der Seite ${e.s} entfernt. Das Original-PDF bleibt unverändert.</p>`, () => {
+        const u = L().uebernahmen.find(x => x.dokId === e.dokId && x.nr === e.nr), auto = (L().elemente[e.dokId] || []).some(x => x.nr === e.nr);
+        if (u && !auto && standVon(L(), 'uebernahmen', u) === 'neu') { L().uebernahmen = L().uebernahmen.filter(x => x !== u); log('Übernahme gelöscht', w.id, `Seite ${e.s}, ${name}`); }
+        else ueSetzen(w, e, { weg: true }, 'Tabelle oder Skizze entfernt');
+      }, 'Entfernen');
+    }),
+    'ue-gitter': el => {
+      const st = UE, form = el.closest('form'); st.zeilen = ueLesen(form); st.titel = form.elements.titel.value; st.ohneKopf = !form.elements.kopf.checked;
+      const nc = st.zeilen[0].length, op = el.dataset.op;
+      if (op === 'z+') st.zeilen.push(new Array(nc).fill('')); else if (op === 'z-' && st.zeilen.length > 1) st.zeilen.pop();
+      else if (op === 's+') st.zeilen.forEach(z => z.push('')); else if (op === 's-' && nc > 1) st.zeilen.forEach(z => z.pop());
+      else if (op === 'zu') { st.zeilen = st.zeilen.filter(z => z.some(c => c)); const voll = st.zeilen[0] ? st.zeilen[0].map((_, j) => st.zeilen.some(z => z[j])) : []; st.zeilen = st.zeilen.map(z => z.filter((_, j) => voll[j])); }
+      ueForm(werk(S.view.id), st); return false;
+    },
     'fv-zeige': el => { const f = L().formate.find(x => x.id === el.dataset.id); S.view = { typ: 'werk', id: f.werkId }; S.tab = 'edit'; S.ed.dok = f.dokId; S.ed.seite = f.seite; S.ed.edit = false; },
     'struktur-neu': el => { const ds = dokus(el.dataset.id).filter(pdfDa); el.disabled = true; el.textContent = 'Wird erkannt …'; (async () => { for (const d of ds) await strukturLesen(d); })().then(() => { render(); meldung('Struktur neu erkannt. Zuweisungen von Hand sind erhalten.'); }, e => meldung('Die Struktur lässt sich nicht erkennen: ' + (e.message || e))); return false; },
     'ed-undo': () => { const t = $('#ed-text'); t.focus(); document.execCommand('undo'); S.ed.entwurf = t.value; return false; },

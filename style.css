@@ -410,3 +410,24 @@ button.klein.ok{color:var(--gruen);border-color:var(--gruen)}
 .leiste .logo{display:block;flex:none;width:100%;height:var(--logo-hoehe,0);background:var(--logo,none) left center/contain no-repeat}
 .leiste .app{flex-wrap:wrap}
 .leiste .app:has(.logo[style]),.leiste .app{row-gap:.6rem}
+
+/* Tabellen und Skizzen aus dem Original */
+.ue{margin:.7rem 0;white-space:normal;font-family:var(--ui);break-inside:avoid}
+.ue figcaption{display:flex;flex-wrap:wrap;gap:.3rem .8rem;align-items:center;justify-content:space-between;font-size:.8rem;color:var(--leise);padding:.25rem 0 0}
+.uetools{display:flex;flex-wrap:wrap;gap:.3rem}
+.uerahmen{overflow-x:auto;max-width:100%}
+.uetab{border-collapse:collapse;font-size:.9rem;line-height:1.35;min-width:60%}
+.uetab th,.uetab td{border:1px solid var(--linie);padding:.3rem .5rem;text-align:left;vertical-align:top}
+.uetab thead th{background:var(--papier);font-weight:700;border-bottom-width:2px}
+.uetab.ohnekopf th{font-weight:600;width:34%;background:var(--papier)}
+img.ausschnitt{display:block;max-width:100%;width:100%;height:auto;background:#fff;border:1px solid var(--linie)}
+.ue-skizze img.ausschnitt{width:auto;max-height:80vh}
+.uevorschau{max-height:38vh;overflow:auto;border:1px solid var(--linie);margin-bottom:.6rem}
+.uevorschau img.ausschnitt{border:0}
+.uegitter{border-collapse:collapse;width:100%}
+.uegitter td{border:1px solid var(--linie);padding:0;min-width:7rem;vertical-align:top}
+.uegitter textarea{width:100%;border:0;border-radius:0;padding:.3rem .4rem;font:inherit;font-size:.88rem;resize:vertical;background:transparent;min-height:2rem}
+.uegitter textarea:focus{outline:2px solid var(--blau);outline-offset:-2px}
+mark.unsicher{background:#FFE9A8;color:#4A3500;border-bottom:2px dotted #B07A00;padding:0 .1em}
+@media (prefers-color-scheme:dark){mark.unsicher{background:#4A3A0A;color:#FFE08A;border-bottom-color:#E0B040}}
+@media print{.ue figcaption .uetools{display:none}#druck .uetab th,#druck .uetab td{border:1px solid #666}#druck img.ausschnitt{border:0;max-height:22cm;width:auto;max-width:100%}}
