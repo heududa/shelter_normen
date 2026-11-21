@@ -26,7 +26,7 @@ Die gescannten Normen sind neu eingelesen. Tabellen und Skizzen stehen jetzt als
 
 ### Kontrolle
 - Automatisch je Seite: Sicherheit der Erkennung, Anteil nicht gelesener Schrift, Abgleich aller Zahlen mit der früheren Erkennung. Ergebnis je PDF in `daten/ocr/bericht.json`.
-- Von Hand gegen das Seitenbild verglichen: fünf Seiten vollständig (TWP 1984 S. 38 und 49, TWE 1994 S. 20, TWS 1982 S. 52, TWO 1977 S. 196), dazu die Lage der Elemente auf rund 30 Seiten. Fliesstext und Zahlenwerte stimmten. Gefundene Fehlerarten sind unten genannt; drei Einzelfehler sind berichtigt (⅔ statt «24» in TWP 3.15, ≥135 m² statt «2135 m²», «Variante 1» statt «Variante 7»).
+- Von Hand gegen das Seitenbild verglichen: vier Seiten vollständig (TWP 1984 S. 49, TWE 1994 S. 20, TWS 1982 S. 52, TWO 1977 S. 196), Teile von TWP 1984 S. 38 und 64, dazu die Lage der Elemente auf rund 25 Seiten. Das sind Stichproben; die übrigen Seiten hat nur die automatische Kontrolle gesehen. Fliesstext und Zahlenwerte stimmten. Gefundene Fehlerarten sind unten genannt; drei Einzelfehler sind berichtigt (⅔ statt «24» in TWP 3.15, ≥135 m² statt «2135 m²», «Variante 1» statt «Variante 7»).
 - Alle 74 Normen bleiben «Ungeprüft». Die Kontrolle ersetzt den Vergleich durch einen Prüfer nicht.
 
 ### Annahmen (Status „zu bestätigen“)
