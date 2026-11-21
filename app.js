@@ -596,16 +596,23 @@ if (typeof document !== 'undefined') (function () {
   }
   // ----- Markierung im Text zeigt die Stelle im Original: Wörter der PDF-Seite mit ihrer Lage
   const wortNorm = t => String(t).toLowerCase().replace(/[äàâ]/g, 'a').replace(/[öô]/g, 'o').replace(/[üû]/g, 'u').replace(/[éèê]/g, 'e').replace(/ß/g, 'ss').replace(/[^a-z0-9]/g, '');
-  function seitenWorte(dId, n) {
+  function lagenVon(dId) { // Wortlagen der neuen Texterkennung (daten/lagen/<Dokument>.json), nur für neu erkannte PDF
+    P.lagen = P.lagen || new Map(); if (P.lagen.has(dId)) return P.lagen.get(dId);
+    const pr = !L().ocr[dId] ? Promise.resolve(null) : liesText('daten/lagen/' + dId + '.json').then(t => JSON.parse(t).seiten || null).catch(() => null);
+    P.lagen.set(dId, pr); return pr;
+  }
+  function seitenWorte(dId, n) { // Wörter der Seite mit Lage (Anteile der Seite): aus der neuen Texterkennung, sonst aus der Textebene des PDF
     P.worte = P.worte || new Map(); const key = dId + ':' + n; if (P.worte.has(key)) return P.worte.get(key);
     const pr = (async () => {
       try {
+        const lg = await lagenVon(dId);
+        if (lg && lg[n] && lg[n].length) return lg[n].map(a => ({ t: a[0], k: wortNorm(a[0]), x: a[1], y: a[2], w: a[3], h: a[4], strich: /[-‐]$/.test(a[0]), neu: true }));
         const doc = await pdfDoc(dId); if (!doc) return [];
         const page = await doc.getPage(n), vp = page.getViewport({ scale: 1 }), c = await page.getTextContent(), ws = [];
         c.items.forEach(it => {
           if (!it.str || !it.str.trim() || !it.width) return;
           const [x, y] = vp.convertToViewportPoint(it.transform[4], it.transform[5]), hh = it.height || 10; let pos = 0;
-          it.str.split(/(\s+)/).forEach(t => { if (t.trim()) { const k = wortNorm(t); if (k) ws.push({ t, k, x: (x + it.width * pos / it.str.length) / vp.width, y: (y - hh) / vp.height, w: it.width * t.length / it.str.length / vp.width, h: hh * 1.15 / vp.height, strich: /[-‐]$/.test(t) }); } pos += t.length; });
+          it.str.split(/(\s+)/).forEach(t => { if (t.trim()) ws.push({ t, k: wortNorm(t), x: (x + it.width * pos / it.str.length) / vp.width, y: (y - hh) / vp.height, w: it.width * t.length / it.str.length / vp.width, h: hh * 1.15 / vp.height, strich: /[-‐]$/.test(t) }); pos += t.length; });
         });
         return ws;
       } catch (e) { return []; }
@@ -630,7 +637,7 @@ if (typeof document !== 'undefined') (function () {
   async function zeigeImOriginal(text, davor) {
     const se = $('#pdfseiten .seite'); if (!se) return; se.querySelectorAll('.treffer').forEach(x => x.remove());
     const tok = String(text).split(/\s+/).map(wortNorm).filter(Boolean); if (!tok.length || tok.length > 40) return;
-    const dId = se.dataset.dok, n = +se.dataset.seite, ws = await seitenWorte(dId, n); if (se !== $('#pdfseiten .seite')) return;
+    const dId = se.dataset.dok, n = +se.dataset.seite, ws = (await seitenWorte(dId, n)).filter(w => w.k); if (se !== $('#pdfseiten .seite')) return;
     let fs = fundstellen(ws, tok); if (!fs.length && tok.length === 1 && tok[0].length >= 4) fs = ws.filter(w => w.k.startsWith(tok[0]) || (w.k.length >= 4 && tok[0].startsWith(w.k))).map(w => [w]);
     if (!fs.length) return;
     // die wievielte gleiche Stelle im Text ist markiert? Dieselbe Nummer im Original wird hervorgehoben.
@@ -703,7 +710,17 @@ if (typeof document !== 'undefined') (function () {
   }
   async function textEbene(el) { // erkannter Text des PDF positionsgenau über dem Scan
     if (el.dataset.tl) return; el.dataset.tl = '1';
-    const gen = P.gen, doc = await pdfDoc(el.dataset.dok); if (!doc || gen !== P.gen || !el.isConnected) return;
+    const gen = P.gen, ws = await seitenWorte(el.dataset.dok, +el.dataset.seite); if (gen !== P.gen || !el.isConnected) return;
+    if (ws.length && ws[0].neu) { // neu erkannter Text: derselbe wie in der Textspalte
+      const div = document.createElement('div'); div.className = 'textebene neu'; const H = el.clientHeight, B = el.clientWidth, zeilen = [];
+      const hs = ws.map(w => w.h).sort((a, b) => a - b), hm = hs[Math.floor(hs.length / 2)];
+      ws.forEach(w => { const z = zeilen[zeilen.length - 1], m = w.y + w.h / 2; if (z && Math.abs(m - z.m) < 0.6 * hm && w.x > z.x1 - 0.01) { z.w.push(w); z.o = Math.min(z.o, w.y); z.u = Math.max(z.u, w.y + w.h); z.x1 = w.x + w.w; } else zeilen.push({ m, o: w.y, u: w.y + w.h, x1: w.x + w.w, w: [w] }); });
+      div.innerHTML = zeilen.map(z => { const gr = Math.max(4, Math.min(z.u - z.o, 2.2 * hm) * H * 0.9); return z.w.map(w => `<span style="left:${(w.x * 100).toFixed(2)}%;top:${(z.o * 100).toFixed(2)}%;font-size:${gr.toFixed(1)}px" data-b="${(w.w * B).toFixed(1)}">${h(w.t)}</span>`).join(''); }).join('');
+      el.appendChild(div);
+      div.querySelectorAll('span').forEach(sp => { const b = sp.offsetWidth; if (b) sp.style.transform = `scaleX(${Math.min(3, +sp.dataset.b / b).toFixed(3)})`; });
+      el.dataset.tlfertig = '1'; return;
+    }
+    const doc = await pdfDoc(el.dataset.dok); if (!doc || gen !== P.gen || !el.isConnected) return;
     const page = await doc.getPage(+el.dataset.seite), v1 = page.getViewport({ scale: 1 }), sc = el.clientWidth / v1.width;
     const div = document.createElement('div'); div.className = 'textebene'; div.style.setProperty('--scale-factor', sc);
     el.appendChild(div);
@@ -712,6 +729,8 @@ if (typeof document !== 'undefined') (function () {
   }
   async function textImRechteck(dId, seite, r) { // Text des PDF innerhalb eines markierten Rechtecks (Anteile 0..1)
     try {
+      const nw = await seitenWorte(dId, seite);
+      if (nw.length && nw[0].neu) return nw.filter(w => { const mx = w.x + w.w / 2, my = w.y + w.h / 2; return mx >= r.x && mx <= r.x + r.w && my >= r.y - 0.004 && my <= r.y + r.h + 0.004; }).map(w => w.t).join(' ').slice(0, 600);
       const doc = await pdfDoc(dId); if (!doc) return '';
       const page = await doc.getPage(seite), vp = page.getViewport({ scale: 1 }), c = await page.getTextContent(), teile = [];
       c.items.forEach(it => {
@@ -1214,17 +1233,9 @@ if (typeof document !== 'undefined') (function () {
     return html + els.filter(e => !da.has(e.nr)).map(e => elementHtml(e, druck)).join('');
   }
   async function schnitteLaden(ds, wahl) { for (const d of ds) { if (!hatEl(d.id) || !pdfDa(d)) continue; for (const n of (wahl || Array.from({ length: d.seiten }, (_, i) => i + 1))) for (const e of elementeVon(L(), d.id, n)) if (e.typ === 'skizze') await ausschnitt(d.id, n, e.box); } }
-  async function tabelleImRechteck(dId, seite, box) { // Text des PDF im Rechteck als Zeilen und Spalten
-    try {
-      const doc = await pdfDoc(dId); if (!doc) return [];
-      const page = await doc.getPage(seite), vp = page.getViewport({ scale: 1 }), c = await page.getTextContent(), ws = [];
-      c.items.forEach(it => {
-        if (!it.str || !it.str.trim() || !it.width) return;
-        const [x, y] = vp.convertToViewportPoint(it.transform[4], it.transform[5]), hh = it.height || 10, cy = (y - hh / 2) / vp.height; if (cy < box[1] || cy > box[1] + box[3]) return;
-        let pos = 0; it.str.split(/(\s+)/).forEach(t => { if (t.trim()) { const wx = (x + it.width * pos / it.str.length) / vp.width, ww = it.width * t.length / it.str.length / vp.width; if (wx + ww / 2 >= box[0] && wx + ww / 2 <= box[0] + box[2]) ws.push({ t, x: wx, w: ww, y: cy, h: hh / vp.height }); } pos += t.length; });
-      });
-      return gitterAus(ws);
-    } catch (e) { return []; }
+  async function tabelleImRechteck(dId, seite, box) { // erkannter Text im Rechteck als Zeilen und Spalten
+    try { return gitterAus((await seitenWorte(dId, seite)).map(w => ({ t: w.t, x: w.x, w: w.w, y: w.y + w.h / 2, h: w.h })).filter(w => w.x + w.w / 2 >= box[0] && w.x + w.w / 2 <= box[0] + box[2] && w.y >= box[1] && w.y <= box[1] + box[3])); }
+    catch (e) { return []; }
   }
   const ueNrNeu = (dId, n) => n + '.' + (Math.max(0, ...((L().elemente[dId] || []).filter(e => e.s === n).map(e => +e.nr.split('.')[1])), ...L().uebernahmen.filter(u => u.dokId === dId && u.seite === n).map(u => +u.nr.split('.')[1])) + 1);
   function ueSetzen(w, e, felder, was) { // Übernahme anlegen oder ändern; ein automatisch erkanntes Element wird dabei überlagert

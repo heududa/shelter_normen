@@ -473,3 +473,4 @@ body.vglan{overflow:hidden}
 .vglleiste .zoom,.vglleiste label.sprung,.vglleiste label.haken{display:inline-flex;flex-direction:row;align-items:center;gap:.35rem;margin:0;white-space:nowrap}
 .vglleiste input[type=number]{width:4.2rem;margin:0}
 .vglleiste input[type=checkbox]{margin:0}
+.textebene.neu span{line-height:1.05;font-family:Arial,Helvetica,sans-serif}

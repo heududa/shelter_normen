@@ -64,6 +64,8 @@ function ganzseite(p) {
   const bleibt = kopf.concat(titel, unter);
   p.text = kopf.concat(titel, [`[[Skizze ${p.s}.1]]`], unter).join('\n'); p.roh = bleibt.join('\n'); p.zeilen = p.zeilen.filter(z => bleibt.some(b => b.replace(/\s+/g, ' ').startsWith(z.t))); p.unsicher = p.unsicher.filter(u => p.text.includes(u)); ganzseiten++; ganzListe.push(p.s);
 }
+// Lesefehler der Texterkennung, die sich sicher berichtigen lassen
+const putzen = t => String(t).replace(/\(\(/g, '(').replace(/\)\)/g, ')').replace(/@ ?(?=\d)/g, 'Ø').replace(/(\d) ?mh(?![a-zäöü])/g, '$1 m³/h').replace(/([A-ZÄÖÜ]{2,})- (?!und |oder |bzw)(?=[A-Za-zäöü])/g, '$1-').replace(/(^|[^A-Za-zÄÖÜäöü0-9])UV(?=\/ESV)/g, '$1ÜV').replace(/(^|[^A-Za-zÄÖÜäöü0-9\-])UV(?![A-Za-zÄÖÜäöü0-9\-\/])/g, '$1ÜV');
 // Gescannte Seiten: Text, Tabellen und Skizzen aus der neuen Texterkennung (werkzeuge/ocr.py, Dateien in daten/ocr/)
 const bericht = [];
 for (const e of erfasst) {
@@ -72,7 +74,6 @@ for (const e of erfasst) {
   if (o.pruefsumme !== dk.pruefsumme) { console.log('  Texterkennung passt nicht zum PDF, übersprungen:', e.id); continue; }
   e.ocr = o; lib.elemente[e.id] = []; lib.unsicher[e.id] = {};
   // Lesefehler der Texterkennung, die sich sicher berichtigen lassen: doppelte Klammern, @ statt Durchmesserzeichen
-  const putzen = t => String(t).replace(/\(\(/g, '(').replace(/\)\)/g, ')').replace(/@ ?(?=\d)/g, 'Ø').replace(/(\d) ?mh(?![a-zäöü])/g, '$1 m³/h').replace(/([A-ZÄÖÜ]{2,})- (?!und |oder |bzw)(?=[A-Za-zäöü])/g, '$1-').replace(/(^|[^A-Za-zÄÖÜäöü0-9])UV(?=\/ESV)/g, '$1ÜV').replace(/(^|[^A-Za-zÄÖÜäöü0-9\-])UV(?![A-Za-zÄÖÜäöü0-9\-\/])/g, '$1ÜV');
   o.seiten.forEach(p => { p.text = putzen(p.text); p.roh = putzen(p.roh); p.zeilen.forEach(z => { z.t = putzen(z.t); }); if (/\d ?mh(?![a-zäöü])/.test(p.text)) p.unsicher.push('m³/h'); if (/(^|[^A-Za-zÄÖÜäöü0-9\-])UV(?![A-Za-zÄÖÜäöü0-9\-\/])/.test(p.text)) p.unsicher.push('ÜV'); p.unsicher = p.unsicher.map(putzen); p.elemente.forEach(x => { if (x.zeilen) x.zeilen = x.zeilen.map(z => z.map(putzen)); }); });
   // Lesefehler, die bei der Stichprobe am Scan aufgefallen sind (Bruchzeichen, Grösser-gleich-Zeichen, Ziffer in Kursivschrift)
   STICHPROBE.filter(k => k.dok === e.id).forEach(k => { const p = o.seiten.find(x => x.s === k.s); if (!p || !p.text.includes(k.alt)) { console.log('  Stichprobenkorrektur nicht gefunden:', k.dok, k.s, k.alt); return; } const f = t => String(t).split(k.alt).join(k.neu); p.text = f(p.text); p.roh = f(p.roh); p.zeilen.forEach(z => { z.t = f(z.t); }); p.unsicher = p.unsicher.filter(u => !k.alt.split(' ').includes(u)); stichproben++; });
@@ -112,6 +113,9 @@ for (const e of erfasst) {
     if (un.size) { lib.unsicher[e.id][p.s] = [...un].sort(); nU += un.size; }
     conf += p.conf * p.worte; worte += p.worte;
   });
+  // Wortlagen je Dokument: für die Markierung im Scan und die Hybridansicht (das Programm lädt sie bei Bedarf)
+  const lagen = {}; e.ocr.seiten.forEach(p => { if (p.lagen && p.lagen.length) lagen[p.s] = p.lagen.map(a => [String(putzen(a[0])).split(RW).map((x, i) => i % 2 ? umlaut(x) : x).join(''), a[1], a[2], a[3], a[4]]); });
+  if (Object.keys(lagen).length) { fs.mkdirSync(path.join('daten', 'lagen'), { recursive: true }); fs.writeFileSync(path.join('daten', 'lagen', e.id + '.json'), JSON.stringify({ dokId: e.id, seiten: lagen })); }
   lib.ocr[e.id] = { werkzeug: e.ocr.werkzeug, seiten: e.ocr.seiten.length, datum: '2026-11-21', sicherheit: +(conf / Math.max(1, worte)).toFixed(1), tabellen: nT, skizzen: nS, unsicher: nU };
   bericht.push({ dok: e.id, norm: e.w.kurz, teil: e.q.teil || '', seiten: e.ocr.seiten.length, sicherheit: lib.ocr[e.id].sicherheit, tabellen: nT, skizzen: nS, unsicher: nU, schwach: e.ocr.seiten.filter(p => p.conf < 80 && p.worte > 20).map(p => p.s) });
 }

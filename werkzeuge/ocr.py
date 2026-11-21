@@ -325,7 +325,7 @@ def seite(arg):
         img = lade_seite(pfad, i); H, W = img.shape
         zl = zeilen_bauen(tess(img, tessdata, 4), 30.0)
         alle = [w for l in zl for w in l['worte']]
-        return dict(s=i, luecke=0, fehler=str(ex)[:120], text=absaetze(zl, 30.0), roh='\n'.join(l['t'] for l in zl), zeilen=[dict(t=re.sub(r'\s+', ' ', l['t']), g=10, x=round(l['x0'] * 72 / DPI), yy=round(l['y0'] / H, 3)) for l in zl],
+        return dict(s=i, luecke=0, fehler=str(ex)[:120], lagen=[[w['t'], round(w['x'] / W, 4), round(w['y'] / H, 4), round(w['w'] / W, 4), round(w['h'] / H, 4)] for w in alle], text=absaetze(zl, 30.0), roh='\n'.join(l['t'] for l in zl), zeilen=[dict(t=re.sub(r'\s+', ' ', l['t']), g=10, x=round(l['x0'] * 72 / DPI), yy=round(l['y0'] / H, 3)) for l in zl],
                     elemente=[], unsicher=sorted({w['t'] for w in alle if w['c'] < 55 and re.search(r'\d', w['t'])}), conf=round(float(np.mean([w['c'] for w in alle])) if alle else 0, 1), worte=len(alle))
 
 
@@ -551,7 +551,8 @@ def seite_(arg):
             if e.get('formel'): o['formel'] = True
         el.append(o)
     conf = float(np.mean([w['c'] for w in alle])) if alle else 0
-    return dict(s=i, luecke=luecke_, text=text, roh='\n'.join(l['t'] for l in echte), zeilen=zl, elemente=el, unsicher=unsicher, conf=round(conf, 1), worte=len(alle))
+    lagen = [[w['t'], round(w['x'] / W, 4), round(w['y'] / H, 4), round(w['w'] / W, 4), round(w['h'] / H, 4)] for w in sorted(alle, key=lambda w: (round((w['y'] + w['h'] / 2) / (0.6 * th)), w['x']))]
+    return dict(s=i, luecke=luecke_, lagen=lagen, text=text, roh='\n'.join(l['t'] for l in echte), zeilen=zl, elemente=el, unsicher=unsicher, conf=round(conf, 1), worte=len(alle))
 
 
 def main():
