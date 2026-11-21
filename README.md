@@ -10,6 +10,7 @@ Alle Normen an einem Ort: Original-PDF, erkannter Text, Regeln, Änderungen und 
 | `lib/` | PDF-Anzeige (pdf.js) und PDF-Export (pdf-lib) |
 | `daten/bibliothek.json` | Bearbeitungsstand: Normen, Regeln, Änderungen, Anmerkungen, Glossar, Versionen, Verlauf |
 | `daten/texte.json` | Seitentexte, Abschnitte, erkannte Struktur, Tabellen und Skizzen, unsicher gelesene Stellen |
+| `daten/lagen/` | Lage jedes Wortes auf den neu erkannten Seiten; für Markierung im Scan und Hybridansicht |
 | `daten/ocr/` | Ergebnis der Texterkennung je gescanntem PDF und `bericht.json`; Quelle für die Ersterfassung |
 | `daten/titelbilder.json` | Titelblätter für die Startseite |
 | `pdf/` | Original-PDF, unverändert |

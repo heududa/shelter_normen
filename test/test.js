@@ -209,6 +209,10 @@ const path0 = path.join(__dirname, 'daten');
   await p.evaluate(() => window.dispatchEvent(new Event('afterprint')));
   // Vergleich über das ganze Fenster: gleicher Zoom, gleiches Scrollen, Markierung im Text zeigt die Stelle im Scan
   await p.evaluate(() => { const S = window.__nb.S; S.ed.ansicht = 'neu'; S.ed.dok = 'd-twp84-1'; S.ed.seite = 9; window.__nb.oeffne('twp84', 'edit'); }); await p.waitForSelector('.seite[data-fertig]');
+  // Hybridansicht und Markierung nutzen die Wortlagen der neuen Texterkennung
+  await p.click('[data-act=ed-links][data-v=hybrid]'); await p.waitForSelector('.seite .textebene.neu span'); assert.ok(await p.locator('.seite .textebene.neu span').count() > 150);
+  assert.ok((await p.locator('.seite .textebene.neu').innerText()).includes('Konstruktionsstärken')); await p.screenshot({ path: D + 'l_hybrid.png' });
+  await p.click('[data-act=ed-links][data-v=scan]');
   await p.click('[data-act=vgl-an]'); await p.waitForSelector('#vgl .seite[data-fertig]');
   const vm = () => p.evaluate(() => { const l = document.querySelector('#vgl-l .vglblatt'), r = document.querySelector('#vgl-r .vglblatt'), f = document.querySelector('#vgl-l'); return { lw: l.offsetWidth, rw: r.offsetWidth, lh: l.offsetHeight, feld: f.clientHeight, fs: parseFloat(getComputedStyle(r).fontSize) }; });
   let v1 = await vm(); assert.equal(v1.lw, v1.rw); assert.ok(v1.lh <= v1.feld, 'die ganze Seite ist sichtbar'); assert.equal(await p.locator('#vgl-z').innerText(), '100 %');

@@ -1,5 +1,18 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.11.2 – 21.11.2026
+
+### Geändert
+- **Nur noch eine Texterkennung im Programm:** Die Lage jedes Wortes aus der neuen Texterkennung ist gespeichert (`daten/lagen/`, je gescanntem PDF eine Datei, zusammen 5 MB). Für die neu erkannten Seiten nutzt das Programm überall diese Lagen statt der alten Textebene im PDF:
+  - **Markierung im Text → Scan** trifft jetzt jedes Wort des angezeigten Textes.
+  - **Hybridansicht** legt den neuen Text über den Scan, also denselben wie in der Textspalte.
+  - **«Tabelle übernehmen»** und **«Änderung im Scan vorschlagen»** lesen den neuen Text im eingerahmten Bereich.
+- Die Texterkennung lief dafür noch einmal über alle Scans. Text, Tabellen und Skizzen sind auf allen 820 Seiten gleich geblieben; nur die Wortlagen kamen dazu.
+- Die Original-PDF sind unverändert. Ihre alte Textebene wird nur noch für digital entstandene PDF gebraucht (dort ist sie der richtige Text) und als Ersatz, wenn `daten/lagen/` fehlt.
+
+### Zu bestätigen
+- Annahme M1 aus 0.11.1 entfällt. Bleibt: Von Hand berichtigte Wörter (OCR-Korrekturen) haben keine eigene Lage; die Markierung findet sie im Scan nur, wenn das ursprünglich gelesene Wort ähnlich beginnt.
+
 ## 0.11.1 – 21.11.2026
 
 ### Neu
