@@ -1,5 +1,33 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.14.0 – 22.11.2026
+
+Werkzeuge für den Vergleich mit dem Original.
+
+### Neu im Vergleich («Vergleichen: ganze Seite»)
+- **Zeilengetreu:** Umschalter «Fliesstext / Zeilengetreu». Zeilengetreu steht jede Zeile an ihrem Ort wie auf der Seite, mit demselben Umbruch; Skizzen stehen als Ausschnitt am selben Platz. Unsichere Wörter sind gelb, von Hand berichtigte blau.
+- **Zeilengenaues Mitscrollen:** Im Fliesstext richtet sich die andere Seite nach der Zeile, nicht mehr nach dem Anteil. Die Stelle auf einem Drittel der Fensterhöhe steht links und rechts gleich hoch; Skizzen und Tabellen dienen als zusätzliche Stützpunkte.
+- **Zeilenlineal:** Die aktuelle Zeile ist im Scan und im Text hervorgehoben und wandert mit Pfeil auf und ab oder per Klick.
+- **Blinkvergleich:** Scan und zeilengetreuer Text liegen übereinander und wechseln mit der Leertaste.
+- **Tastaturablauf:** Enter markiert die Seite als verglichen und geht zur nächsten, N springt zur nächsten Seite mit unsicheren Stellen, dazu Tasten für Seiten, Zoom, Darstellung, Lineal, Blinken und Bearbeiten. «Tasten» zeigt die Liste.
+- **Fortschritt:** Balken «n von N Seiten verglichen» in der Leiste.
+
+### Neu: Prüfliste
+- **Stellen einzeln prüfen:** Unter «Prüfungen → Stellen prüfen» oder «Prüfliste» in der Bearbeitung. Jede Stelle zeigt den Ausschnitt aus dem Scan mit dem eingerahmten Wort, das gelesene Wort gross und die Zeile als Kontext. Enter bestätigt, K berichtigt, Pfeiltasten blättern, V öffnet die Seite im Vergleich.
+- **Drei Listen:** unsicher gelesene Stellen, Zahlen mit Einheit, alle Zahlen. Eine vierte, «Vorschläge der Zweitlesung», erscheint, wenn Vorschläge vorliegen.
+- **Berichtigen** legt eine OCR-Korrektur an (oder ändert die Tabellenzelle) und ist wie jede Änderung versioniert.
+- **Bestätigte Stellen** erscheinen nicht mehr in der Liste. Sind alle gleichen Wörter einer Seite bestätigt, entfällt die gelbe Markierung im Text. Seiten, die als verglichen markiert sind, lässt die Liste aus.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| P1 | Zeilengetreu zeigt den Grundtext mit den OCR-Korrekturen von Hand, keine Schichten (Kanton, Hersteller) und keine Formatvorlagen. Tabellen stehen dort als Wörter an ihrem Ort, ohne Linien. |
+| P2 | Seiten, die ganz als Bild geführt sind, zeigen zeilengetreu nur das Bild. |
+| P3 | «Zahlen mit Einheit» erkennt eine Zahl, auf die in derselben Zeile eine Einheit folgt (m, mm, m², m³/h, Pa, kN/m², %, …) oder an der sie hängt. Zahlen ohne Einheit stehen nur in «Alle Zahlen». |
+| P4 | Die Prüfliste gibt es nur für neu erkannte (gescannte) Seiten. Bei digital entstandenen PDF ist der Text das Original. |
+| P5 | Bestätigungen in der Prüfliste werden je Sitzung und Liste einmal im Verlauf vermerkt, nicht je Stelle. Sie stehen aber einzeln in den Daten. |
+| P6 | Eine bestätigte Stelle ist kein Ersatz für «Seite verglichen»: Die Prüfliste prüft Wörter, nicht ob etwas fehlt. |
+
 ## 0.13.0 – 22.11.2026
 
 Eigene Bilder im Text: Skizze tauschen, Bild neu einfügen, Grösse, Ausrichtung und Lage einstellen.

@@ -224,6 +224,32 @@ const path0 = path.join(__dirname, 'daten');
   await p.evaluate(() => { const r = document.querySelector('#vgl-r'); r.scrollTop = (r.scrollHeight - r.clientHeight) / 2; }); await p.waitForTimeout(250);
   const sc = await p.evaluate(() => { const l = document.querySelector('#vgl-l'); return l.scrollTop / (l.scrollHeight - l.clientHeight); }); assert.ok(Math.abs(sc - 0.5) < 0.03, 'gleich scrollen');
   await p.click('[data-act=ed-seite][data-d="1"]'); await p.waitForSelector('#vgl .seite[data-seite="10"][data-fertig]'); await p.keyboard.press('Escape'); await p.waitForSelector('.edgrid'); assert.equal(await p.locator('#vgl').count(), 0);
+  // Vergleich: zeilengetreu, zeilengenaues Scrollen, Zeilenlineal, Blinkvergleich, Tasten
+  await p.evaluate(() => { const S = window.__nb.S; S.ed.ansicht = 'neu'; S.ed.dok = 'd-tws82-1'; S.ed.seite = 52; S.ed.vz = 'seite'; window.__nb.oeffne('tws82', 'edit'); }); await p.waitForSelector('.seite[data-fertig]');
+  await p.click('[data-act=vgl-an]'); await p.waitForSelector('#vgl .seite[data-fertig]'); await p.keyboard.press('+'); await p.keyboard.press('+'); await p.keyboard.press('+'); await p.waitForTimeout(500);
+  await p.evaluate(() => { document.querySelector('#vgl-l').scrollTop = 420; }); await p.waitForTimeout(250);
+  const gleichHoch = await p.evaluate(() => { const Z = window.__nb.S, li = document.querySelector('#vgl-l'), re = document.querySelector('#vgl-r'), mitte = li.getBoundingClientRect().top + li.clientHeight / 3; const lin = [...document.querySelectorAll('#vgl-r .lesetext')][0]; const tw = document.createTreeWalker(lin, NodeFilter.SHOW_TEXT); let n, best = null; const r = document.createRange(); while ((n = tw.nextNode())) { const i = n.nodeValue.indexOf('Schutzbauten'); if (i >= 0) { r.setStart(n, i); r.setEnd(n, i + 5); best = r.getBoundingClientRect().top; break; } } return { rs: re.scrollTop, ls: li.scrollTop, best, mitte }; });
+  assert.ok(gleichHoch.rs > 0 && Math.abs(gleichHoch.rs - gleichHoch.ls) > 1, 'der Text läuft nach Zeilen mit, nicht nach Anteil: ' + JSON.stringify(gleichHoch));
+  await p.keyboard.press('l'); await p.waitForSelector('.seite .lineal'); for (let i = 0; i < 6; i++) await p.keyboard.press('ArrowDown');
+  assert.equal(await p.evaluate(() => window.__nb.S.ed.vzl), 6); assert.ok(await p.evaluate(() => CSS.highlights.has('lineal') && CSS.highlights.get('lineal').size > 2), 'Zeilenlineal im Fliesstext');
+  await p.keyboard.press('z'); await p.waitForSelector('#vgl-zg .zg span'); assert.ok(await p.locator('#vgl-zg .zg').count() > 8); assert.equal(await p.locator('#vgl-zg .zg.aktiv').count(), 1);
+  assert.equal(await p.evaluate(() => document.querySelector('#vgl-zg').offsetHeight), await p.evaluate(() => document.querySelector('#vgl-l .seite').offsetHeight), 'zeilengetreu: beide Blätter gleich hoch');
+  assert.ok(await p.locator('#vgl-zg .zgbild img').count() >= 1); await p.screenshot({ path: D + 'm_zeilengetreu.png' });
+  await p.keyboard.press('b'); await p.waitForSelector('.seite .blinklage .zg span'); assert.equal(await p.locator('#vgl-r').count(), 0); await p.keyboard.press(' ');
+  assert.ok(await p.evaluate(() => document.querySelector('.blinklage').hidden)); await p.keyboard.press(' '); assert.ok(!(await p.evaluate(() => document.querySelector('.blinklage').hidden))); await p.keyboard.press('b');
+  await p.keyboard.press('Enter'); await p.waitForSelector('#vgl .seite[data-seite="53"]'); assert.deepEqual(await p.evaluate(() => window.__nb.S.lib.dokumente.find(d => d.id === 'd-tws82-1').geprueftSeiten), [52]);
+  await p.keyboard.press('n'); assert.ok(await p.evaluate(() => window.__nb.S.ed.seite) > 53); await p.click('[data-act=vgl-tasten]'); await p.waitForSelector('#dlg kbd'); await p.click('#dlg [data-act=dlg-zu]'); await p.keyboard.press('Escape'); await p.waitForSelector('.edgrid');
+  // Prüfliste: Stellen mit Ausschnitt bestätigen und berichtigen
+  await p.click('[data-act=pl-auf]'); await p.waitForSelector('#plkarte'); await p.waitForFunction(() => { const i = document.querySelector('.plbild img'); return i && i.naturalWidth > 100; });
+  const pls = () => p.evaluate(() => { const Q = window.__nb.S.pl, it = Q.liste[Q.i]; return { von: Q.von, i: Q.i, n: it.n, t: it.t, ok: Q.ok, korr: Q.korr }; });
+  let q0 = await pls(); assert.ok(q0.von > 100 && q0.n !== 52, 'verglichene Seiten erscheinen nicht'); await p.screenshot({ path: D + 'm_pruefliste.png' });
+  await p.keyboard.press('Enter'); let q1 = await pls(); assert.equal(q1.i, 1); assert.equal(q1.ok, 1);
+  const vorAe = await p.evaluate(() => window.__nb.S.lib.aenderungen.length + window.__nb.S.lib.uebernahmen.length);
+  await p.keyboard.press('k'); await p.waitForSelector('#pl-neu'); await p.fill('#pl-neu', q1.t + 'Z'); await p.keyboard.press('Enter'); await p.waitForFunction(() => window.__nb.S.pl.korr === 1);
+  assert.equal(await p.evaluate(() => window.__nb.S.lib.aenderungen.length + window.__nb.S.lib.uebernahmen.length), vorAe + 1, 'Berichtigung ist eine OCR-Korrektur oder eine Tabellenänderung');
+  assert.equal(await p.evaluate(() => window.__nb.S.lib.dokumente.find(d => d.id === 'd-tws82-1').bestaetigt.length), 2);
+  await p.selectOption('#pl-art', 'einheit'); await p.waitForFunction(() => window.__nb.S.pl.art === 'einheit' && window.__nb.S.pl.liste); assert.ok((await pls()).von > 50);
+  await p.keyboard.press('v'); await p.waitForSelector('#vgl'); await p.keyboard.press('Escape'); await p.waitForSelector('.edgrid');
   // Ohne Webserver: Startschirm mit Ordnerwahl
   const p3 = await b.newPage(); p3.on('pageerror', e => errs.push('file: ' + e.message)); await p3.goto('file://' + R + '/index.html'); await p3.waitForSelector('.startschirm [data-act=ordner]');
   srv.close();

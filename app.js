@@ -324,7 +324,7 @@ if (typeof document !== 'undefined') (function () {
   const layer0 = istSchicht;
   const ebeneVon = w => hg(w.herausgeberId).art === 'kanton' ? 'kanton' : 'hersteller';
   S.dokWahl = {}; S.auf = {};
-  S.ed = { dok: null, seite: 1, ansicht: 'hybrid', ebene: '', edit: false, entwurf: '', filter: 'alle', links: 'scan', transp: 60, zScan: true, zText: true, zMarken: true, such: '', ers: '', vgl: false, vz: 'seite', vsync: true };
+  S.ed = { dok: null, seite: 1, ansicht: 'hybrid', ebene: '', edit: false, entwurf: '', filter: 'alle', links: 'scan', transp: 60, zScan: true, zText: true, zMarken: true, such: '', ers: '', vgl: false, vz: 'seite', vsync: true, vtext: 'fliess', vlineal: false, vzl: 0, vblink: false, vblinkT: true };
   S.wahlAus = new Set(); S.vgl = { a: '', b: 'jetzt' };
   S.bib = { q: '', gruppe: '', status: '', hg: '', liste: false };
   const R = { offen: [] };
@@ -334,7 +334,7 @@ if (typeof document !== 'undefined') (function () {
   const dokVon = id => dokus(id)[0];
   const istGanz = w => dokus(w.id).length > 1 && (!S.dokWahl[w.id] || S.dokWahl[w.id] === '*');
   function migriere() { // fehlende Felder älterer Stände ergänzen
-    const l = S.lib; ['anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar', 'abschnitte', 'versionen', 'verlauf'].forEach(k => { l[k] = l[k] || []; }); ['titelbilder', 'seitentext', 'struktur', 'elemente', 'unsicher', 'ocr'].forEach(k => { l[k] = l[k] || {}; }); l.uebernahmen = l.uebernahmen || [];
+    const l = S.lib; ['anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar', 'abschnitte', 'versionen', 'verlauf'].forEach(k => { l[k] = l[k] || []; }); ['titelbilder', 'seitentext', 'struktur', 'elemente', 'unsicher', 'ocr', 'vorschlaege'].forEach(k => { l[k] = l[k] || {}; }); l.uebernahmen = l.uebernahmen || [];
     l.dokumente.forEach(d => { if (d.teil == null) d.teil = ''; });
     l.anmerkungen.forEach(a => { if (!a.dokId) { const d = l.dokumente.find(x => x.werkId === a.werkId); if (d) a.dokId = d.id; } });
   }
@@ -657,28 +657,133 @@ if (typeof document !== 'undefined') (function () {
     zeigeImOriginal(sel.toString(), vor.toString());
   }, 160); });
   const VGL_STUFEN = [50, 75, 100, 125, 150, 200, 250, 300, 400];
+  // ----- Zeilen der Seite, zeilengetreue Darstellung, Zuordnung Text ↔ Scan
+  function zeilenAusWorten(ws) { // Wörter mit Lage zu Zeilen, von oben nach unten; in der Zeile von links nach rechts
+    if (!ws.length) return [];
+    const hs = ws.map(w => w.h).sort((a, b) => a - b), hm = hs[Math.floor(hs.length / 2)] || 0.012, zl = [];
+    ws.map((w, i) => i).sort((p, q) => (ws[p].y + ws[p].h / 2) - (ws[q].y + ws[q].h / 2)).forEach(i => { const w = ws[i], z = zl[zl.length - 1], m = w.y + w.h / 2; if (z && Math.abs(m - z.m) < 0.55 * hm) { z.w.push(i); z.o = Math.min(z.o, w.y); z.u = Math.max(z.u, w.y + w.h); z.m = (z.o + z.u) / 2; } else zl.push({ m, o: w.y, u: w.y + w.h, w: [i] }); });
+    zl.forEach(z => { z.w.sort((p, q) => ws[p].x - ws[q].x); z.x0 = ws[z.w[0]].x; z.x1 = Math.max(...z.w.map(k => ws[k].x + ws[k].w)); z.gr = Math.min(z.u - z.o, 2.2 * hm); });
+    return zl;
+  }
+  function lcs(a, b, gleich) { // längste gemeinsame Folge: Paare [i, j]
+    const n = a.length, m = b.length, t = new Uint16Array((n + 1) * (m + 1)), out = [];
+    for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) t[i * (m + 1) + j] = gleich(a[i], b[j]) ? t[(i + 1) * (m + 1) + j + 1] + 1 : Math.max(t[(i + 1) * (m + 1) + j], t[i * (m + 1) + j + 1]);
+    for (let i = 0, j = 0; i < n && j < m;) { if (gleich(a[i], b[j])) { out.push([i, j]); i++; j++; } else if (t[(i + 1) * (m + 1) + j] >= t[i * (m + 1) + j + 1]) i++; else j++; }
+    return out;
+  }
+  function ersetzungen(dId, n, ws) { // Korrekturen am Grundtext auf die Wörter im Scan übertragen: Wortnummer → neuer Text
+    const out = new Map(), basis = seitenBasis(L(), dId, n), eff = textOcr(L(), dId, n); if (basis === eff) return out;
+    const tok = t => t.replace(/\[\[[^\]]*\]\]/g, ' ').split(/\s+/).filter(Boolean), A = tok(basis), B = tok(eff), ers = new Map(); let ia = 0, ib = 0;
+    lcs(A, B, (x, y) => x === y).concat([[A.length, B.length]]).forEach(([x, y]) => {
+      if (x > ia) { ers.set(ia, B.slice(ib, y).join(' ')); for (let k = ia + 1; k < x; k++) ers.set(k, ''); }
+      else if (y > ib && ia > 0) ers.set(ia - 1, (ers.has(ia - 1) ? ers.get(ia - 1) : A[ia - 1]) + ' ' + B.slice(ib, y).join(' '));
+      ia = x + 1; ib = y + 1;
+    });
+    if (ers.size) lcs(A.map(wortNorm), ws.map(w => w.k), (x, y) => !!x && x === y).forEach(([ai, wi]) => { if (ers.has(ai)) out.set(wi, ers.get(ai)); });
+    return out;
+  }
+  async function zeilenBlatt(ziel, dId, n) { // der Text zeilengetreu: jede Zeile an ihrem Ort auf der Seite, Skizzen als Ausschnitt
+    const dok = dokId(dId), ws = await seitenWorte(dId, n); if (!ziel.isConnected) return;
+    const els = hatEl(dId) ? elementeVon(L(), dId, n).filter(e => e.typ === 'skizze') : [], inBild = w => els.some(e => w.x + w.w / 2 > e.box[0] && w.x + w.w / 2 < e.box[0] + e.box[2] && w.y + w.h / 2 > e.box[1] && w.y + w.h / 2 < e.box[1] + e.box[3]);
+    const zl = zeilenAusWorten(ws), H = ziel.clientHeight, B = ziel.clientWidth, un = new Set(unsicherVon(dok, n)), ers = ersetzungen(dId, n, ws);
+    ziel.innerHTML = (ws.length ? '' : '<p class="zgleer">Auf dieser Seite ist kein Text erkannt.</p>') + els.map(e => `<div class="zgbild" style="left:${e.box[0] * 100}%;top:${e.box[1] * 100}%;width:${e.box[2] * 100}%;height:${e.box[3] * 100}%">${schnittImg(dId, n, e.box, 'Skizze ' + e.nr)}</div>`).join('')
+      + zl.map((z, i) => `<div class="zg" data-z="${i}" style="top:${(z.o * 100).toFixed(2)}%;height:${((z.u - z.o) * 100).toFixed(2)}%;font-size:${Math.max(3, z.gr * H * 0.9).toFixed(1)}px">${z.w.map(k => { const w = ws[k], t = ers.has(k) ? ers.get(k) : w.t; return t === '' || inBild(w) ? '' : `<span class="${ers.has(k) ? 'korr' : un.has(w.t) ? 'unsicher' : ''}" style="left:${(w.x * 100).toFixed(2)}%" data-b="${(w.w * B).toFixed(1)}">${h(t)}</span>`; }).join('')}</div>`).join('');
+    ziel.querySelectorAll('.zg span').forEach(sp => { const b = sp.offsetWidth; if (b) sp.style.transform = `scaleX(${Math.min(2.5, Math.max(0.4, +sp.dataset.b / b)).toFixed(3)})`; });
+    schnitteMount(); linealZeigen();
+  }
+  function domWorte(feld) { // Wörter des Fliesstextes mit ihrer Stelle im Dokumentbaum
+    const out = [], tw = document.createTreeWalker(feld, NodeFilter.SHOW_TEXT); let nd;
+    while ((nd = tw.nextNode())) { if (nd.parentElement.closest('figcaption')) continue; const re = /\S+/g; let m; while ((m = re.exec(nd.nodeValue))) { const k = wortNorm(m[0]); if (k) out.push({ nd, a: m.index, b: m.index + m[0].length, k }); } }
+    return out;
+  }
+  async function vglZuordnen() { // welches Wort im Fliesstext ist welches Wort im Scan; daraus die Anker für das Scrollen
+    const se = $('#vgl .seite'), v = $('#vgl'); if (!se || !v) return; const dId = se.dataset.dok, n = +se.dataset.seite, marke = dId + ':' + n + ':' + S.ed.ansicht + ':' + S.ed.vtext + ':' + S.ed.vblink;
+    const ws = await seitenWorte(dId, n); if (!se.isConnected) return;
+    const Z = { marke, ws, zl: zeilenAusWorten(ws), tk: [], zuTk: new Map(), anker: null }, feld = $('#vgl-r .vgltext .lesetext');
+    if (feld) { Z.tk = domWorte(feld); lcs(Z.tk.map(t => t.k), ws.map(w => w.k), (x, y) => x === y).forEach(([i, j]) => Z.zuTk.set(j, i)); }
+    vglMount.z = Z; if (S.ed.vzl >= Z.zl.length) S.ed.vzl = 0; vglAnker(); linealZeigen();
+  }
+  function vglAnker() { // Stützpunkte: Höhe im Scan (Anteil) ↔ Höhe im Textblatt (Anteil)
+    const Z = vglMount.z, blatt = $('#vgl-r .vgltext'); if (!Z) return; Z.anker = null; if (!blatt || !Z.tk.length) return;
+    const top = blatt.getBoundingClientRect().top, H = blatt.offsetHeight, roh = [], r = document.createRange();
+    Z.zl.forEach(z => { const k = z.w.find(x => Z.zuTk.has(x)); if (k === undefined) return; const t = Z.tk[Z.zuTk.get(k)]; r.setStart(t.nd, t.a); r.setEnd(t.nd, t.b); const q = r.getBoundingClientRect(); if (q.height) roh.push([z.o, (q.top - top) / H]); });
+    const se = $('#vgl .seite'); if (hatEl(se.dataset.dok)) elementeVon(L(), se.dataset.dok, +se.dataset.seite).forEach(e => { const f = document.getElementById('ue-' + e.nr.replace('.', '-')); if (f && blatt.contains(f)) { const q = f.getBoundingClientRect(); roh.push([e.box[1], (q.top - top) / H], [e.box[1] + e.box[3], (q.bottom - top) / H]); } });
+    roh.sort((a, b) => a[0] - b[0]); const A = [[0, 0]]; roh.forEach(p => { const l = A[A.length - 1]; if (p[0] > l[0] + 0.004 && p[1] > l[1]) A.push(p); }); if (A[A.length - 1][0] < 1) A.push([1, Math.max(1, A[A.length - 1][1] + 0.001)]);
+    if (A.length > 3) Z.anker = A;
+  }
+  function vglUm(x, vonLinks) { // Höhe von einem Blatt ins andere umrechnen (Anteile)
+    const A = vglMount.z && vglMount.z.anker; if (!A) return x; const a = vonLinks ? 0 : 1, b = 1 - a;
+    for (let i = 1; i < A.length; i++) if (x <= A[i][a] || i === A.length - 1) { const p = A[i - 1], q = A[i]; return p[b] + (q[b] - p[b]) * Math.max(0, Math.min(1.5, (x - p[a]) / Math.max(1e-6, q[a] - p[a]))); }
+    return x;
+  }
+  function linealZeigen() { // aktuelle Zeile auf beiden Seiten hervorheben
+    document.querySelectorAll('.lineal').forEach(x => x.remove()); document.querySelectorAll('.zg.aktiv').forEach(x => x.classList.remove('aktiv')); if (window.CSS && CSS.highlights) CSS.highlights.delete('lineal');
+    const Z = vglMount.z, se = $('#vgl .seite'); if (!Z || !se || !S.ed.vlineal || S.ed.vblink || !Z.zl.length) return;
+    const z = Z.zl[Math.max(0, Math.min(Z.zl.length - 1, S.ed.vzl))], d = document.createElement('div'); d.className = 'lineal'; d.style.cssText = `top:${((z.o - 0.0015) * 100).toFixed(2)}%;height:${((z.u - z.o + 0.003) * 100).toFixed(2)}%`; se.appendChild(d);
+    const zg = document.querySelector(`#vgl-zg .zg[data-z="${Z.zl.indexOf(z)}"]`); if (zg) zg.classList.add('aktiv');
+    if (window.CSS && CSS.highlights && window.Highlight && Z.tk.length) { const rs = z.w.filter(k => Z.zuTk.has(k)).map(k => { const t = Z.tk[Z.zuTk.get(k)], r = document.createRange(); r.setStart(t.nd, t.a); r.setEnd(t.nd, t.b); return r; }); if (rs.length) CSS.highlights.set('lineal', new Highlight(...rs)); }
+  }
+  function linealGehe(i, rollen) {
+    const Z = vglMount.z; if (!Z || !Z.zl.length) return; S.ed.vzl = Math.max(0, Math.min(Z.zl.length - 1, i)); linealZeigen();
+    if (!rollen) return; const li = $('#vgl-l'), bl = li.querySelector('.vglblatt'), z = Z.zl[S.ed.vzl], y = z.o * bl.offsetHeight + 14;
+    if (y < li.scrollTop + 30 || y > li.scrollTop + li.clientHeight - 60) li.scrollTop = Math.max(0, y - li.clientHeight / 3);
+  }
   function vglMount() { // Grösse beider Blätter aus dem Zoom berechnen; 100 % heisst: die ganze Seite passt ins Feld
-    const v = $('#vgl'); document.body.classList.toggle('vglan', !!v); if (!v) return;
+    const v = $('#vgl'); document.body.classList.toggle('vglan', !!v); if (!v) { vglMount.z = null; if (window.CSS && CSS.highlights) CSS.highlights.delete('lineal'); return; }
     const E = S.ed, [a, b] = v.dataset.m.split('/').map(Number), li = $('#vgl-l'), re = $('#vgl-r');
     const bw = li.clientWidth - 28, bh = li.clientHeight - 28, fit = Math.max(160, Math.min(bw, bh * a / b));
     const W = Math.round(E.vz === 'breite' ? bw : fit * (E.vz === 'seite' ? 100 : E.vz) / 100); E.vzAkt = Math.round(W / fit * 100);
     v.querySelectorAll('.vglblatt').forEach(x => { x.style.width = W + 'px'; });
-    const t = v.querySelector('.vgltext'); t.style.minHeight = Math.round(W * b / a) + 'px'; t.style.fontSize = Math.max(4, W * 0.0165).toFixed(2) + 'px'; t.style.padding = `${Math.round(W * 0.06)}px ${Math.round(W * 0.08)}px`;
+    const t = v.querySelector('.vgltext'); if (t) { t.style.minHeight = Math.round(W * b / a) + 'px'; t.style.fontSize = Math.max(4, W * 0.0165).toFixed(2) + 'px'; t.style.padding = `${Math.round(W * 0.06)}px ${Math.round(W * 0.08)}px`; }
+    let zg = $('#vgl-zg'); const se = v.querySelector('.seite');
+    if (E.vblink && !E.edit && se && !zg) { zg = document.createElement('div'); zg.id = 'vgl-zg'; zg.className = 'vglzeile blinklage'; zg.dataset.dok = se.dataset.dok; zg.dataset.seite = se.dataset.seite; se.appendChild(zg); }
+    if (zg) { if (!zg.classList.contains('blinklage')) zg.style.height = Math.round(W * b / a) + 'px'; else { zg.hidden = !E.vblinkT; const was = $('#vgl-blinkwas'); if (was) was.textContent = E.vblinkT ? 'Zu sehen: erkannter Text' : 'Zu sehen: Scan'; } zeilenBlatt(zg, zg.dataset.dok, +zg.dataset.seite); }
     $('#vgl-z').textContent = E.vzAkt + ' %'; $('#vgl-seite').setAttribute('aria-pressed', E.vz === 'seite'); $('#vgl-breite').setAttribute('aria-pressed', E.vz === 'breite');
     clearTimeout(vglMount.t); vglMount.t = setTimeout(() => { const el = v.querySelector('.seite'); if (el) zeichne(el); }, 140);
+    const Z = vglMount.z, marke = se ? se.dataset.dok + ':' + se.dataset.seite + ':' + E.ansicht + ':' + E.vtext + ':' + E.vblink : '';
+    if (!Z || Z.marke !== marke || (Z.tk[0] && !Z.tk[0].nd.isConnected)) vglZuordnen(); else { vglAnker(); linealZeigen(); }
     if (li.dataset.gebunden) return; li.dataset.gebunden = '1';
-    [li, re].forEach((x, i) => x.addEventListener('scroll', () => {
-      if (!S.ed.vsync || vglMount.still === x) return; const y = i ? li : re; vglMount.still = y; clearTimeout(vglMount.t2); vglMount.t2 = setTimeout(() => { vglMount.still = null; }, 80);
-      y.scrollTop = x.scrollTop / Math.max(1, x.scrollHeight - x.clientHeight) * (y.scrollHeight - y.clientHeight); y.scrollLeft = x.scrollLeft / Math.max(1, x.scrollWidth - x.clientWidth) * (y.scrollWidth - y.clientWidth);
+    const felder = re ? [li, re] : [li];
+    felder.forEach((x, i) => x.addEventListener('scroll', () => {
+      if (!re || !S.ed.vsync || vglMount.still === x) return; const y = i ? li : re; vglMount.still = y; clearTimeout(vglMount.t2); vglMount.t2 = setTimeout(() => { vglMount.still = null; }, 80);
+      // zeilengenau: die Stelle auf einem Drittel der Höhe des Feldes steht auf beiden Seiten gleich hoch
+      const bx = x.querySelector('.vglblatt'), by = y.querySelector('.vglblatt'), ant = (x.scrollTop + x.clientHeight / 3 - 14) / Math.max(1, bx.offsetHeight);
+      y.scrollTop = vglUm(ant, i === 0) * by.offsetHeight + 14 - y.clientHeight / 3; y.scrollLeft = x.scrollLeft / Math.max(1, x.scrollWidth - x.clientWidth) * (y.scrollWidth - y.clientWidth);
     }, { passive: true }));
     v.addEventListener('wheel', ev => { if (!ev.ctrlKey) return; ev.preventDefault(); vglZoom(ev.deltaY < 0 ? 1 : -1); }, { passive: false });
+    v.addEventListener('click', ev => { // Zeilenlineal: Klick setzt die Zeile
+      if (!S.ed.vlineal || P.mark || ev.target.closest('button,a,input,select,textarea,label')) return; const Z2 = vglMount.z; if (!Z2) return;
+      const zgl = ev.target.closest('.zg'); if (zgl) return linealGehe(+zgl.dataset.z, false);
+      const s2 = ev.target.closest('.seite'); if (!s2) return; const q = s2.getBoundingClientRect(), y = (ev.clientY - q.top) / q.height; let best = 0; Z2.zl.forEach((z, k) => { if (Math.abs((z.o + z.u) / 2 - y) < Math.abs((Z2.zl[best].o + Z2.zl[best].u) / 2 - y)) best = k; }); linealGehe(best, false);
+    });
   }
   function vglZoom(d, v) {
     const E = S.ed; if (v) E.vz = v; else { const jetzt = E.vzAkt || 100, st = d > 0 ? VGL_STUFEN.find(x => x > jetzt + 2) : VGL_STUFEN.slice().reverse().find(x => x < jetzt - 2); if (!st) return; E.vz = st; }
     vglMount();
   }
   window.addEventListener('resize', () => { if ($('#vgl')) vglMount(); });
-  document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && S.ed.vgl && !$('#dlg').open && !S.ed.edit) { S.ed.vgl = false; render(); } });
+  const TASTEN = [['← →', 'vorherige, nächste Seite'], ['Enter', 'Seite als verglichen markieren und zur nächsten'], ['N', 'nächste Seite mit unsicher gelesenen Stellen'], ['+ −', 'grösser, kleiner'], ['Z', 'Fliesstext oder zeilengetreu'], ['L', 'Zeilenlineal ein und aus'], ['↑ ↓', 'Zeilenlineal: eine Zeile hinauf, hinunter'], ['B', 'Blinkvergleich ein und aus'], ['Leertaste', 'Blinkvergleich: zwischen Scan und Text wechseln'], ['E', 'Text bearbeiten'], ['Esc', 'Vergleich beenden']];
+  function naechsteUnsichere() { const d = dokId(S.ed.dok); for (let k = S.ed.seite + 1; k <= d.seiten; k++) if (unsicherVon(d, k).length) { S.ed.seite = k; return true; } meldung('Nach dieser Seite gibt es in diesem PDF keine unsicher gelesenen Stellen mehr.'); return false; }
+  document.addEventListener('keydown', ev => {
+    if (!S.lib || !S.ed.vgl || S.view.typ !== 'werk' || $('#dlg').open || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    const E = S.ed, ziel = ev.target, tippt = ziel && (ziel.tagName === 'INPUT' || ziel.tagName === 'TEXTAREA' || ziel.tagName === 'SELECT');
+    if (ev.key === 'Escape' && !E.edit) { E.vgl = false; return render(); }
+    if (tippt || E.edit) return;
+    const d = dokId(E.dok), k = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key, tu = f => { ev.preventDefault(); f(); };
+    if (k === 'ArrowLeft' && E.seite > 1) tu(() => { E.seite--; render(); });
+    else if (k === 'ArrowRight' && E.seite < d.seiten) tu(() => { E.seite++; render(); });
+    else if (k === 'ArrowUp' && E.vlineal) tu(() => linealGehe(E.vzl - 1, true));
+    else if (k === 'ArrowDown' && E.vlineal) tu(() => linealGehe(E.vzl + 1, true));
+    else if (k === 'Enter' && ziel.tagName !== 'BUTTON') tu(() => mitName(() => { const set = new Set(d.geprueftSeiten || []); if (!set.has(E.seite)) { set.add(E.seite); d.geprueftSeiten = [...set].sort((x, y) => x - y); log('Seite mit dem Original verglichen', d.werkId, `${d.teil ? d.teil + ', ' : ''}Seite ${E.seite}`); } if (E.seite < d.seiten) E.seite++; render(); }));
+    else if (k === 'n') tu(() => { if (naechsteUnsichere()) render(); });
+    else if (k === '+' || k === '=') tu(() => vglZoom(1));
+    else if (k === '-') tu(() => vglZoom(-1));
+    else if (k === 'z') tu(() => { E.vtext = E.vtext === 'zeile' ? 'fliess' : 'zeile'; E.vblink = false; render(); });
+    else if (k === 'l') tu(() => { E.vlineal = !E.vlineal; render(); });
+    else if (k === 'b') tu(() => { E.vblink = !E.vblink; E.vblinkT = true; render(); });
+    else if (k === ' ' && E.vblink && ziel.tagName !== 'BUTTON') tu(() => { E.vblinkT = !E.vblinkT; vglMount(); });
+    else if (k === 'e') tu(() => { const b = document.querySelector('#vgl [data-act=ed-edit]'); if (b) b.click(); });
+  });
   function pdfMount() {
     const box = $('#pdfseiten'); if (!box) return;
     if (P.werkId !== box.dataset.werk) { pdfReset(); P.werkId = box.dataset.werk; }
@@ -944,13 +1049,91 @@ if (typeof document !== 'undefined') (function () {
       log('Prüfstatus: ' + DSTAT[dd.ziel][0], w.id, notiz);
     }, 'Übernehmen');
   }
+  // ----- Prüfliste: unsichere Stellen, Zahlen und Vorschläge einzeln mit Ausschnitt aus dem Scan bestätigen oder berichtigen
+  const PL_ART = { unsicher: 'Unsicher gelesene Stellen', einheit: 'Zahlen mit Einheit', zahlen: 'Alle Zahlen', vorschlag: 'Vorschläge der Zweitlesung' };
+  const EINHEIT = /^[(\[]?(mm|cm|dm|m|km|m²|m³|m2|m3|m³\/h|m\/s|l|l\/s|l\/min|kg|g|t|kg\/m³|kg\/m²|kN|kN\/m²|kN\/m|N\/mm²|MN|Pa|kPa|MPa|bar|mbar|atü|°C|K|W|kW|V|A|Hz|h|min|s|%|‰|SP|Stk\.?|Mpm|Mp|kp|kp\/cm²|t\/m²)[)\].,;:]*$/;
+  const plKey = it => it.n + '|' + it.idx;
+  async function plBauen(w, art) {
+    const out = [];
+    for (const d of dokus(w.id)) {
+      if (art === 'vorschlag') { const vs = L().vorschlaege[d.id] || {}, erl = d.vorschlagErledigt || []; for (const n of Object.keys(vs).map(Number).sort((a, b) => a - b)) { const ws = (await seitenWorte(d.id, n)).filter(x => x.k), alle = await seitenWorte(d.id, n); vs[n].forEach((v, k) => { if (erl.some(e => e.startsWith(n + '|' + k + '|'))) return; const f = fundstellen(ws, String(v.alt).split(/\s+/).map(wortNorm).filter(Boolean))[0], wo = f ? f[0] : null; out.push({ dokId: d.id, n, idx: 'v' + k, vk: k, t: v.alt, neu: v.neu, grund: v.grund || '', x: wo ? wo.x : 0.1, y: wo ? wo.y : 0.05, w: wo ? Math.max(...f.map(q => q.x + q.w)) - wo.x : 0.8, h: wo ? wo.h : 0.02, zo: wo ? wo.y : 0.05, zu: wo ? wo.y + wo.h : 0.07, ctx: '', gefunden: !!wo, alleLen: alle.length }); }); } continue; }
+      const lg = await lagenVon(d.id); if (!lg) continue; const best = new Set(d.bestaetigt || []);
+      for (const n of Object.keys(lg).map(Number).sort((a, b) => a - b)) {
+        if ((d.geprueftSeiten || []).includes(n)) continue;
+        const ws = await seitenWorte(d.id, n), zl = zeilenAusWorten(ws), zuZ = new Map(); zl.forEach(z => z.w.forEach(k => zuZ.set(k, z)));
+        const tabs = hatEl(d.id) ? elementeVon(L(), d.id, n).filter(e => e.typ === 'tabelle') : [], inTab = x => tabs.find(e => x.x + x.w / 2 > e.box[0] - 0.005 && x.x + x.w / 2 < e.box[0] + e.box[2] + 0.005 && x.y + x.h / 2 > e.box[1] - 0.005 && x.y + x.h / 2 < e.box[1] + e.box[3] + 0.005);
+        const un = art === 'unsicher' ? new Set((L().unsicher[d.id] || {})[n] || []) : null;
+        ws.forEach((x, idx) => {
+          const z = zuZ.get(idx), pos = z.w.indexOf(idx), nach = pos + 1 < z.w.length ? ws[z.w[pos + 1]].t : '';
+          const passt = art === 'unsicher' ? un.has(x.t) : /\d/.test(x.t) && (art === 'zahlen' || EINHEIT.test(nach) || /\d\s?(mm|cm|m|m²|m³|kg|kN|Pa|bar|%|°C|kW|W|V|l|h)[).,;:]*$/.test(x.t));
+          if (!passt || best.has(n + '|' + idx)) return;
+          const gleiche = ws.map((q, k) => q.t === x.t ? k : -1).filter(k => k >= 0), tab = inTab(x);
+          out.push({ dokId: d.id, n, idx, t: x.t, x: x.x, y: x.y, w: x.w, h: x.h, zo: z.o, zu: z.u, ctx: z.w.map(k => k === idx ? '\u0001' + ws[k].t + '\u0002' : ws[k].t).join(' '), gleiche, tabNr: tab ? tab.nr : '', vorher: gleiche.filter(k => k < idx && !inTab(ws[k])).length, nach: art === 'unsicher' ? '' : nach });
+        });
+      }
+    }
+    return out;
+  }
+  function plStart(w, art) { S.pl = { werk: w.id, art, i: 0, liste: null, ok: 0, korr: 0, schreibt: false }; plBauen(w, art).then(l => { if (S.pl && S.pl.werk === w.id && S.pl.art === art) { S.pl.liste = l; S.pl.von = l.length; if (S.view.typ === 'stellen') render(); } }); }
+  function stellenAnsicht(w) {
+    if (!S.pl || S.pl.werk !== w.id) plStart(w, 'unsicher');
+    const Q = S.pl, hatV = dokus(w.id).some(d => Object.keys(L().vorschlaege[d.id] || {}).length);
+    const kopf = `<header class="dashkopf"><div><p class="pfad"><a href="#" data-act="werk-pdf" data-id="${h(w.id)}">Zurück zu ${h(w.kurz)}</a></p><h2>Prüfliste ${h(w.kurz)}</h2><p class="lead">Jede Stelle zeigt den Ausschnitt aus dem Scan und das gelesene Wort. Bestätigen oder berichtigen; das Original bleibt unverändert.</p></div></header>
+      <div class="filter"><label>Was prüfen<select id="pl-art">${opt(Object.keys(PL_ART).filter(k => k !== 'vorschlag' || hatV).map(k => [k, PL_ART[k]]), Q.art)}</select></label>${Q.liste ? `<span class="vglstand"><progress max="${Math.max(1, Q.von)}" value="${Math.min(Q.i, Q.von)}"></progress> Stelle ${Math.min(Q.i + 1, Q.von)} von ${Q.von} · ${Q.ok} bestätigt, ${Q.korr} berichtigt</span>` : ''}</div>`;
+    if (!Q.liste) return `<section class="blatt weit">${kopf}<p class="leer" role="status">Die Liste wird aufgebaut …</p></section>`;
+    if (!Q.von) return `<section class="blatt weit">${kopf}<p class="leer">${Q.art === 'vorschlag' ? 'Keine offenen Vorschläge.' : 'Keine offenen Stellen dieser Art. Seiten, die als verglichen markiert sind, und bestätigte Stellen erscheinen nicht.'}</p></section>`;
+    if (Q.i >= Q.von) return `<section class="blatt weit">${kopf}<div class="plende"><h3>Die Liste ist durch.</h3><p>${Q.ok} bestätigt, ${Q.korr} berichtigt, ${Q.von - Q.ok - Q.korr} übersprungen.</p><p class="reihe"><button data-act="pl-neu">Übersprungene noch einmal zeigen</button><button class="haupt" data-act="werk-pdf" data-id="${h(w.id)}">Zurück zur Norm</button></p></div></section>`;
+    const it = Q.liste[Q.i], d = dokId(it.dokId), zh = Math.max(it.zu - it.zo, 0.012), r4 = x => +x.toFixed(4);
+    const bw = 0.64, bx = r4(Math.max(0, Math.min(1 - bw, it.x + it.w / 2 - bw / 2))), by = r4(Math.max(0, it.zo - 1.7 * zh)), bh = r4(Math.min(1 - by, (it.zu - it.zo) + 3.4 * zh));
+    const ctx = h(it.ctx).replace('\u0001', '<mark>').replace('\u0002', '</mark>'), vor = Q.art === 'vorschlag';
+    return `<section class="blatt weit">${kopf}
+      <div class="plkarte" id="plkarte">
+        <p class="plwo">${h(d.teil ? d.teil + ' · ' : '')}Seite ${it.n}${it.tabNr ? ' · in Tabelle ' + h(it.tabNr) : ''}</p>
+        <div class="plbild">${schnittImg(it.dokId, it.n, [bx, by, bw, bh], 'Ausschnitt aus dem Scan, Seite ' + it.n)}${vor && !it.gefunden ? '' : `<span class="plmarke" style="left:${((it.x - bx) / bw * 100).toFixed(2)}%;top:${((it.y - by) / bh * 100).toFixed(2)}%;width:${(it.w / bw * 100).toFixed(2)}%;height:${(it.h / bh * 100).toFixed(2)}%"></span>`}</div>
+        ${vor ? `<dl class="altneu vorschau"><div><dt>Gelesen</dt><dd><del class="ocr">${h(it.t)}</del></dd><dt>Vorschlag</dt><dd><ins class="ocr">${h(it.neu)}</ins></dd></div></dl>${it.grund ? `<p class="hinweis">${h(it.grund)}</p>` : ''}`
+          : `<p class="plwort"><span>Gelesen</span><b>${h(it.t)}</b>${it.nach ? `<i>${h(it.nach)}</i>` : ''}</p><p class="plctx">${ctx}</p>`}
+        ${Q.schreibt ? `<form class="plform" id="plform"><label>Richtig ist<input id="pl-neu" value="${h(vor ? it.neu : it.t)}" autocomplete="off" spellcheck="false"></label><button class="haupt">Übernehmen (Enter)</button><button type="button" data-act="pl-abbr">Abbrechen (Esc)</button></form>`
+          : `<p class="aktionen plknopf">${vor ? '<button class="haupt" data-act="pl-ok">Annehmen <kbd>Enter</kbd></button><button data-act="pl-nein">Ablehnen <kbd>X</kbd></button><button data-act="pl-korr">Anders berichtigen <kbd>K</kbd></button>' : '<button class="haupt" data-act="pl-ok">Stimmt <kbd>Enter</kbd></button><button data-act="pl-korr">Berichtigen <kbd>K</kbd></button>'}<button data-act="pl-weiter">Überspringen <kbd>→</kbd></button><button data-act="pl-zurueck" ${Q.i ? '' : 'disabled'}>Zurück <kbd>←</kbd></button><button data-act="pl-vgl">Im Vergleich öffnen <kbd>V</kbd></button></p>`}
+      </div></section>`;
+  }
+  function plVermerk(d) { if (S.pl.vermerkt) return; S.pl.vermerkt = true; log('Prüfliste: Stellen mit dem Original verglichen', d.werkId, PL_ART[S.pl.art]); digitalBeruehrt(werk(d.werkId)); }
+  function plErledigt(it) { // Stelle bestätigt; sind alle gleichen Wörter der Seite bestätigt, entfällt die Markierung im Text
+    const d = dokId(it.dokId); d.bestaetigt = d.bestaetigt || []; if (!d.bestaetigt.includes(plKey(it))) d.bestaetigt.push(plKey(it));
+    if ((it.gleiche || []).every(k => d.bestaetigt.includes(it.n + '|' + k))) { d.stelleOk = d.stelleOk || {}; const l = d.stelleOk[it.n] = d.stelleOk[it.n] || []; if (!l.includes(it.t)) l.push(it.t); }
+    plVermerk(d); S.dirty = true;
+  }
+  function plBerichtigen(it, neu) {
+    const d = dokId(it.dokId), w = werk(d.werkId), esc = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), vorher = textOcr(L(), it.dokId, it.n);
+    if (S.pl.art === 'vorschlag') { if (!vorher.includes(it.t)) return 'Die Stelle steht so nicht mehr im Text. Bitte im Vergleich berichtigen.'; aendAnlegen(w, it.dokId, it.n, 'ocr', null, vorher, vorher.replace(it.t, neu), 'Lesefehler berichtigt (Vorschlag der Zweitlesung, vom Prüfer angenommen).', ''); return ''; }
+    const re = new RegExp('(^|[\\s(\\[„])' + esc(it.t) + '(?=$|[\\s)\\]“.,;:])', 'g');
+    if (it.tabNr) { const e = elementeVon(L(), it.dokId, it.n).find(x => x.nr === it.tabNr); if (e && e.zeilen) { let fertig = false; const Z = e.zeilen.map(z => z.map(c => { if (fertig) return c; const q = c.replace(new RegExp(re.source), (m, a) => { fertig = true; return a + neu; }); return q; })); if (fertig) { ueSetzen(w, e, { zeilen: Z }, 'Tabelle berichtigt (Prüfliste)'); return ''; } } }
+    let c = -1, nachher = vorher.replace(re, (m, a) => ++c === it.vorher ? a + neu : m);
+    if (nachher === vorher) { const alle = vorher.match(re) || []; if (alle.length === 1) nachher = vorher.replace(re, (m, a) => a + neu); }
+    if (nachher === vorher) return 'Die Stelle liess sich im Text nicht eindeutig finden. Bitte «Im Vergleich öffnen» und dort berichtigen.';
+    aendAnlegen(w, it.dokId, it.n, 'ocr', null, vorher, nachher, 'Lesefehler der Texterkennung berichtigt (Prüfliste).', ''); return '';
+  }
+  function plTat(was, wert) {
+    const Q = S.pl; if (!Q || !Q.liste || Q.i >= Q.von) return; const it = Q.liste[Q.i], d = dokId(it.dokId), vor = Q.art === 'vorschlag';
+    const vErl = k => { d.vorschlagErledigt = d.vorschlagErledigt || []; d.vorschlagErledigt.push(it.n + '|' + it.vk + '|' + k); plVermerk(d); S.dirty = true; };
+    if (was === 'ok') { if (it.fertig) { Q.i++; return; } if (vor) { const f = plBerichtigen(it, it.neu); if (f) return meldung(f); vErl('a'); Q.korr++; } else { plErledigt(it); Q.ok++; } it.fertig = true; Q.i++; }
+    else if (was === 'nein') { if (!it.fertig) { vErl('x'); it.fertig = true; Q.ok++; } Q.i++; }
+    else if (was === 'korr') { if (wert === (vor ? it.neu : it.t) && !vor) { Q.schreibt = false; return plTat('ok'); } const f = plBerichtigen(it, wert); if (f) return meldung(f); if (vor) vErl('a'); else plErledigt(it); it.fertig = true; Q.korr++; Q.schreibt = false; Q.i++; }
+  }
+  document.addEventListener('submit', ev => { if (ev.target.id !== 'plform') return; ev.preventDefault(); const v = $('#pl-neu').value.trim(); if (!v) return meldung('Das Feld ist leer. Zum Löschen eines Wortes bitte im Vergleich bearbeiten.'); mitName(() => { plTat('korr', v); render(); }); });
+  document.addEventListener('keydown', ev => {
+    if (!S.lib || S.view.typ !== 'stellen' || !S.pl || !S.pl.liste || $('#dlg').open || ev.ctrlKey || ev.metaKey || ev.altKey) return;
+    const Q = S.pl, tippt = ev.target && (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA' || ev.target.tagName === 'SELECT');
+    if (Q.schreibt) { if (ev.key === 'Escape') { Q.schreibt = false; render(); } return; }
+    if (tippt || Q.i >= Q.von) return; const k = ev.key.length === 1 ? ev.key.toLowerCase() : ev.key, knopf = a => { const b = document.querySelector(`#plkarte [data-act=${a}]`); if (b && !b.disabled) { ev.preventDefault(); b.click(); } };
+    if (k === 'Enter' && ev.target.tagName !== 'BUTTON') knopf('pl-ok'); else if (k === 'k') knopf('pl-korr'); else if (k === 'x') knopf('pl-nein'); else if (k === 'ArrowRight') knopf('pl-weiter'); else if (k === 'ArrowLeft') knopf('pl-zurueck'); else if (k === 'v') knopf('pl-vgl');
+  });
   function pruefAnsicht() {
     const f = S.pf || '', ws = L().werke.filter(w => dokVon(w.id) && (!f || dstat(w) === f)), zahl = k => L().werke.filter(w => dstat(w) === k).length;
     return `<section class="blatt weit"><header class="dashkopf"><div><h2>Prüfungen</h2><p class="lead">Jede Norm mit PDF und der Stand ihrer digitalen Fassung. Freigegeben ist eine Norm erst, wenn ein Prüfer Text und Struktur mit dem Original verglichen hat.</p></div></header>
       <p class="kenn">${['ungeprueft', 'bearbeitung', 'pruefung', 'korrektur', 'freigegeben'].map(k => `<span><b>${zahl(k)}</b> ${DSTAT[k][0]}</span>`).join('')}</p>
       <div class="filter"><label><span class="sr">Status</span><select id="pf">${opt([['', 'Alle Status']].concat(['ungeprueft', 'bearbeitung', 'pruefung', 'korrektur', 'freigegeben'].map(k => [k, DSTAT[k][0]])), f)}</select></label></div>
       <div class="rollen"><table class="tabelle bibtab"><thead><tr><th>Norm</th><th>Status</th><th>Seiten verglichen</th><th>Ohne Text</th><th>OCR-Korrekturen</th><th>Formatänderungen</th><th>Prüfer</th><th><span class="sr">Aktion</span></th></tr></thead><tbody>${ws.map(w => { const st = werkStatus(w), se = seitenStand(w), d = w.digital || {};
-        return `<tr><td><a href="#" data-act="werk-pdf" data-id="${h(w.id)}"><b>${h(w.kurz)}</b></a></td><td>${marke(st.pill, st.art)}${d.notiz && st.k !== 'freigegeben' ? `<span class="notiz">${h(d.notiz)}</span>` : ''}</td><td>${se.ok} von ${se.alle}</td><td>${se.leer || ''}</td><td>${L().aenderungen.filter(a => a.werkId === w.id && a.art === 'ocr' && !a.zurueckgezogen).length || ''}</td><td>${L().formate.filter(x => x.werkId === w.id).length || ''}</td><td>${d.pruefer ? h(d.pruefer) + ', ' + datumCH(d.datum) : ''}</td><td><button class="klein" data-act="digital" data-id="${h(w.id)}">Status ändern</button></td></tr>`; }).join('') || '<tr><td colspan="8" class="leer">Keine Norm in diesem Status.</td></tr>'}</tbody></table></div></section>`;
+        return `<tr><td><a href="#" data-act="werk-pdf" data-id="${h(w.id)}"><b>${h(w.kurz)}</b></a></td><td>${marke(st.pill, st.art)}${d.notiz && st.k !== 'freigegeben' ? `<span class="notiz">${h(d.notiz)}</span>` : ''}</td><td>${se.ok} von ${se.alle}</td><td>${se.leer || ''}</td><td>${L().aenderungen.filter(a => a.werkId === w.id && a.art === 'ocr' && !a.zurueckgezogen).length || ''}</td><td>${L().formate.filter(x => x.werkId === w.id).length || ''}</td><td>${d.pruefer ? h(d.pruefer) + ', ' + datumCH(d.datum) : ''}</td><td><button class="klein" data-act="pl-auf" data-id="${h(w.id)}" ${dokus(w.id).some(x => L().ocr[x.id]) ? '' : 'disabled title="Nur für gescannte Normen"'}>Stellen prüfen</button> <button class="klein" data-act="digital" data-id="${h(w.id)}">Status ändern</button></td></tr>`; }).join('') || '<tr><td colspan="8" class="leer">Keine Norm in diesem Status.</td></tr>'}</tbody></table></div></section>`;
   }
   function werkKarte(w) {
     const ds = dokus(w.id), d = ds[0], bild = d && L().titelbilder[d.id], st = werkStatus(w);
@@ -1239,7 +1422,7 @@ if (typeof document !== 'undefined') (function () {
     if (!druck && ansicht !== 'hybrid') html = unsicherMark(html, dok, n);
     return mitElementen(formatiert(html, dok.id, n), dok, n, druck);
   }
-  const unsicherVon = (dok, n) => (dok.geprueftSeiten || []).includes(n) ? [] : ((L().unsicher[dok.id] || {})[n] || []);
+  const unsicherVon = (dok, n) => { if ((dok.geprueftSeiten || []).includes(n)) return []; const ok = (dok.stelleOk || {})[n] || []; return ((L().unsicher[dok.id] || {})[n] || []).filter(t => !ok.includes(t)); }; // in der Prüfliste bestätigte Wörter sind nicht mehr unsicher
   function unsicherMark(html, dok, n) { // Wörter, die die Texterkennung unsicher gelesen hat, bis die Seite verglichen ist
     const ws = unsicherVon(dok, n); if (!ws.length) return html;
     const re = new RegExp('(^|[\\s(\\[„])(' + ws.map(w => h(w).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).sort((a, b) => b.length - a.length).join('|') + ')(?=$|[\\s)\\]“])', 'g');
@@ -1422,21 +1605,25 @@ if (typeof document !== 'undefined') (function () {
     const sicht = (k, t) => `<button data-act="ed-ansicht" data-v="${k}" aria-pressed="${E.ansicht === k}">${t}</button>`;
     const bl = bloeckeVon(dok.id), kap = bl.filter(b => /^u\d$/.test(b.typ) || b.typ === 'titel');
     const inhalt = `<details class="inhalt" ${E.inhaltAuf ? 'open' : ''}><summary data-act="ed-inhalt">Inhalt${kap.length ? ' (' + kap.length + ')' : ''}</summary><div class="inhaltliste">${L().struktur[dok.id] ? (kap.map(b => `<a href="#" data-act="ed-gehe" data-s="${b.s}" class="iv-${b.typ}${b.s === n ? ' hier' : ''}"><span>${h(b.t.slice(0, 80))}</span><i>${b.s}</i></a>`).join('') || '<p class="leer">In diesem PDF wurden keine Überschriften erkannt. Im Text lässt sich einer Zeile die Formatvorlage „Überschrift“ zuweisen.</p>') : `<p class="leer">Für dieses PDF ist die Struktur noch nicht erkannt.</p>`}<p class="feldfuss"><button data-act="struktur-neu" data-id="${h(w.id)}">Struktur neu erkennen</button></p></div></details>`;
-    if (E.vgl) { // Vergleich: Original und Text nebeneinander über das ganze Fenster, gleicher Zoom, gleiches Scrollen
-      const ok = (dok.geprueftSeiten || []).includes(n);
+    if (E.vgl) { // Vergleich: Original und Text nebeneinander über das ganze Fenster, gleicher Zoom, zeilengenaues Scrollen
+      const ok = (dok.geprueftSeiten || []).includes(n), nOk = (dok.geprueftSeiten || []).length, blink = E.vblink && !E.edit, zeile = E.vtext === 'zeile' && !E.edit;
+      const an = (k, v) => `aria-pressed="${v}" class="${v ? 'an' : ''}"`;
       return `<div class="vgl" id="vgl" data-m="${m[0]}/${m[1]}">
         <div class="vglleiste">
           <b class="vglname">${h(w.kurz)}</b>
           <span class="zoom"><button data-act="ed-seite" data-d="-1" aria-label="Vorherige Seite" ${n <= 1 ? 'disabled' : ''}>‹</button><label class="sprung">Seite<input type="number" id="ed-sprung" min="1" max="${N}" value="${n}"> von ${N}</label><button data-act="ed-seite" data-d="1" aria-label="Nächste Seite" ${n >= N ? 'disabled' : ''}>›</button></span>
           <span class="zoom"><button data-act="vgl-zoom" data-d="-1" aria-label="Kleiner">−</button><output id="vgl-z" aria-label="Zoom"></output><button data-act="vgl-zoom" data-d="1" aria-label="Grösser">+</button></span>
           <span class="umschalt"><button data-act="vgl-zoom" data-v="seite" id="vgl-seite">Ganze Seite</button><button data-act="vgl-zoom" data-v="breite" id="vgl-breite">Seitenbreite</button></span>
+          ${blink ? `<button data-act="vgl-wechsel" class="haupt">Wechseln (Leertaste)</button><span class="hinweis" id="vgl-blinkwas"></span>` : `<span class="umschalt" role="group" aria-label="Darstellung des Textes"><button data-act="vgl-text" data-v="fliess" aria-pressed="${!zeile}">Fliesstext</button><button data-act="vgl-text" data-v="zeile" aria-pressed="${zeile}" title="Jede Zeile steht wie auf der Seite (Z)">Zeilengetreu</button></span>
+          ${zeile ? '' : `<span class="umschalt">${sicht('original', 'Grundtext')}${sicht('hybrid', 'Mit Änderungen')}${sicht('neu', 'Neu')}</span>`}
           <label class="haken"><input type="checkbox" id="vgl-sync" ${E.vsync ? 'checked' : ''}> Gleich scrollen</label>
-          <span class="umschalt">${sicht('original', 'Grundtext')}${sicht('hybrid', 'Mit Änderungen')}${sicht('neu', 'Neu')}</span>
-          <span class="rechts"><button data-act="seite-ok" aria-pressed="${ok}" class="${ok ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${ok ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}">Norm freigeben</button>` : ''}${hat && !E.edit ? '<button data-act="ed-edit">Text bearbeiten</button>' : ''}<button class="haupt" data-act="vgl-aus" title="Esc">Vergleich beenden</button></span>
+          <button data-act="vgl-lineal" ${an('l', E.vlineal)} title="Die aktuelle Zeile ist auf beiden Seiten hervorgehoben; Pfeil auf und ab (L)">Zeilenlineal</button>`}
+          <button data-act="vgl-blink" ${an('b', blink)} title="Scan und gesetzter Text liegen übereinander und wechseln auf Tastendruck (B)">Blinkvergleich</button>
+          <span class="rechts"><span class="vglstand" title="Seiten dieses PDF, die als verglichen markiert sind"><progress max="${N}" value="${nOk}"></progress> ${nOk} von ${N}</span><button data-act="vgl-unsicher" title="Zur nächsten Seite mit unsicher gelesenen Stellen (N)">Nächste unsichere</button><button data-act="seite-ok" aria-pressed="${ok}" class="${ok ? 'ok' : ''}" title="Enter: als verglichen markieren und zur nächsten Seite">${ok ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}">Norm freigeben</button>` : ''}${hat && !E.edit ? '<button data-act="ed-edit" title="E">Text bearbeiten</button>' : ''}<button data-act="vgl-tasten" aria-label="Tasten anzeigen">Tasten</button><button class="haupt" data-act="vgl-aus" title="Esc">Vergleich beenden</button></span>
         </div>
-        <div class="vglgrid">
+        <div class="vglgrid${blink ? ' blink' : ''}">
           <div class="vglfeld" id="vgl-l" tabindex="0" aria-label="Original, Seite ${n}"><div class="vglblatt">${links}</div></div>
-          <div class="vglfeld" id="vgl-r" tabindex="0" aria-label="Text der Seite ${n}"><div class="vglblatt vgltext${E.edit ? ' schreibt' : ''}">${mitte}</div></div>
+          ${blink ? '' : `<div class="vglfeld" id="vgl-r" tabindex="0" aria-label="Text der Seite ${n}">${zeile ? `<div class="vglblatt vglzeile" id="vgl-zg" data-dok="${h(dok.id)}" data-seite="${n}"></div>` : `<div class="vglblatt vgltext${E.edit ? ' schreibt' : ''}">${mitte}</div>`}</div>`}
         </div></div>`;
     }
     return `<div class="pdfleiste edleiste">
@@ -1444,7 +1631,7 @@ if (typeof document !== 'undefined') (function () {
         ${ds.length > 1 ? `<label class="sprung">Teil<select id="ed-dok">${opt(ds.map(d => [d.id, d.teil || d.datei]), dok.id)}</select></label>` : ''}
         <span class="zoom"><button data-act="ed-seite" data-d="-1" aria-label="Vorherige Seite" ${n <= 1 ? 'disabled' : ''}>‹</button><label class="sprung">Seite<input type="number" id="ed-sprung" min="1" max="${N}" value="${n}"> von ${N}</label><button data-act="ed-seite" data-d="1" aria-label="Nächste Seite" ${n >= N ? 'disabled' : ''}>›</button></span>
         <label class="sprung">Ich bearbeite<select id="ed-ebene">${opt([['', 'Grundtext (OCR-Korrektur)']].concat(schichten.map(x => [x.id, x.kurz + ' (fachlich)'])), E.ebene)}</select></label>
-        <span class="rechts"><button class="haupt" data-act="vgl-an" ${da && hat ? '' : 'disabled'}>Vergleichen: ganze Seite</button><button data-act="ed-druck">Drucken oder Word</button><button data-act="ed-pdf">PDF exportieren</button><button data-act="protokoll-csv" data-id="${h(w.id)}">Protokoll für Excel</button></span>
+        <span class="rechts"><button class="haupt" data-act="vgl-an" ${da && hat ? '' : 'disabled'}>Vergleichen: ganze Seite</button><button data-act="pl-auf" data-id="${h(w.id)}" ${L().ocr[dok.id] ? '' : 'disabled title="Nur für gescannte Normen"'}>Prüfliste</button><button data-act="ed-druck">Drucken oder Word</button><button data-act="ed-pdf">PDF exportieren</button><button data-act="protokoll-csv" data-id="${h(w.id)}">Protokoll für Excel</button></span>
       </div>
       <div class="edgrid">
         <section class="edspalte" aria-label="Original"><header class="edkopf"><h3>Original</h3><span class="edtools"><button data-act="seite-ok" aria-pressed="${(dok.geprueftSeiten || []).includes(n)}" class="klein ${(dok.geprueftSeiten || []).includes(n) ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${(dok.geprueftSeiten || []).includes(n) ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}" class="klein" title="${seitenStand(w).ok} von ${seitenStand(w).alle} Seiten verglichen">Norm freigeben</button>` : ''}<span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span></span></header>
@@ -1675,6 +1862,7 @@ if (typeof document !== 'undefined') (function () {
     if (v.typ === 'glossar') return glossarAnsicht();
     if (v.typ === 'index') return indexAnsicht();
     if (v.typ === 'pruefung') return pruefAnsicht();
+    if (v.typ === 'stellen' && werk(v.id)) return stellenAnsicht(werk(v.id));
     if (v.typ === 'suche') return suchAnsicht();
     return start();
   }
@@ -1789,8 +1977,8 @@ if (typeof document !== 'undefined') (function () {
 
   // ----- Datei
   function teileDaten() { // drei Dateien: Bearbeitungsstand, Texte aus den PDF, Titelbilder
-    const l = L(), kern = {}; Object.keys(l).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder', 'elemente', 'unsicher', 'ocr'].includes(k)) kern[k] = l[k]; });
-    return { 'daten/bibliothek.json': JSON.stringify(kern, null, 1), 'daten/texte.json': JSON.stringify({ seitentext: l.seitentext, abschnitte: l.abschnitte, struktur: l.struktur, elemente: l.elemente, unsicher: l.unsicher, ocr: l.ocr }), 'daten/titelbilder.json': JSON.stringify(l.titelbilder) };
+    const l = L(), kern = {}; Object.keys(l).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder', 'elemente', 'unsicher', 'ocr', 'vorschlaege'].includes(k)) kern[k] = l[k]; });
+    return { 'daten/bibliothek.json': JSON.stringify(kern, null, 1), 'daten/texte.json': JSON.stringify({ seitentext: l.seitentext, abschnitte: l.abschnitte, struktur: l.struktur, elemente: l.elemente, unsicher: l.unsicher, ocr: l.ocr, vorschlaege: l.vorschlaege }), 'daten/titelbilder.json': JSON.stringify(l.titelbilder) };
   }
   function herunterladen(name, text, typ) {
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: typ })); a.download = name;
@@ -1825,7 +2013,7 @@ if (typeof document !== 'undefined') (function () {
     try { texte = JSON.parse(await lies('daten/texte.json')); } catch (e) { /* ohne Texte weiter */ }
     try { bilder = JSON.parse(await lies('daten/titelbilder.json')); } catch (e) { /* werden nachgeholt */ }
     if (M.an) { const danach = await ruf('api/stand'); if (st.ok && danach.ok && st.j.revision !== danach.j.revision) return ladeBibliothek(); st = danach.ok ? danach : st; M.revision = st.j.revision; M.sperre = st.j.sperre || null; M.hat = !!st.j.ich; M.geladen = roh; bib.meta = bib.meta || {}; bib.meta.bearbeiter = M.ich.anzeige; }
-    S.lib = Object.assign(bib, { seitentext: texte.seitentext || {}, abschnitte: texte.abschnitte || [], struktur: texte.struktur || {}, elemente: texte.elemente || {}, unsicher: texte.unsicher || {}, ocr: texte.ocr || {}, titelbilder: bilder || {} });
+    S.lib = Object.assign(bib, { seitentext: texte.seitentext || {}, abschnitte: texte.abschnitte || [], struktur: texte.struktur || {}, elemente: texte.elemente || {}, unsicher: texte.unsicher || {}, ocr: texte.ocr || {}, vorschlaege: texte.vorschlaege || {}, titelbilder: bilder || {} });
     nachLaden();
   }
   function nachLaden() {
@@ -1962,6 +2150,21 @@ if (typeof document !== 'undefined') (function () {
     'pdf-seite': el => { geheZu(el.dataset.id, +el.dataset.seite, null, el.dataset.dok); },
     'vgl-an': () => { S.ed.vgl = true; },
     'vgl-aus': () => { S.ed.vgl = false; },
+    'pl-auf': el => { S.view = { typ: 'stellen', id: el.dataset.id }; S.ed.vgl = false; plStart(werk(el.dataset.id), S.pl && S.pl.werk === el.dataset.id ? S.pl.art : 'unsicher'); },
+    'pl-ok': () => mitName(() => { plTat('ok'); render(); }),
+    'pl-nein': () => mitName(() => { plTat('nein'); render(); }),
+    'pl-korr': () => mitName(() => { S.pl.schreibt = true; render(); const f = $('#pl-neu'); if (f) { f.focus(); f.select(); } }),
+    'pl-abbr': () => { S.pl.schreibt = false; },
+    'pl-weiter': () => { S.pl.i++; },
+    'pl-zurueck': () => { if (S.pl.i > 0) S.pl.i--; },
+    'pl-neu': () => { const Q = S.pl; Q.liste = Q.liste.filter(x => !x.fertig); Q.von = Q.liste.length; Q.i = 0; Q.ok = 0; Q.korr = 0; },
+    'pl-vgl': () => { const it = S.pl.liste[S.pl.i], d = dokId(it.dokId); S.view = { typ: 'werk', id: d.werkId }; S.tab = 'edit'; S.ed.dok = it.dokId; S.ed.seite = it.n; S.ed.edit = false; S.ed.vgl = true; },
+    'vgl-text': el => { S.ed.vtext = el.dataset.v; },
+    'vgl-lineal': () => { S.ed.vlineal = !S.ed.vlineal; },
+    'vgl-blink': () => { S.ed.vblink = !S.ed.vblink; S.ed.vblinkT = true; },
+    'vgl-wechsel': () => { S.ed.vblinkT = !S.ed.vblinkT; vglMount(); return false; },
+    'vgl-unsicher': () => naechsteUnsichere(),
+    'vgl-tasten': () => dialog('Tasten im Vergleich', `<table class="tabelle"><tbody>${TASTEN.map(t => `<tr><th scope="row"><kbd>${h(t[0])}</kbd></th><td>${h(t[1])}</td></tr>`).join('')}</tbody></table>`),
     'vgl-zoom': el => { vglZoom(+el.dataset.d || 0, el.dataset.v); return false; },
     'pdf-zoom': el => { P.zoom = Math.max(50, Math.min(250, P.zoom + (+el.dataset.d))); },
     'pdf-mark': el => mitName(() => { const art = el.dataset.art || 'kommentar'; P.mark = !(P.mark && P.markArt === art); P.markArt = art; render(); }),
@@ -2128,6 +2331,7 @@ if (typeof document !== 'undefined') (function () {
     else if (t.id === 'vgl-a' || t.id === 'vgl-b') { S.vgl[t.id.slice(4)] = t.value; render(); }
     else if (t.id === 'ed-fv') { mitName(() => { fvSetzen(werk(S.view.id), S.ed.dok, S.ed.seite, edZeile(), t.value); }); }
     else if (t.id === 'vgl-sync') { S.ed.vsync = t.checked; }
+    else if (t.id === 'pl-art') { plStart(werk(S.view.id), t.value); render(); }
     else if (t.id === 'ed-z-scan') { S.ed.zScan = t.checked; render(); }
     else if (t.id === 'ed-z-text') { S.ed.zText = t.checked; render(); }
     else if (t.id === 'ed-z-marken') { S.ed.zMarken = t.checked; render(); }

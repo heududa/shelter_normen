@@ -505,3 +505,43 @@ body.vglan{overflow:hidden}
 .uetools button[data-act=ue-pos]{min-width:1.9rem}
 @media print{#druck .ue-skizze.mitbreite img.ausschnitt{width:var(--b);max-height:22cm}}
 .lesetext .ue.hand.eigen::after{content:"eigenes Bild"}
+
+/* Vergleich: zeilengetreu, Zeilenlineal, Blinkvergleich */
+.vglzeile{position:relative;overflow:hidden;background:#fff;color:#000;line-height:1.05;font-family:Arial,Helvetica,sans-serif}
+.vglzeile .zg{position:absolute;left:0;right:0}
+.vglzeile .zg span{position:absolute;top:0;white-space:pre;transform-origin:0 0}
+.vglzeile .zg span.unsicher{background:#FFE9A8;outline:1px dotted #B07A00}
+.vglzeile .zg span.korr{background:#D7E5FB;color:#173B7A}
+.vglzeile .zg.aktiv{background:rgba(255,205,0,.3);outline:1px solid rgba(190,130,0,.7)}
+.vglzeile .zgbild{position:absolute}
+.vglzeile .zgbild img.ausschnitt{width:100%;height:100%;border:0}
+.vglzeile .zgleer{position:absolute;inset:40% 10% auto;text-align:center;color:#666;font-size:14px}
+.vglzeile.blinklage{position:absolute;inset:0;z-index:3}
+.vglzeile.blinklage[hidden]{display:none}
+.seite .lineal{position:absolute;left:0;right:0;background:rgba(255,205,0,.28);border-top:1px solid rgba(190,130,0,.8);border-bottom:1px solid rgba(190,130,0,.8);pointer-events:none;z-index:2}
+::highlight(lineal){background-color:rgba(255,205,0,.45)}
+.vglgrid.blink{grid-template-columns:minmax(0,1fr)}
+.vglleiste button.an{background:var(--nacht,#1B2B4B);color:#fff;border-color:transparent}
+.vglstand{display:inline-flex;align-items:center;gap:.4rem;font-size:.85rem;color:var(--leise);white-space:nowrap}
+.vglstand progress{width:6rem;height:.55rem}
+kbd{font-family:var(--ui);font-size:.85em;border:1px solid var(--linie);border-bottom-width:2px;border-radius:4px;padding:.05rem .4rem;background:var(--papier);white-space:nowrap}
+
+/* Prüfliste */
+.plkarte{max-width:62rem;margin:1rem auto 0;border:1px solid var(--linie);border-radius:10px;background:var(--blatt);padding:1rem 1.2rem 1.2rem}
+.plwo{margin:0 0 .5rem;color:var(--leise);font-size:.9rem}
+.plbild{position:relative;border:1px solid var(--linie);background:#fff;overflow:hidden}
+.plbild img.ausschnitt{border:0;width:100%;display:block}
+.plmarke{position:absolute;outline:3px solid #D96A00;outline-offset:3px;background:rgba(255,160,0,.14);border-radius:2px;pointer-events:none}
+.plwort{display:flex;align-items:baseline;gap:.8rem;margin:1rem 0 .2rem}
+.plwort span{color:var(--leise);font-size:.9rem}
+.plwort b{font-size:2rem;font-family:var(--ui);letter-spacing:.01em}
+.plwort i{font-size:1.3rem;color:var(--leise);font-style:normal}
+.plctx{margin:.1rem 0 1rem;color:var(--text);font-family:var(--lese,Georgia,serif)}
+.plctx mark{background:#FFE9A8;color:#4A3500;padding:0 .15em}
+.plknopf{display:flex;flex-wrap:wrap;gap:.5rem}
+.plknopf kbd{margin-left:.35rem;font-size:.75em;opacity:.85}
+.plknopf .haupt kbd{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);color:inherit}
+.plform{display:flex;flex-wrap:wrap;gap:.6rem;align-items:end}
+.plform label{flex:1 1 16rem;margin:0}
+.plform input{font-size:1.4rem;padding:.4rem .6rem;width:100%}
+.plende{max-width:40rem;margin:2rem auto;text-align:center}
