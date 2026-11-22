@@ -474,3 +474,21 @@ body.vglan{overflow:hidden}
 .vglleiste input[type=number]{width:4.2rem;margin:0}
 .vglleiste input[type=checkbox]{margin:0}
 .textebene.neu span{line-height:1.05;font-family:Arial,Helvetica,sans-serif}
+/* 0.12.0: Antworten auf Anmerkungen, Markierung per Textauswahl */
+.anm .zitat,.dlg-body .zitat{margin:.35rem 0;padding:.25rem .6rem;border-left:3px solid var(--linie);color:var(--leise);font-size:.88rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.dlg-body .zitat footer{font-size:.8rem;margin-top:.25rem}
+.antworten{list-style:none;margin:.5rem 0 0 .2rem;padding:0 0 0 .7rem;border-left:2px solid var(--linie)}
+.antworten li{padding:.3rem 0}.antworten li+li{border-top:1px dashed var(--linie)}
+.antworten .text{margin:0 0 .15rem}.antworten .grund{margin:0;font-size:.8rem;color:var(--leise)}
+.antworten li.weg .text{text-decoration:line-through;color:var(--leise)}
+.antworten button.klein{font-size:.75rem;padding:.05rem .4rem;margin-left:.3rem;color:var(--leise)}
+.seite.marktext{cursor:text}
+.seite .auswahl{position:absolute;background:rgba(29,63,122,.3);pointer-events:none;z-index:2}
+.fleck.text{border-color:transparent;background:none;pointer-events:none;min-width:0;min-height:0}
+.fleck.text i{position:absolute;pointer-events:auto;cursor:pointer;background:rgba(29,63,122,.2);border-bottom:2px solid #1D3F7A}
+.fleck.text span{pointer-events:auto;cursor:pointer}
+.fleck.text.art-aenderung{background:none;border-color:transparent}.fleck.text.art-aenderung i{background:rgba(240,138,0,.25);border-bottom-color:#C75F00}
+.fleck.text.art-frage{background:none;border-color:transparent}.fleck.text.art-frage i{background:rgba(168,38,29,.18);border-bottom-color:#A8261D}
+.fleck.text:hover{border-color:transparent}.fleck.text.aktiv{box-shadow:none}.fleck.text.aktiv i{box-shadow:0 0 0 2px var(--signal)}
+.seite.mark .fleck *{pointer-events:none}
+.pdfleiste .umschalt,.edzeile>.umschalt{margin-left:.4rem}

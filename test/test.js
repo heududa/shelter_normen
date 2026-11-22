@@ -81,7 +81,7 @@ const path0 = path.join(__dirname, 'daten');
   await p.uncheck('#ed-z-text'); await p.waitForSelector('.seite[data-tlfertig]'); assert.ok(!(await p.locator('.textebene').isVisible())); await p.check('#ed-z-text'); await p.click('[data-act=ed-links][data-v=scan]');
   // Änderung im Scan vorschlagen: Rechteck, Originalinhalt aus dem PDF, Art automatisch
   await p.fill('#ed-sprung', '64'); await p.press('#ed-sprung', 'Enter'); await p.waitForSelector('.seite[data-seite="64"][data-fertig]');
-  await p.click('[data-act=pdf-mark][data-art=aenderung]'); let bx = await p.locator('.seite').boundingBox();
+  await p.click('[data-act=mark-weise][data-v=rechteck]'); await p.click('[data-act=pdf-mark][data-art=aenderung]'); let bx = await p.locator('.seite').boundingBox();
   await p.mouse.move(bx.x + bx.width * 0.25, bx.y + bx.height * 0.12); await p.mouse.down(); await p.mouse.move(bx.x + bx.width * 0.95, bx.y + bx.height * 0.16, { steps: 4 }); await p.mouse.up();
   await p.waitForSelector('#dlg textarea[name=alt]'); const gelesen = await p.inputValue('#dlg textarea[name=alt]'); assert.ok(gelesen.length > 20, 'Text im Rechteck: ' + gelesen);
   assert.equal(await p.inputValue('#dlg select[name=art]'), 'aenderung');

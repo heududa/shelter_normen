@@ -1,5 +1,36 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.12.0 – 22.11.2026
+
+Antworten auf Anmerkungen und Markieren per Textauswahl.
+
+### Neu
+- **Antworten auf Anmerkungen:** Jede Anmerkung hat den Knopf «Antworten». Die Antworten stehen mit Name und Datum unter der Anmerkung, in der Reihenfolge ihres Eingangs. Beim Antworten lässt sich die Anmerkung gleich als erledigt markieren.
+  - Antworten gehören zur Anmerkung und laufen wie sie über die Freigabe: Eine neue Antwort macht die Anmerkung zu einer offenen Änderung. Nicht freigegebene Antworten lassen sich löschen, freigegebene nur zurückziehen.
+  - Die Suche findet den Text der Antworten. Das Protokoll für Excel führt jede Antwort als eigene Zeile, Druck, Word-Datei und PDF-Export zeigen sie unter der Anmerkung. Der Verlauf vermerkt jede Antwort.
+- **Markieren per Textauswahl:** Neben «Stelle kommentieren» steht die Wahl «Text | Rechteck». Bei «Text» (Vorgabe) überstreicht man die Wörter im Scan wie in einem Textprogramm, über mehrere Zeilen hinweg; ein Klick markiert ein einzelnes Wort. Die Stelle ist danach zeilenweise hinterlegt statt eingerahmt.
+  - Die Anmerkung hält den markierten Text fest und zeigt ihn als Zitat. Bei «Änderung im Scan vorschlagen» steht er als Originalinhalt und als Ausgangspunkt des Vorschlags im Formular.
+  - Es gilt der Text der neuen Texterkennung, bei digital entstandenen PDF die Textebene des PDF.
+  - «Rechteck» arbeitet wie bisher. Tabellen und Skizzen werden immer mit einem Rechteck übernommen.
+  - Der PDF-Export hinterlegt solche Stellen zeilenweise.
+
+### Prüflauf
+- `node test/anmerkungen.js` (neu): Text über mehrere Zeilen markieren, einzelnes Wort, Rechteck, zwei Personen antworten, erledigen, Antwort löschen, Suche, Speichern und Wiederlesen.
+- `node test/test.js` und `node test/mehrnutzer.js`: ohne Fehler.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| N1 | Antworten sind eine einfache Liste unter der Anmerkung; Antworten auf Antworten (Verschachtelung) gibt es nicht. |
+| N2 | Eine Antwort lässt sich nicht nachträglich ändern, nur löschen (nicht freigegeben) oder zurückziehen (freigegeben). |
+| N3 | Jeder, der bearbeiten darf, kann antworten und auch fremde Antworten löschen oder zurückziehen. Der Server prüft das wie bei den Anmerkungen selbst nicht (siehe «Offen»). |
+| N4 | Steht an der überstrichenen Stelle kein erkannter Text (Skizze, Seite ohne Text), wird die Stelle als Rechteck markiert; das Programm meldet das. |
+| N5 | Die Lesefolge ist die der Texterkennung. Bei mehrspaltigen Seiten kann eine Auswahl über die Spalten hinweg mehr Wörter erfassen als gemeint. |
+| N6 | Der markierte Text wird auf 600 Zeichen und 60 Zeilen begrenzt. |
+
+### Offen
+- Der Server schützt Anmerkungen und Antworten nicht je Person: Ein Autor kann fremde Einträge ändern oder löschen, und der Name am Eintrag kommt aus dem Browser. Freigegebene Versionen sind davon nicht betroffen.
+
 ## 0.11.2 – 21.11.2026
 
 ### Geändert

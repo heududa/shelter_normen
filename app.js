@@ -340,7 +340,7 @@ if (typeof document !== 'undefined') (function () {
   }
   const FV = { text: 'Fliesstext', titel: 'Normtitel', u1: 'Überschrift 1', u2: 'Überschrift 2', u3: 'Überschrift 3', tabelle: 'Tabellentitel', bild: 'Bildbeschriftung', fussnote: 'Fussnote', liste: 'Aufzählung', formel: 'Formel' };
   const ANM = { kommentar: 'Kommentar', aenderung: 'Änderungsvorschlag', frage: 'Offene Frage' };
-  const P = { werkId: null, docs: new Map(), gen: 0, canvases: new Map(), obs: null, zoom: 100, ziel: null, mark: false, markArt: 'kommentar', aktiv: null, schnitte: new Map(), kette: Promise.resolve(), seitenbild: null };
+  const P = { werkId: null, docs: new Map(), gen: 0, canvases: new Map(), obs: null, zoom: 100, ziel: null, mark: false, markArt: 'kommentar', markWeise: 'text', aktiv: null, schnitte: new Map(), kette: Promise.resolve(), seitenbild: null };
 
   function log(aktion, ziel, detail) { L().verlauf.push({ zeit: new Date().toISOString(), name: L().meta.bearbeiter || '', aktion, ziel, detail: detail || '' }); S.dirty = true; }
   function mitName(dann) {
@@ -746,17 +746,46 @@ if (typeof document !== 'undefined') (function () {
       return teile.map(t => t.s).join(' ').replace(/\s+/g, ' ').slice(0, 600);
     } catch (e) { return ''; }
   }
+  // Antworten auf eine Anmerkung (Diskussion). Freigegebene Antworten lassen sich nur zurückziehen, neue auch löschen.
+  const antwFrei = a => { const alt = freigegeben(L()).anmerkungen.find(x => x.id === a.id); return new Set(((alt && alt.antworten) || []).map(r => r.nr)); };
+  function antwortenHtml(a) {
+    const rs = a.antworten || []; if (!rs.length) return '';
+    const frei = antwFrei(a);
+    return `<ol class="antworten" aria-label="Antworten auf Anmerkung ${a.nr}">${rs.map(r => `<li class="${r.zurueckgezogen ? 'weg' : ''}" id="r-${h(a.id)}-${r.nr}"><p class="text">${h(r.text)}</p><p class="grund">${h(r.autor)}, ${datumCH(r.datum)}${frei.has(r.nr) ? '' : ', nicht freigegeben'}${r.zurueckgezogen ? ', zurückgezogen' : ''} <button class="klein" data-act="antw-weg" data-id="${h(a.id)}" data-nr="${r.nr}">${!frei.has(r.nr) ? 'Löschen' : r.zurueckgezogen ? 'Wieder aufnehmen' : 'Zurückziehen'}</button></p></li>`).join('')}</ol>`;
+  }
+  const antwortText = a => (a.antworten || []).filter(r => !r.zurueckgezogen);
+  function antwortForm(a) {
+    dialog('Antwort auf Anmerkung ' + a.nr, `<blockquote class="zitat">${h(a.text)}<footer>${h(a.autor)}, ${datumCH(a.datum)}</footer></blockquote>
+      ${bereich('text', 'Antwort', '', 'required')}
+      ${a.erledigt ? '' : '<label class="haken"><input type="checkbox" name="erledigt"> Anmerkung damit als erledigt markieren</label>'}`, d => {
+      const text = d.text.trim(); if (!text) return 'Antwort eingeben.';
+      const rs = a.antworten = a.antworten || [], nr = rs.reduce((m, r) => Math.max(m, r.nr), 0) + 1;
+      rs.push({ nr, text, autor: L().meta.bearbeiter, datum: heute(), zurueckgezogen: false });
+      log('Antwort auf Anmerkung', a.id, 'Antwort ' + nr); P.aktiv = a.id;
+      if (d.erledigt && !a.erledigt) { a.erledigt = true; log('Anmerkung erledigt', a.id); }
+    }, 'Antworten', true);
+  }
+  // Markierte Stelle im PDF: Rechteck oder, bei Textauswahl, eine Fläche je Zeile
+  function fleckHtml(a) {
+    const b = a.rect, pz = v => (v * 100).toFixed(2) + '%', zl = a.rects && a.rects.length && b.w > 0 && b.h > 0 ? a.rects : null;
+    return `<button class="fleck art-${a.art}${zl ? ' text' : ''}${a.erledigt ? ' erledigt' : ''}${P.aktiv === a.id ? ' aktiv' : ''}" id="f-${h(a.id)}" data-act="fleck" data-id="${h(a.id)}" style="left:${pz(b.x)};top:${pz(b.y)};width:${pz(b.w)};height:${pz(b.h)}" aria-label="Anmerkung ${a.nr}: ${h(a.text.slice(0, 80))}">${zl ? zl.map(z => `<i style="left:${pz((z.x - b.x) / b.w)};top:${pz((z.y - b.y) / b.h)};width:${pz(z.w / b.w)};height:${pz(z.h / b.h)}"></i>`).join('') : ''}<span>${a.nr}</span></button>`;
+  }
+  const markText = () => P.markWeise !== 'rechteck' && P.markArt !== 'tabelle' && P.markArt !== 'skizze';
+  const markKl = () => P.mark ? ' mark' + (markText() ? ' marktext' : '') : '';
+  const weiseWahl = () => `<span class="umschalt" role="group" aria-label="Art der Markierung"><button data-act="mark-weise" data-v="text" aria-pressed="${P.markWeise !== 'rechteck'}">Text</button><button data-act="mark-weise" data-v="rechteck" aria-pressed="${P.markWeise === 'rechteck'}">Rechteck</button></span>`;
   function anmKarte(a) {
     const r = a.regelId && regel(a.regelId), offen = S.offen[a.id], neu = standVon(L(), 'anmerkungen', a) === 'neu';
     const hist = offen ? `<ol class="mini-verlauf">${(a.frueher || []).map(f => `<li><time>${datumCH(f.datum)}</time> ${h(f.autor)}, Fassung ${f.rev} (${h(ANM[f.art])}): ${h(f.text)}</li>`).join('')}${L().verlauf.filter(v => v.ziel === a.id).map(v => `<li><time>${datumCH(v.zeit)}</time> ${h(v.name)}: ${h(v.aktion)}</li>`).join('')}</ol>` : '';
     return `<article class="anm art-${a.art}${a.zurueckgezogen ? ' weg' : ''}${a.erledigt ? ' erledigt' : ''}${P.aktiv === a.id ? ' aktiv' : ''}" id="a-${h(a.id)}">
       <header><span class="nr">${a.nr}</span>${marke(ANM[a.art], a.art === 'frage' ? 'warn' : a.art === 'aenderung' ? 'art' : '')}<a href="#" data-act="anm-zeige" data-id="${h(a.id)}">${dokus(a.werkId).length > 1 && dokId(a.dokId) ? h(dokId(a.dokId).teil || dokId(a.dokId).datei) + ', ' : ''}Seite ${a.seite}${a.rect ? '' : ', ganze Seite'}</a></header>
       ${a.art === 'aenderung' && (a.alt || a.neu) ? `<dl class="altneu"><div><dt>Alt</dt><dd>${a.alt ? `<del class="${a.aendArt === 'ocr' ? 'ocr' : 'fach'}">${h(a.alt)}</del>` : '–'}</dd><dt>Neu</dt><dd>${a.neu ? `<ins class="${a.aendArt === 'ocr' ? 'ocr' : 'fach'}">${h(a.neu)}</ins>` : '–'}</dd></div></dl>` : ''}
+      ${a.zitat && a.art !== 'aenderung' ? `<blockquote class="zitat">${h(a.zitat)}</blockquote>` : ''}
       <p class="text">${h(a.text)}</p>
       <p class="grund">${h(a.autor)}, ${datumCH(a.datum)}${a.rev > 1 ? ', Fassung ' + a.rev : ''}</p>
+      ${antwortenHtml(a)}
       ${r ? `<p class="ziel">gehört zu <a href="#" data-act="zeige-regel" data-id="${h(r.id)}">${h(r.id)} ${h(r.titel)}</a></p>` : ''}
       <p class="marken">${a.art === 'aenderung' && a.aendArt ? marke(AEND[a.aendArt], a.aendArt === 'ocr' ? '' : 'art') : ''}${a.uebernommen ? marke('in den Text übernommen als ' + a.uebernommen, 'ok') : ''}${standMarke('anmerkungen', a)}${a.erledigt ? marke('erledigt', 'ok') : ''}${a.zurueckgezogen ? marke('zurückgezogen', 'weg') : ''}</p>
-      <p class="aktionen">${a.art === 'aenderung' && !a.uebernommen && !a.zurueckgezogen ? `<button data-act="anm-uebernehmen" data-id="${h(a.id)}">In den Text übernehmen</button>` : ''}<button data-act="anm-edit" data-id="${h(a.id)}">Bearbeiten</button><button data-act="anm-erledigt" data-id="${h(a.id)}">${a.erledigt ? 'Wieder öffnen' : 'Erledigt'}</button>${r ? '' : `<button data-act="anm-regel" data-id="${h(a.id)}">Regel daraus anlegen</button>`}<button data-act="anm-weg" data-id="${h(a.id)}">${neu ? 'Löschen' : a.zurueckgezogen ? 'Wieder aufnehmen' : 'Zurückziehen'}</button><button data-act="anm-hist" data-id="${h(a.id)}" aria-expanded="${!!offen}">Verlauf</button></p>${hist}</article>`;
+      <p class="aktionen">${a.art === 'aenderung' && !a.uebernommen && !a.zurueckgezogen ? `<button data-act="anm-uebernehmen" data-id="${h(a.id)}">In den Text übernehmen</button>` : ''}<button data-act="anm-antwort" data-id="${h(a.id)}">Antworten</button><button data-act="anm-edit" data-id="${h(a.id)}">Bearbeiten</button><button data-act="anm-erledigt" data-id="${h(a.id)}">${a.erledigt ? 'Wieder öffnen' : 'Erledigt'}</button>${r ? '' : `<button data-act="anm-regel" data-id="${h(a.id)}">Regel daraus anlegen</button>`}<button data-act="anm-weg" data-id="${h(a.id)}">${neu ? 'Löschen' : a.zurueckgezogen ? 'Wieder aufnehmen' : 'Zurückziehen'}</button><button data-act="anm-hist" data-id="${h(a.id)}" aria-expanded="${!!offen}">Verlauf</button></p>${hist}</article>`;
   }
   function anmForm(a, vorgabe) {
     const x = a || vorgabe, w = werk(x.werkId), rs = L().regeln.filter(r => r.werkId === w.id);
@@ -778,7 +807,7 @@ if (typeof document !== 'undefined') (function () {
       } else {
         const pre = w.kurz.replace(/[^A-Za-z0-9]/g, '').toUpperCase(); let nr = L().anmerkungen.filter(q => q.werkId === w.id).reduce((m, q) => Math.max(m, q.nr), 0), id;
         do { id = `${pre}-A${++nr}`; } while (anm(id) || L().verlauf.some(v => v.ziel === id));
-        L().anmerkungen.push({ id, nr, werkId: w.id, dokId: x.dokId, seite: x.seite, rect: x.rect, art: d.art, text, alt, neu, aendArt, uebernommen: '', regelId: d.regelId, autor: L().meta.bearbeiter, datum: heute(), rev: 1, erledigt: false, zurueckgezogen: false, frueher: [] });
+        L().anmerkungen.push({ id, nr, werkId: w.id, dokId: x.dokId, seite: x.seite, rect: x.rect, ...(x.rects ? { rects: x.rects, zitat: x.zitat || '' } : {}), art: d.art, text, alt, neu, aendArt, uebernommen: '', regelId: d.regelId, autor: L().meta.bearbeiter, datum: heute(), rev: 1, erledigt: false, zurueckgezogen: false, frueher: [] });
         log('Anmerkung erfasst (' + ANM[d.art] + ')', id, 'Seite ' + x.seite); P.aktiv = id;
       }
     }, a ? 'Änderung übernehmen' : 'Speichern', true);
@@ -792,13 +821,13 @@ if (typeof document !== 'undefined') (function () {
     const teile = ds.length > 1 ? `<div class="teile" role="tablist" aria-label="Teile dieser Norm"><button role="tab" aria-selected="${ganz}" data-act="pdf-teil" data-id="${h(w.id)}" data-dok="*">Ganze Norm<span>${ds.reduce((n, d) => n + d.seiten, 0)} S.</span></button>${ds.map(d => `<button role="tab" aria-selected="${d === dok}" data-act="pdf-teil" data-id="${h(w.id)}" data-dok="${h(d.id)}">${h(name(d))}<span>${d.seiten} S.</span></button>`).join('')}</div>` : '';
     const mehr = `<button class="klein" data-act="pdf-neu" data-id="${h(w.id)}">weiteres PDF hinzufügen</button>`;
     if (!ganz && !pdfDa(dok)) return `${teile}<div class="leerblock"><p>Das PDF „${h(dok.datei)}“ liegt nicht in der Ablage. Dasselbe PDF erneut hinzufügen; die Anmerkungen bleiben erhalten.</p><button class="haupt" data-act="pdf-ersetzen" data-id="${h(dok.id)}">PDF hinzufügen</button></div>${karten ? `<div id="pdfanm" class="lose">${karten}</div>` : ''}`;
-    const fleck = a => `<button class="fleck art-${a.art}${a.erledigt ? ' erledigt' : ''}${P.aktiv === a.id ? ' aktiv' : ''}" id="f-${h(a.id)}" data-act="fleck" data-id="${h(a.id)}" style="left:${(a.rect.x * 100).toFixed(2)}%;top:${(a.rect.y * 100).toFixed(2)}%;width:${(a.rect.w * 100).toFixed(2)}%;height:${(a.rect.h * 100).toFixed(2)}%" aria-label="Anmerkung ${a.nr}: ${h(a.text.slice(0, 80))}"><span>${a.nr}</span></button>`;
+    const fleck = fleckHtml;
     const seiten = zeigen.map(d => (ganz ? `<h4 class="teilkopf" style="width:${P.zoom}%">${h(name(d))}</h4>` : '') + (pdfDa(d) ? d.masse.map((m, i) => {
       const n = i + 1, hier = liste.filter(a => a.dokId === d.id && a.seite === n && !a.zurueckgezogen);
-      return `<div class="seitenblock" data-dok="${h(d.id)}" data-seite="${n}" style="width:${P.zoom}%"><div class="seitenkopf"><span>${ganz ? h(name(d)) + ', ' : ''}Seite ${n}${hier.length ? ', ' + hier.length + (hier.length === 1 ? ' Anmerkung' : ' Anmerkungen') : ''}</span><button class="klein" data-act="anm-seite" data-werk="${h(w.id)}" data-dok="${h(d.id)}" data-seite="${n}">Ganze Seite kommentieren</button></div><div class="seite${P.mark ? ' mark' : ''}" data-dok="${h(d.id)}" data-seite="${n}" style="aspect-ratio:${m[0]}/${m[1]}">${hier.filter(a => a.rect).map(fleck).join('')}</div></div>`;
+      return `<div class="seitenblock" data-dok="${h(d.id)}" data-seite="${n}" style="width:${P.zoom}%"><div class="seitenkopf"><span>${ganz ? h(name(d)) + ', ' : ''}Seite ${n}${hier.length ? ', ' + hier.length + (hier.length === 1 ? ' Anmerkung' : ' Anmerkungen') : ''}</span><button class="klein" data-act="anm-seite" data-werk="${h(w.id)}" data-dok="${h(d.id)}" data-seite="${n}">Ganze Seite kommentieren</button></div><div class="seite${markKl()}" data-dok="${h(d.id)}" data-seite="${n}" style="aspect-ratio:${m[0]}/${m[1]}">${hier.filter(a => a.rect).map(fleck).join('')}</div></div>`;
     }).join('') : `<p class="fehler-fest">Das PDF „${h(d.datei)}“ liegt nicht in der Ablage.</p>`)).join('');
     return `${teile}<div class="pdfleiste">
-        <button data-act="pdf-mark" aria-pressed="${P.mark}" class="${P.mark ? 'haupt' : ''}">${P.mark ? 'Jetzt auf der Seite ein Rechteck aufziehen' : 'Stelle markieren und kommentieren'}</button>
+        <button data-act="pdf-mark" aria-pressed="${P.mark}" class="${P.mark ? 'haupt' : ''}">${P.mark ? (markText() ? 'Jetzt den Text auf der Seite überstreichen' : 'Jetzt auf der Seite ein Rechteck aufziehen') : 'Stelle markieren und kommentieren'}</button>${weiseWahl()}
         <span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span>
         ${ganz ? '' : `<label class="sprung">Seite<input type="number" id="pdf-sprung" min="1" max="${dok.seiten}" value="1"> von ${dok.seiten}</label>`}
         <span class="rechts">${istSchicht(w) ? '' : `<button data-act="pdf-text" data-id="${h(w.id)}">Text als Originaltext übernehmen</button>`}${ganz ? '' : `<button data-act="pdf-laden" data-id="${h(dok.id)}">PDF herunterladen</button>`}</span>
@@ -815,17 +844,41 @@ if (typeof document !== 'undefined') (function () {
     const x0 = fx(ev), y0 = fy(ev), band = document.createElement('div'); band.className = 'band'; s.appendChild(band);
     try { s.setPointerCapture(ev.pointerId); } catch (e) { /* ohne Capture weiter */ }
     const rect = e => ({ x: Math.min(x0, fx(e)), y: Math.min(y0, fy(e)), w: Math.abs(fx(e) - x0), h: Math.abs(fy(e) - y0) });
-    const mv = e => { const q = rect(e); band.style.cssText = `left:${q.x * 100}%;top:${q.y * 100}%;width:${q.w * 100}%;height:${q.h * 100}%`; };
-    const ende = e => {
+    // Textauswahl: die Wörter der Seite vom ersten bis zum letzten überstrichenen, in Lesefolge
+    const alsText = markText(), T = { ws: null, i0: -1, i1: -1, letzt: ev, divs: [] }, seitenV = r.height / r.width;
+    const naechstes = e => { const px = fx(e), py = fy(e); let best = -1, bd = Infinity; T.ws.forEach((w, i) => { const dx = Math.max(w.x - px, 0, px - w.x - w.w), dy = Math.max(w.y - py, 0, py - w.y - w.h) * seitenV, d = dx * dx + 9 * dy * dy; if (d < bd) { bd = d; best = i; } }); return { i: best, d: Math.sqrt(bd) }; };
+    const zeigeWahl = () => {
+      if (!T.ws || !T.ws.length || T.i0 < 0) return; const b = naechstes(T.letzt).i; if (b === T.i1) return; T.i1 = b;
+      T.divs.forEach(d => d.remove()); T.divs = []; band.style.display = 'none';
+      T.ws.slice(Math.min(T.i0, T.i1), Math.max(T.i0, T.i1) + 1).forEach(w => { const d = document.createElement('div'); d.className = 'auswahl'; d.style.cssText = `left:${(w.x * 100).toFixed(2)}%;top:${(w.y * 100).toFixed(2)}%;width:${(w.w * 100).toFixed(2)}%;height:${(w.h * 100).toFixed(2)}%`; s.appendChild(d); T.divs.push(d); });
+    };
+    const bereit = !alsText ? Promise.resolve() : seitenWorte(s.dataset.dok, +s.dataset.seite).then(ws => { T.ws = ws.filter(w => w.t && w.w > 0 && w.h > 0); if (T.ws.length) { const a = naechstes(ev); T.i0 = a.d < 0.05 ? a.i : -1; zeigeWahl(); } });
+    const mv = e => { T.letzt = e; const q = rect(e); band.style.cssText = `left:${q.x * 100}%;top:${q.y * 100}%;width:${q.w * 100}%;height:${q.h * 100}%`; if (alsText && T.ws && T.i0 >= 0) { T.i1 = -1; zeigeWahl(); } };
+    const textWahl = () => { // Flächen je Zeile, Rahmen um alles und der markierte Text
+      const ws = T.ws.slice(Math.min(T.i0, T.i1), Math.max(T.i0, T.i1) + 1), zl = [], r4 = v => +v.toFixed(4);
+      ws.forEach(w => { const z = zl[zl.length - 1], m = w.y + w.h / 2; if (z && Math.abs(m - z.m) < 0.6 * Math.max(w.h, z.u - z.o) && w.x >= z.x1 - 0.02) { z.o = Math.min(z.o, w.y); z.u = Math.max(z.u, w.y + w.h); z.x1 = Math.max(z.x1, w.x + w.w); z.m = (z.o + z.u) / 2; } else zl.push({ m, o: w.y, u: w.y + w.h, x0: w.x, x1: w.x + w.w }); });
+      const x = Math.min(...zl.map(z => z.x0)), y = Math.min(...zl.map(z => z.o)), x1 = Math.max(...zl.map(z => z.x1)), y1 = Math.max(...zl.map(z => z.u));
+      return { rect: { x: r4(x), y: r4(y), w: r4(x1 - x), h: r4(y1 - y) }, rects: zl.slice(0, 60).map(z => ({ x: r4(z.x0), y: r4(z.o), w: r4(z.x1 - z.x0), h: r4(z.u - z.o) })), text: ws.map(w => w.t).join(' ').replace(/([A-Za-zäöüÄÖÜ])[-‐] (?=[a-zäöü])/g, '$1').replace(/\s+/g, ' ').trim().slice(0, 600) };
+    };
+    const ende = async e => {
       s.removeEventListener('pointermove', mv); s.removeEventListener('pointerup', ende); s.removeEventListener('pointercancel', ab); band.remove();
+      if (alsText) {
+        T.letzt = e; await bereit; T.i1 = -1; zeigeWahl(); T.divs.forEach(d => d.remove());
+        if (T.ws && T.ws.length && T.i0 >= 0 && T.i1 >= 0) {
+          const t = textWahl(); P.mark = false;
+          anmForm(null, { werkId: $('#pdfseiten').dataset.werk, dokId: s.dataset.dok, seite: +s.dataset.seite, rect: t.rect, rects: t.rects, zitat: t.text, art: P.markArt, alt: t.text, neu: P.markArt === 'aenderung' ? t.text : '' });
+          document.querySelectorAll('.seite.mark').forEach(n => n.classList.remove('mark', 'marktext')); return;
+        }
+        meldung(T.ws && T.ws.length ? 'An dieser Stelle steht kein erkannter Text. Die Stelle ist als Rechteck markiert.' : 'Auf dieser Seite ist kein Text erkannt. Die Stelle ist als Rechteck markiert.');
+      }
       let q = rect(e); if (q.w < 0.012 && q.h < 0.008) q = { x: Math.max(0, Math.min(0.94, x0 - 0.03)), y: Math.max(0, Math.min(0.97, y0 - 0.012)), w: 0.06, h: 0.024 };
       q = { x: +q.x.toFixed(4), y: +q.y.toFixed(4), w: +q.w.toFixed(4), h: +q.h.toFixed(4) };
       P.mark = false; const vg = { werkId: $('#pdfseiten').dataset.werk, dokId: s.dataset.dok, seite: +s.dataset.seite, rect: q, art: P.markArt };
       if (P.markArt === 'tabelle' || P.markArt === 'skizze') uebernahmeNeu(vg);
       else textImRechteck(vg.dokId, vg.seite, q).then(t => { vg.alt = t; if (P.markArt === 'aenderung') vg.neu = t; anmForm(null, vg); });
-      document.querySelectorAll('.seite.mark').forEach(n => n.classList.remove('mark'));
+      document.querySelectorAll('.seite.mark').forEach(n => n.classList.remove('mark', 'marktext'));
     };
-    const ab = () => { s.removeEventListener('pointermove', mv); s.removeEventListener('pointerup', ende); s.removeEventListener('pointercancel', ab); band.remove(); };
+    const ab = () => { s.removeEventListener('pointermove', mv); s.removeEventListener('pointerup', ende); s.removeEventListener('pointercancel', ab); band.remove(); T.divs.forEach(d => d.remove()); };
     s.addEventListener('pointermove', mv); s.addEventListener('pointerup', ende); s.addEventListener('pointercancel', ab);
   });
   document.addEventListener('keydown', ev => {
@@ -1003,7 +1056,7 @@ if (typeof document !== 'undefined') (function () {
     ws.forEach(w => {
       L().aenderungen.filter(a => a.werkId === w.id).forEach(a => { const st = stellen(diffWorte(a.vorher, a.nachher)), d = dokId(a.dokId) || {}; rows.push([a.id, w.kurz, d.teil || '', a.seite, AEND[a.art], a.schichtId && werk(a.schichtId) ? werk(a.schichtId).kurz : '', st.map(x => x.alt || '–').join(' | '), st.map(x => x.neu || '–').join(' | '), a.begruendung, a.regelId || '', a.autor, datumCH(a.datum), status('aenderungen', a), versionVon('aenderungen', a.id) || '']); });
       L().formate.filter(f => f.werkId === w.id).forEach(f => { const d = dokId(f.dokId) || {}; rows.push([f.id, w.kurz, d.teil || '', f.seite, 'Formatänderung', '', f.text, FV[f.typ], '', '', f.autor, datumCH(f.datum), standVon(L(), 'formate', f) === 'frei' ? 'freigegeben' : 'nicht freigegeben', versionVon('formate', f.id) || '']); });
-      L().anmerkungen.filter(a => a.werkId === w.id).forEach(a => { const d = dokId(a.dokId) || {}; rows.push([a.id, w.kurz, d.teil || '', a.seite, ANM[a.art] + (a.aendArt ? ', ' + AEND[a.aendArt] : ''), '', a.alt || '', a.neu || '', a.text, a.regelId || '', a.autor, datumCH(a.datum), status('anmerkungen', a) + (a.erledigt ? ', erledigt' : ''), versionVon('anmerkungen', a.id) || '']); });
+      L().anmerkungen.filter(a => a.werkId === w.id).forEach(a => { const d = dokId(a.dokId) || {}; rows.push([a.id, w.kurz, d.teil || '', a.seite, ANM[a.art] + (a.aendArt ? ', ' + AEND[a.aendArt] : ''), '', a.alt || '', a.neu || '', a.text, a.regelId || '', a.autor, datumCH(a.datum), status('anmerkungen', a) + (a.erledigt ? ', erledigt' : ''), versionVon('anmerkungen', a.id) || '']); const fr = antwFrei(a); (a.antworten || []).forEach(r => rows.push([a.id + '-R' + r.nr, w.kurz, d.teil || '', a.seite, 'Antwort auf ' + a.id, '', '', '', r.text, '', r.autor, datumCH(r.datum), (fr.has(r.nr) ? 'freigegeben' : 'nicht freigegeben') + (r.zurueckgezogen ? ', zurückgezogen' : ''), ''])); });
     });
     const q = t => '"' + String(t == null ? '' : t).replace(/"/g, '""').replace(/\r?\n/g, ' ') + '"';
     return { text: '﻿' + [kopf].concat(rows).map(r => r.map(q).join(';')).join('\r\n'), zeilen: rows.length };
@@ -1100,7 +1153,7 @@ if (typeof document !== 'undefined') (function () {
     const q = S.q.trim().toLowerCase(); if (q.length < 2) return `<section class="blatt"><h2>Suchen</h2><p class="lead">Mindestens zwei Zeichen eingeben.</p></section>`;
     const tr = L().regeln.filter(r => [r.id, r.titel, r.text, r.abschnitt, r.begruendung].concat(r.params.map(p => p.k + ' ' + p.v + ' ' + p.e)).join(' ').toLowerCase().includes(q));
     const tg = L().glossar.filter(g => (g.begriff + ' ' + g.bedeutung).toLowerCase().includes(q)).slice(0, 40);
-    const tn = L().anmerkungen.filter(a => (a.text + ' ' + a.autor).toLowerCase().includes(q));
+    const tn = L().anmerkungen.filter(a => [a.text, a.autor, a.zitat || ''].concat((a.antworten || []).map(r => r.text + ' ' + r.autor)).join(' ').toLowerCase().includes(q));
     const vt = volltextSuche(q), nSeiten = vt.reduce((n, x) => n + x.seiten.length, 0);
     return `<section class="blatt"><h2>Suche nach „${h(S.q)}“</h2>
       <h3>Regeln (${tr.length})</h3>${tr.map(r => `<p class="treffer-werk">${h((werk(r.werkId) || {}).kurz)}</p>${regelKarte(r)}`).join('') || '<p class="leer">Keine Regel gefunden.</p>'}
@@ -1288,8 +1341,8 @@ if (typeof document !== 'undefined') (function () {
     const ocr = textOcr(L(), dok.id, n), eff = textSchicht(L(), dok.id, n, E.ebene), sch = E.ebene && werk(E.ebene);
     const anms = L().anmerkungen.filter(a => a.dokId === dok.id), aes = L().aenderungen.filter(a => a.dokId === dok.id);
     const hier = anms.filter(a => a.seite === n && !a.zurueckgezogen);
-    const fleck = a => `<button class="fleck art-${a.art}${a.erledigt ? ' erledigt' : ''}${P.aktiv === a.id ? ' aktiv' : ''}" id="f-${h(a.id)}" data-act="fleck" data-id="${h(a.id)}" style="left:${(a.rect.x * 100).toFixed(2)}%;top:${(a.rect.y * 100).toFixed(2)}%;width:${(a.rect.w * 100).toFixed(2)}%;height:${(a.rect.h * 100).toFixed(2)}%" aria-label="Anmerkung ${a.nr}: ${h(a.text.slice(0, 80))}"><span>${a.nr}</span></button>`;
-    const links = da ? `<div id="pdfseiten" class="eine" data-werk="${h(w.id)}"><div class="seitenblock" data-dok="${h(dok.id)}" data-seite="${n}" style="width:${P.zoom}%"><div class="seite${P.mark ? ' mark' : ''}${E.links === 'hybrid' && !E.zScan ? ' ohne-scan' : ''}${E.links === 'hybrid' && !E.zText ? ' ohne-text' : ''}" data-dok="${h(dok.id)}" data-seite="${n}"${E.links === 'hybrid' ? ' data-hybrid="1"' : ''} style="aspect-ratio:${m[0]}/${m[1]};--t:${E.transp / 100}">${E.zMarken ? hier.filter(a => a.rect).map(fleck).join('') : ''}</div></div></div>`
+    const fleck = fleckHtml;
+    const links = da ? `<div id="pdfseiten" class="eine" data-werk="${h(w.id)}"><div class="seitenblock" data-dok="${h(dok.id)}" data-seite="${n}" style="width:${P.zoom}%"><div class="seite${markKl()}${E.links === 'hybrid' && !E.zScan ? ' ohne-scan' : ''}${E.links === 'hybrid' && !E.zText ? ' ohne-text' : ''}" data-dok="${h(dok.id)}" data-seite="${n}"${E.links === 'hybrid' ? ' data-hybrid="1"' : ''} style="aspect-ratio:${m[0]}/${m[1]};--t:${E.transp / 100}">${E.zMarken ? hier.filter(a => a.rect).map(fleck).join('') : ''}</div></div></div>`
       : `<div class="leerblock"><p>Das PDF „${h(dok.datei)}“ liegt nicht in der Ablage.</p><button class="haupt" data-act="pdf-ersetzen" data-id="${h(dok.id)}">PDF hinzufügen</button></div>`;
     let mitte;
     if (!hat) mitte = `<div class="leerblock"><p>Für dieses PDF ist noch kein Seitentext gespeichert.</p>${da ? `<button class="haupt" data-act="ed-text-lesen" data-id="${h(dok.id)}">Text aus dem PDF lesen</button>` : ''}</div>`;
@@ -1335,7 +1388,7 @@ if (typeof document !== 'undefined') (function () {
       </div>
       <div class="edgrid">
         <section class="edspalte" aria-label="Original"><header class="edkopf"><h3>Original</h3><span class="edtools"><button data-act="seite-ok" aria-pressed="${(dok.geprueftSeiten || []).includes(n)}" class="klein ${(dok.geprueftSeiten || []).includes(n) ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${(dok.geprueftSeiten || []).includes(n) ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}" class="klein" title="${seitenStand(w).ok} von ${seitenStand(w).alle} Seiten verglichen">Norm freigeben</button>` : ''}<span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span></span></header>
-          <p class="edzeile">${['aenderung', 'kommentar'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? 'Jetzt die Stelle im Scan einrahmen' : k === 'aenderung' ? 'Änderung im Scan vorschlagen' : 'Stelle kommentieren'}</button>`; }).join('')}<button data-act="anm-seite" data-werk="${h(w.id)}" data-dok="${h(dok.id)}" data-seite="${n}">Ganze Seite kommentieren</button></p>
+          <p class="edzeile">${['aenderung', 'kommentar'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? (markText() ? 'Jetzt den Text im Scan überstreichen' : 'Jetzt die Stelle im Scan einrahmen') : k === 'aenderung' ? 'Änderung im Scan vorschlagen' : 'Stelle kommentieren'}</button>`; }).join('')}${weiseWahl()}<button data-act="anm-seite" data-werk="${h(w.id)}" data-dok="${h(dok.id)}" data-seite="${n}">Ganze Seite kommentieren</button></p>
           <p class="edzeile">${['tabelle', 'skizze'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? 'Jetzt den Bereich im Scan einrahmen' : k === 'tabelle' ? 'Tabelle übernehmen' : 'Skizze übernehmen'}</button>`; }).join('')}</p>
           <p class="edzeile ebenen"><span class="umschalt"><button data-act="ed-links" data-v="scan" aria-pressed="${E.links === 'scan'}">Scan</button><button data-act="ed-links" data-v="hybrid" aria-pressed="${E.links === 'hybrid'}">Hybrid</button></span>
             ${E.links === 'hybrid' ? `<label class="regler">Text deckend<input type="range" id="ed-transp" min="0" max="100" step="5" value="${E.transp}"><output>${E.transp} %</output></label><label class="haken"><input type="checkbox" id="ed-z-scan" ${E.zScan ? 'checked' : ''}> Scan</label><label class="haken"><input type="checkbox" id="ed-z-text" ${E.zText ? 'checked' : ''}> Text</label>` : ''}<label class="haken"><input type="checkbox" id="ed-z-marken" ${E.zMarken ? 'checked' : ''}> Markierungen</label></p>
@@ -1384,7 +1437,7 @@ if (typeof document !== 'undefined') (function () {
     const teil = a => ds.length > 1 ? h((dokId(a.dokId) || {}).teil || '') + ', ' : '';
     return `<table class="dtab" border="1" cellspacing="0" cellpadding="3"><thead><tr><th>Nr.</th><th>Stelle</th><th>Art</th><th>Alt</th><th>Neu</th><th>Begründung</th><th>Von</th></tr></thead><tbody>
       ${aes.map(a => { const st = stellen(diffWorte(a.vorher, a.nachher)); return `<tr><td>Ä${a.nr}</td><td>${teil(a)}S. ${a.seite}</td><td>${AEND[a.art]}${a.schichtId && werk(a.schichtId) ? ', ' + h(werk(a.schichtId).kurz) : ''}${standVon(L(), 'aenderungen', a) === 'frei' ? '' : ' (nicht freigegeben)'}</td><td>${st.map(x => h(x.alt || '–')).join('<br>')}</td><td>${st.map(x => h(x.neu || '–')).join('<br>')}</td><td>${h(a.begruendung)}</td><td>${h(a.autor)}, ${datumCH(a.datum)}</td></tr>`; }).join('')}
-      ${anms.map(a => `<tr><td>A${a.nr}</td><td>${teil(a)}S. ${a.seite}</td><td>${ANM[a.art]}${a.aendArt ? ', ' + AEND[a.aendArt] : ''}${standVon(L(), 'anmerkungen', a) === 'frei' ? '' : ' (nicht freigegeben)'}</td><td>${h(a.alt || '')}</td><td>${h(a.neu || '')}</td><td>${h(a.text)}</td><td>${h(a.autor)}, ${datumCH(a.datum)}</td></tr>`).join('')}</tbody></table>`;
+      ${anms.map(a => `<tr><td>A${a.nr}</td><td>${teil(a)}S. ${a.seite}</td><td>${ANM[a.art]}${a.aendArt ? ', ' + AEND[a.aendArt] : ''}${standVon(L(), 'anmerkungen', a) === 'frei' ? '' : ' (nicht freigegeben)'}</td><td>${h(a.alt || (a.art !== 'aenderung' && a.zitat) || '')}</td><td>${h(a.neu || '')}</td><td>${h(a.text)}${antwortText(a).map(r => `<br>↳ ${h(r.autor)}, ${datumCH(r.datum)}: ${h(r.text)}`).join('')}</td><td>${h(a.autor)}, ${datumCH(a.datum)}</td></tr>`).join('')}</tbody></table>`;
   }
   function druckHtml(w, opt, fuerWord) {
     const E = S.ed, akt = dokId(E.dok), ds = opt.umfang === 'alles' ? dokus(w.id) : [akt], sch = E.ebene && werk(E.ebene), v = letzteVersion(L());
@@ -1500,7 +1553,7 @@ if (typeof document !== 'undefined') (function () {
     const aesAlle = L().aenderungen.filter(a => ds.some(d => d.id === a.dokId) && !a.zurueckgezogen && inWahl(a)), anmAlle = L().anmerkungen.filter(a => ds.some(d => d.id === a.dokId) && !a.zurueckgezogen && inWahl(a));
     const artText = a => AEND[a.art] + (a.schichtId && werk(a.schichtId) ? ', ' + werk(a.schichtId).kurz : '') + (standVon(L(), 'aenderungen', a) === 'frei' ? '' : ' (nicht freigegeben)');
     const eintrag = a => { zeile(`Ä${a.nr}  ${artText(a)}`, { fett: true }); stellen(diffWorte(a.vorher, a.nachher)).forEach(x => { zeile('Alt: ' + (x.alt || '–'), { ein: 14, farbe: FARBE.rot }); zeile('Neu: ' + (x.neu || '–'), { ein: 14, farbe: a.art === 'ocr' ? FARBE.blau : FARBE.gruen }); }); zeile('Begründung: ' + a.begruendung, { ein: 14 }); zeile(`${a.autor}, ${datumCH(a.datum)}`, { ein: 14, g: 8, farbe: FARBE.leise }); y -= 6; };
-    const notiz = a => { zeile(`A${a.nr}  ${ANM[a.art]}${a.rect ? '' : ' zur ganzen Seite'}${standVon(L(), 'anmerkungen', a) === 'frei' ? '' : ' (nicht freigegeben)'}`, { fett: true }); if (a.alt) zeile('Alt: ' + a.alt, { ein: 14, farbe: FARBE.rot }); if (a.neu) zeile('Neu: ' + a.neu, { ein: 14, farbe: a.aendArt === 'ocr' ? FARBE.blau : FARBE.gruen }); zeile(a.text, { ein: 14 }); zeile(`${a.autor}, ${datumCH(a.datum)}`, { ein: 14, g: 8, farbe: FARBE.leise }); y -= 6; };
+    const notiz = a => { zeile(`A${a.nr}  ${ANM[a.art]}${a.rect ? '' : ' zur ganzen Seite'}${standVon(L(), 'anmerkungen', a) === 'frei' ? '' : ' (nicht freigegeben)'}`, { fett: true }); if (a.alt) zeile('Alt: ' + a.alt, { ein: 14, farbe: FARBE.rot }); if (a.neu) zeile('Neu: ' + a.neu, { ein: 14, farbe: a.aendArt === 'ocr' ? FARBE.blau : FARBE.gruen }); if (a.zitat && a.art !== 'aenderung') zeile('Markiert: ' + a.zitat, { ein: 14, farbe: FARBE.leise }); zeile(a.text, { ein: 14 }); zeile(`${a.autor}, ${datumCH(a.datum)}`, { ein: 14, g: 8, farbe: FARBE.leise }); antwortText(a).forEach(r => { zeile('Antwort: ' + r.text, { ein: 28 }); zeile(`${r.autor}, ${datumCH(r.datum)}`, { ein: 28, g: 8, farbe: FARBE.leise }); }); y -= 6; };
     if (opt.deckblatt) {
       neu(''); zeile('Normenbibliothek, Export mit Änderungen', { g: 9, farbe: FARBE.leise }); y -= 14; zeile(w.kurz, { fett: true, g: 26 }); y -= 4; zeile(w.titel, { g: 13 }); y -= 16;
       [['Herausgeber', g.name], ['Ausgabe', w.ausgabe], ['Stand der Bibliothek', v ? `Version ${v.nr} vom ${datumCH(v.datum)}` + (R.offen.length ? ', mit nicht freigegebenen Änderungen' : '') : 'keine Version'], ['Exportiert', datumCH(heute()) + (L().meta.bearbeiter ? ' von ' + L().meta.bearbeiter : '')], ['Umfang', `${wahl ? wahl.length : ds.reduce((x, d) => x + d.seiten, 0)} Originalseiten, ${aesAlle.length} ${aesAlle.length === 1 ? 'Textänderung' : 'Textänderungen'}, ${anmAlle.length} ${anmAlle.length === 1 ? 'Anmerkung' : 'Anmerkungen'}`]].filter(x => x[1]).forEach(x => zeile(x[0] + ': ' + x[1]));
@@ -1517,7 +1570,7 @@ if (typeof document !== 'undefined') (function () {
       seiten.forEach((p, i) => {
         const n = idx[i] + 1, a1 = aesAlle.filter(a => a.dokId === d.id && a.seite === n), a2 = anmAlle.filter(a => a.dokId === d.id && a.seite === n);
         out.addPage(p);
-        if (opt.marken) { const { width, height } = p.getSize(); a2.filter(a => a.rect).forEach(a => { const c = a.art === 'frage' ? FARBE.rot : a.art === 'aenderung' ? rgb(0.78, 0.37, 0) : FARBE.blau, x = a.rect.x * width, yy = height - (a.rect.y + a.rect.h) * height; p.drawRectangle({ x, y: yy, width: a.rect.w * width, height: a.rect.h * height, borderColor: c, borderWidth: 1.2, color: c, opacity: 0.1, borderOpacity: 1 }); p.drawRectangle({ x, y: yy + a.rect.h * height, width: 22, height: 11, color: c }); p.drawText('A' + a.nr, { x: x + 3, y: yy + a.rect.h * height + 2.5, size: 8, font: fett, color: rgb(1, 1, 1) }); }); }
+        if (opt.marken) { const { width, height } = p.getSize(); a2.filter(a => a.rect).forEach(a => { const c = a.art === 'frage' ? FARBE.rot : a.art === 'aenderung' ? rgb(0.78, 0.37, 0) : FARBE.blau, x = a.rect.x * width, yy = height - (a.rect.y + a.rect.h) * height; if (a.rects && a.rects.length) a.rects.forEach(z => p.drawRectangle({ x: z.x * width, y: height - (z.y + z.h) * height, width: z.w * width, height: z.h * height, color: c, opacity: 0.22 })); else p.drawRectangle({ x, y: yy, width: a.rect.w * width, height: a.rect.h * height, borderColor: c, borderWidth: 1.2, color: c, opacity: 0.1, borderOpacity: 1 }); p.drawRectangle({ x, y: yy + a.rect.h * height, width: 22, height: 11, color: c }); p.drawText('A' + a.nr, { x: x + 3, y: yy + a.rect.h * height + 2.5, size: 8, font: fett, color: rgb(1, 1, 1) }); }); }
         if (opt.blaetter && (a1.length || a2.length)) { kz = `${w.kurz}${ds.length > 1 ? ', ' + (d.teil || d.datei) : ''}: Änderungen zu Seite ${n}. Eingefügtes Blatt, kein Bestandteil des Originals.`; neu(kz); zeile(`Änderungen zu Seite ${n}`, { fett: true, g: 15 }); y -= 8; a1.forEach(eintrag); a2.forEach(notiz); }
       });
     }
@@ -1854,6 +1907,9 @@ if (typeof document !== 'undefined') (function () {
     fleck: el => { P.aktiv = el.dataset.id; document.querySelectorAll('.fleck.aktiv,.anm.aktiv').forEach(n => n.classList.remove('aktiv')); el.classList.add('aktiv'); const k = document.getElementById('a-' + el.dataset.id); if (k) { k.classList.add('aktiv'); k.scrollIntoView({ block: 'nearest' }); } return false; },
     'anm-erledigt': el => mitName(() => { const a = anm(el.dataset.id); a.erledigt = !a.erledigt; log(a.erledigt ? 'Anmerkung erledigt' : 'Anmerkung wieder offen', a.id); render(); }),
     'anm-weg': el => mitName(() => { const a = anm(el.dataset.id); if (standVon(L(), 'anmerkungen', a) === 'neu') { L().anmerkungen = L().anmerkungen.filter(x => x !== a); log('Nicht freigegebene Anmerkung gelöscht', a.id); } else { a.zurueckgezogen = !a.zurueckgezogen; log(a.zurueckgezogen ? 'Anmerkung zurückgezogen' : 'Anmerkung wieder aufgenommen', a.id); } render(); }),
+    'anm-antwort': el => mitName(() => antwortForm(anm(el.dataset.id))),
+    'antw-weg': el => mitName(() => { const a = anm(el.dataset.id), r = (a.antworten || []).find(x => String(x.nr) === el.dataset.nr); if (!r) return; if (!antwFrei(a).has(r.nr)) { a.antworten = a.antworten.filter(x => x !== r); if (!a.antworten.length && !antwFrei(a).size) delete a.antworten; log('Nicht freigegebene Antwort gelöscht', a.id, 'Antwort ' + r.nr); } else { r.zurueckgezogen = !r.zurueckgezogen; log(r.zurueckgezogen ? 'Antwort zurückgezogen' : 'Antwort wieder aufgenommen', a.id, 'Antwort ' + r.nr); } render(); }),
+    'mark-weise': el => { P.markWeise = el.dataset.v; },
     'anm-hist': el => { S.offen[el.dataset.id] = !S.offen[el.dataset.id]; },
     'anm-regel': el => mitName(() => { const a = anm(el.dataset.id); regelForm(null, { werkId: a.werkId, dokId: a.dokId, pdfSeite: String(a.seite), abschnitt: '', titel: '', text: a.text, params: [], anmId: a.id, quelle: 'Anmerkung ' + a.id }); }),
     ansicht: el => { S.view = { typ: el.dataset.typ }; },
