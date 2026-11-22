@@ -334,7 +334,7 @@ if (typeof document !== 'undefined') (function () {
   const dokVon = id => dokus(id)[0];
   const istGanz = w => dokus(w.id).length > 1 && (!S.dokWahl[w.id] || S.dokWahl[w.id] === '*');
   function migriere() { // fehlende Felder älterer Stände ergänzen
-    const l = S.lib; ['anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar', 'abschnitte', 'versionen', 'verlauf'].forEach(k => { l[k] = l[k] || []; }); ['titelbilder', 'seitentext', 'struktur', 'elemente', 'unsicher', 'ocr', 'vorschlaege'].forEach(k => { l[k] = l[k] || {}; }); l.uebernahmen = l.uebernahmen || [];
+    const l = S.lib; ['anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar', 'abschnitte', 'versionen', 'verlauf'].forEach(k => { l[k] = l[k] || []; }); ['titelbilder', 'seitentext', 'struktur', 'elemente', 'unsicher', 'ocr', 'vorschlaege', 'zweitlesung'].forEach(k => { l[k] = l[k] || {}; }); l.uebernahmen = l.uebernahmen || [];
     l.dokumente.forEach(d => { if (d.teil == null) d.teil = ''; });
     l.anmerkungen.forEach(a => { if (!a.dokId) { const d = l.dokumente.find(x => x.werkId === a.werkId); if (d) a.dokId = d.id; } });
   }
@@ -1078,8 +1078,8 @@ if (typeof document !== 'undefined') (function () {
   function plStart(w, art) { S.pl = { werk: w.id, art, i: 0, liste: null, ok: 0, korr: 0, schreibt: false }; plBauen(w, art).then(l => { if (S.pl && S.pl.werk === w.id && S.pl.art === art) { S.pl.liste = l; S.pl.von = l.length; if (S.view.typ === 'stellen') render(); } }); }
   function stellenAnsicht(w) {
     if (!S.pl || S.pl.werk !== w.id) plStart(w, 'unsicher');
-    const Q = S.pl, hatV = dokus(w.id).some(d => Object.keys(L().vorschlaege[d.id] || {}).length);
-    const kopf = `<header class="dashkopf"><div><p class="pfad"><a href="#" data-act="werk-pdf" data-id="${h(w.id)}">Zurück zu ${h(w.kurz)}</a></p><h2>Prüfliste ${h(w.kurz)}</h2><p class="lead">Jede Stelle zeigt den Ausschnitt aus dem Scan und das gelesene Wort. Bestätigen oder berichtigen; das Original bleibt unverändert.</p></div></header>
+    const Q = S.pl, hatV = dokus(w.id).some(d => Object.keys(L().vorschlaege[d.id] || {}).length), zw = L().zweitlesung;
+    const kopf = `<header class="dashkopf"><div><p class="pfad"><a href="#" data-act="werk-pdf" data-id="${h(w.id)}">Zurück zu ${h(w.kurz)}</a></p><h2>Prüfliste ${h(w.kurz)}</h2><p class="lead">Jede Stelle zeigt den Ausschnitt aus dem Scan und das gelesene Wort. Bestätigen oder berichtigen; das Original bleibt unverändert.</p>${hatV && zw.hinweis ? `<p class="hinweis">${h(zw.hinweis)}</p>` : ''}</div></header>
       <div class="filter"><label>Was prüfen<select id="pl-art">${opt(Object.keys(PL_ART).filter(k => k !== 'vorschlag' || hatV).map(k => [k, PL_ART[k]]), Q.art)}</select></label>${Q.liste ? `<span class="vglstand"><progress max="${Math.max(1, Q.von)}" value="${Math.min(Q.i, Q.von)}"></progress> Stelle ${Math.min(Q.i + 1, Q.von)} von ${Q.von} · ${Q.ok} bestätigt, ${Q.korr} berichtigt</span>` : ''}</div>`;
     if (!Q.liste) return `<section class="blatt weit">${kopf}<p class="leer" role="status">Die Liste wird aufgebaut …</p></section>`;
     if (!Q.von) return `<section class="blatt weit">${kopf}<p class="leer">${Q.art === 'vorschlag' ? 'Keine offenen Vorschläge.' : 'Keine offenen Stellen dieser Art. Seiten, die als verglichen markiert sind, und bestätigte Stellen erscheinen nicht.'}</p></section>`;
@@ -1091,8 +1091,8 @@ if (typeof document !== 'undefined') (function () {
       <div class="plkarte" id="plkarte">
         <p class="plwo">${h(d.teil ? d.teil + ' · ' : '')}Seite ${it.n}${it.tabNr ? ' · in Tabelle ' + h(it.tabNr) : ''}</p>
         <div class="plbild">${schnittImg(it.dokId, it.n, [bx, by, bw, bh], 'Ausschnitt aus dem Scan, Seite ' + it.n)}${vor && !it.gefunden ? '' : `<span class="plmarke" style="left:${((it.x - bx) / bw * 100).toFixed(2)}%;top:${((it.y - by) / bh * 100).toFixed(2)}%;width:${(it.w / bw * 100).toFixed(2)}%;height:${(it.h / bh * 100).toFixed(2)}%"></span>`}</div>
-        ${vor ? `<dl class="altneu vorschau"><div><dt>Gelesen</dt><dd><del class="ocr">${h(it.t)}</del></dd><dt>Vorschlag</dt><dd><ins class="ocr">${h(it.neu)}</ins></dd></div></dl>${it.grund ? `<p class="hinweis">${h(it.grund)}</p>` : ''}`
-          : `<p class="plwort"><span>Gelesen</span><b>${h(it.t)}</b>${it.nach ? `<i>${h(it.nach)}</i>` : ''}</p><p class="plctx">${ctx}</p>`}
+        ${vor ? `<dl class="altneu vorschau"><div><dt>Gelesen</dt><dd><del class="ocr">${h(it.t)}</del></dd><dt>Vorschlag</dt><dd>${it.neu ? `<ins class="ocr">${h(it.neu)}</ins>` : 'entfernen'}</dd></div></dl>${it.grund ? `<p class="hinweis">${h(it.grund)}</p>` : ''}`
+          : `<p class="plwort"><span>Gelesen</span><b>${h(it.t)}</b>${it.nach ? `<i>${h(it.nach)}</i>` : ''}${((((L().zweitlesung.stimmt || {})[it.dokId] || {})[it.n]) || []).includes(it.t) ? '<span class="plzweit" title="Hinweis, keine Prüfung">Zweitlesung: stimmt</span>' : ''}</p><p class="plctx">${ctx}</p>`}
         ${Q.schreibt ? `<form class="plform" id="plform"><label>Richtig ist<input id="pl-neu" value="${h(vor ? it.neu : it.t)}" autocomplete="off" spellcheck="false"></label><button class="haupt">Übernehmen (Enter)</button><button type="button" data-act="pl-abbr">Abbrechen (Esc)</button></form>`
           : `<p class="aktionen plknopf">${vor ? '<button class="haupt" data-act="pl-ok">Annehmen <kbd>Enter</kbd></button><button data-act="pl-nein">Ablehnen <kbd>X</kbd></button><button data-act="pl-korr">Anders berichtigen <kbd>K</kbd></button>' : '<button class="haupt" data-act="pl-ok">Stimmt <kbd>Enter</kbd></button><button data-act="pl-korr">Berichtigen <kbd>K</kbd></button>'}<button data-act="pl-weiter">Überspringen <kbd>→</kbd></button><button data-act="pl-zurueck" ${Q.i ? '' : 'disabled'}>Zurück <kbd>←</kbd></button><button data-act="pl-vgl">Im Vergleich öffnen <kbd>V</kbd></button></p>`}
       </div></section>`;
@@ -1105,7 +1105,12 @@ if (typeof document !== 'undefined') (function () {
   }
   function plBerichtigen(it, neu) {
     const d = dokId(it.dokId), w = werk(d.werkId), esc = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), vorher = textOcr(L(), it.dokId, it.n);
-    if (S.pl.art === 'vorschlag') { if (!vorher.includes(it.t)) return 'Die Stelle steht so nicht mehr im Text. Bitte im Vergleich berichtigen.'; aendAnlegen(w, it.dokId, it.n, 'ocr', null, vorher, vorher.replace(it.t, neu), 'Lesefehler berichtigt (Vorschlag der Zweitlesung, vom Prüfer angenommen).', ''); return ''; }
+    if (S.pl.art === 'vorschlag') {
+      if (vorher.includes(it.t)) { aendAnlegen(w, it.dokId, it.n, 'ocr', null, vorher, vorher.replace(it.t, neu).replace(/ {2,}/g, ' '), 'Lesefehler berichtigt (Vorschlag der Zweitlesung, vom Prüfer angenommen).', ''); return ''; }
+      const e = elementeVon(L(), it.dokId, it.n).find(x => x.typ === 'tabelle' && x.zeilen && x.zeilen.some(z => z.some(c => c.includes(it.t))));
+      if (e) { let fertig = false; const Z = e.zeilen.map(z => z.map(c => { if (fertig || !c.includes(it.t)) return c; fertig = true; return c.replace(it.t, neu); })); ueSetzen(w, e, { zeilen: Z }, 'Tabelle berichtigt (Vorschlag der Zweitlesung)'); return ''; }
+      return 'Die Stelle steht so nicht mehr im Text. Bitte im Vergleich berichtigen.';
+    }
     const re = new RegExp('(^|[\\s(\\[„])' + esc(it.t) + '(?=$|[\\s)\\]“.,;:])', 'g');
     if (it.tabNr) { const e = elementeVon(L(), it.dokId, it.n).find(x => x.nr === it.tabNr); if (e && e.zeilen) { let fertig = false; const Z = e.zeilen.map(z => z.map(c => { if (fertig) return c; const q = c.replace(new RegExp(re.source), (m, a) => { fertig = true; return a + neu; }); return q; })); if (fertig) { ueSetzen(w, e, { zeilen: Z }, 'Tabelle berichtigt (Prüfliste)'); return ''; } } }
     let c = -1, nachher = vorher.replace(re, (m, a) => ++c === it.vorher ? a + neu : m);
@@ -1978,8 +1983,8 @@ if (typeof document !== 'undefined') (function () {
 
   // ----- Datei
   function teileDaten() { // drei Dateien: Bearbeitungsstand, Texte aus den PDF, Titelbilder
-    const l = L(), kern = {}; Object.keys(l).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder', 'elemente', 'unsicher', 'ocr', 'vorschlaege'].includes(k)) kern[k] = l[k]; });
-    return { 'daten/bibliothek.json': JSON.stringify(kern, null, 1), 'daten/texte.json': JSON.stringify({ seitentext: l.seitentext, abschnitte: l.abschnitte, struktur: l.struktur, elemente: l.elemente, unsicher: l.unsicher, ocr: l.ocr, vorschlaege: l.vorschlaege }), 'daten/titelbilder.json': JSON.stringify(l.titelbilder) };
+    const l = L(), kern = {}; Object.keys(l).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder', 'elemente', 'unsicher', 'ocr', 'vorschlaege', 'zweitlesung'].includes(k)) kern[k] = l[k]; });
+    return { 'daten/bibliothek.json': JSON.stringify(kern, null, 1), 'daten/texte.json': JSON.stringify({ seitentext: l.seitentext, abschnitte: l.abschnitte, struktur: l.struktur, elemente: l.elemente, unsicher: l.unsicher, ocr: l.ocr, vorschlaege: l.vorschlaege, zweitlesung: l.zweitlesung }), 'daten/titelbilder.json': JSON.stringify(l.titelbilder) };
   }
   function herunterladen(name, text, typ) {
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: typ })); a.download = name;
@@ -2014,7 +2019,7 @@ if (typeof document !== 'undefined') (function () {
     try { texte = JSON.parse(await lies('daten/texte.json')); } catch (e) { /* ohne Texte weiter */ }
     try { bilder = JSON.parse(await lies('daten/titelbilder.json')); } catch (e) { /* werden nachgeholt */ }
     if (M.an) { const danach = await ruf('api/stand'); if (st.ok && danach.ok && st.j.revision !== danach.j.revision) return ladeBibliothek(); st = danach.ok ? danach : st; M.revision = st.j.revision; M.sperre = st.j.sperre || null; M.hat = !!st.j.ich; M.geladen = roh; bib.meta = bib.meta || {}; bib.meta.bearbeiter = M.ich.anzeige; }
-    S.lib = Object.assign(bib, { seitentext: texte.seitentext || {}, abschnitte: texte.abschnitte || [], struktur: texte.struktur || {}, elemente: texte.elemente || {}, unsicher: texte.unsicher || {}, ocr: texte.ocr || {}, vorschlaege: texte.vorschlaege || {}, titelbilder: bilder || {} });
+    S.lib = Object.assign(bib, { seitentext: texte.seitentext || {}, abschnitte: texte.abschnitte || [], struktur: texte.struktur || {}, elemente: texte.elemente || {}, unsicher: texte.unsicher || {}, ocr: texte.ocr || {}, vorschlaege: texte.vorschlaege || {}, zweitlesung: texte.zweitlesung || {}, titelbilder: bilder || {} });
     nachLaden();
   }
   function nachLaden() {

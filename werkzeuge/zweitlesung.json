@@ -1,0 +1,565 @@
+{
+ "hinweis": "Zweitlesung durch Claude am 22.11.2026: jede unsicher gelesene Stelle der TWP 1984 am Ausschnitt des Scans gegengelesen. Vorschläge sind keine Prüfung; der Prüfer nimmt sie in der Prüfliste an oder lehnt sie ab.",
+ "datum": "2026-11-22",
+ "vorschlaege": [
+  {
+   "dok": "d-twp84-1",
+   "s": 1,
+   "alt": "50008",
+   "neu": "1750.00/8 d",
+   "grund": "Nummer auf dem Titelblatt"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 3,
+   "alt": "19762,",
+   "neu": "1976²⁾,",
+   "grund": "Fussnotenziffer"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 3,
+   "alt": "1976.",
+   "neu": "1976⁵⁾.",
+   "grund": "Fussnotenziffer"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 4,
+   "alt": "2)SR",
+   "neu": "²⁾ SR",
+   "grund": "Fussnotenziffer"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 4,
+   "alt": "76",
+   "neu": "16",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 4,
+   "alt": "37",
+   "neu": "31",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 4,
+   "alt": "2SR",
+   "neu": "²⁾ SR",
+   "grund": "Fussnotenziffer; die Ziffer selbst bitte am Original prüfen"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 8,
+   "alt": "Anzahl!",
+   "neu": "Anzahl",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 8,
+   "alt": "TWK1994",
+   "neu": "TWK 1994",
+   "grund": "Stempel auf der Seite"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 12,
+   "alt": "57",
+   "neu": "51",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 14,
+   "alt": "10kt",
+   "neu": "10 kt",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 15,
+   "alt": "übertebt.",
+   "neu": "überlebt.",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 16,
+   "alt": "erg/9).",
+   "neu": "erg/g).",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 16,
+   "alt": "1bar-Abstand",
+   "neu": "1 bar-Abstand",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 17,
+   "alt": "Notfall!",
+   "neu": "Notfall",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 19,
+   "alt": "km©®.",
+   "neu": "km².",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 24,
+   "alt": "2A",
+   "neu": "",
+   "grund": "Störzeichen aus einer gestrichelten Linie"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 30,
+   "alt": "(VA).",
+   "neu": "(VA),",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 35,
+   "alt": "9m?)",
+   "neu": "9 m²)",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 35,
+   "alt": "UFuNGFSSTONM",
+   "neu": "Grundrissform",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 35,
+   "alt": "FIGUr",
+   "neu": "Figur",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 36,
+   "alt": "75",
+   "neu": "15",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 36,
+   "alt": "271",
+   "neu": "≥21",
+   "grund": "Grösser-gleich-Zeichen"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 37,
+   "alt": "253",
+   "neu": "≥53",
+   "grund": "Grösser-gleich-Zeichen"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 37,
+   "alt": "nr)",
+   "neu": "m²)",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 37,
+   "alt": "261m",
+   "neu": "≥61 m²",
+   "grund": "Grösser-gleich-Zeichen"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 37,
+   "alt": "nr)",
+   "neu": "m²)",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 39,
+   "alt": "2217",
+   "neu": "≥217",
+   "grund": "Grösser-gleich-Zeichen"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 42,
+   "alt": "=p-d2",
+   "neu": "= ρ·d ≥",
+   "grund": "Formelzeichen"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 43,
+   "alt": "Baax",
+   "neu": "Bmax",
+   "grund": "Tiefstellung max"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 43,
+   "alt": "Apin",
+   "neu": "Amin",
+   "grund": "Tiefstellung min"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 49,
+   "alt": "b.in=0,80",
+   "neu": "bmin = 0,80",
+   "grund": "Tiefstellung min"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 49,
+   "alt": "m/h.in",
+   "neu": "m/hmin",
+   "grund": "Tiefstellung min"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 49,
+   "alt": "600mm",
+   "neu": "600 mm",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 57,
+   "alt": "m/1.20",
+   "neu": "m/1,20",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 58,
+   "alt": "10SP",
+   "neu": "10 SP",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 58,
+   "alt": "1117",
+   "neu": "111",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 61,
+   "alt": "m°/h",
+   "neu": "m³/h",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 61,
+   "alt": "CO„-Konzentration",
+   "neu": "CO₂-Konzentration",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 61,
+   "alt": "CO„-Konzentration",
+   "neu": "CO₂-Konzentration",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 61,
+   "alt": "(Handbhetrieb)",
+   "neu": "(Handbetrieb)",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 62,
+   "alt": "(ESVM/VF)",
+   "neu": "(ESV/VF)",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 62,
+   "alt": "Kondenswassermammler",
+   "neu": "Kondenswassersammler",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 63,
+   "alt": "2,7",
+   "neu": "2.7",
+   "grund": "Abschnittsnummer"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 64,
+   "alt": "40%",
+   "neu": "40¹⁾",
+   "grund": "Fussnotenziffer"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 66,
+   "alt": "—>Über-",
+   "neu": "→ Über-",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 68,
+   "alt": "315P",
+   "neu": "31 SP",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 68,
+   "alt": "SP\"",
+   "neu": "SP¹⁾",
+   "grund": "Fussnotenziffer"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 68,
+   "alt": "5P",
+   "neu": "SP",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 68,
+   "alt": "SP\"",
+   "neu": "SP¹⁾",
+   "grund": "Fussnotenziffer"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 68,
+   "alt": "75,2ESV/VF",
+   "neu": "75, 2 ESV/VF",
+   "grund": ""
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 70,
+   "alt": "22,8",
+   "neu": "≥2,8",
+   "grund": "Grösser-gleich-Zeichen"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 72,
+   "alt": "_'struktionen,",
+   "neu": "struktionen,",
+   "grund": "vom Stempel überdeckt"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 72,
+   "alt": "LJLJFLFPFPPA",
+   "neu": "",
+   "grund": "Störzeichen aus einer Linie"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 74,
+   "alt": "6,3",
+   "neu": "6.3",
+   "grund": "Abschnittsnummer"
+  },
+  {
+   "dok": "d-twp84-1",
+   "s": 74,
+   "alt": "rmaaren",
+   "neu": "Normaltüren",
+   "grund": ""
+  }
+ ],
+ "stimmt": {
+  "d-twp84-1": {
+   "2": [
+    "Bundesamtes"
+   ],
+   "3": [
+    "Januar"
+   ],
+   "4": [
+    "22.",
+    "24",
+    "24,",
+    "25",
+    "Oktober"
+   ],
+   "7": [
+    "1.4",
+    "2.34",
+    "2.42"
+   ],
+   "9": [
+    "4.57",
+    "4.6"
+   ],
+   "10": [
+    "1.1-1"
+   ],
+   "14": [
+    "0,8",
+    "0,9",
+    "100",
+    "6,5"
+   ],
+   "15": [
+    "16",
+    "Schutzraum."
+   ],
+   "22": [
+    "Neubauten"
+   ],
+   "24": [
+    "Schutzplatzzahl.",
+    "nale",
+    "nungsvorgang)"
+   ],
+   "30": [
+    "(BF)"
+   ],
+   "34": [
+    "0,70"
+   ],
+   "35": [
+    "2.4-3"
+   ],
+   "36": [
+    "2.4-10",
+    "2.4-8a"
+   ],
+   "40": [
+    "(Bauingenieur)"
+   ],
+   "42": [
+    "500"
+   ],
+   "44": [
+    "Splitter"
+   ],
+   "45": [
+    "2.6-6",
+    "46"
+   ],
+   "48": [
+    "0,60/0,80"
+   ],
+   "49": [
+    "(Konus).",
+    "(LF)",
+    "Ø0,30"
+   ],
+   "50": [
+    "0,20"
+   ],
+   "51": [
+    "2.7-5).",
+    "Bei",
+    "einer"
+   ],
+   "52": [
+    "0,25"
+   ],
+   "54": [
+    "2.7-10",
+    "Fenster"
+   ],
+   "56": [
+    "(vgl.",
+    "2.8-2)."
+   ],
+   "57": [
+    "58"
+   ],
+   "58": [
+    "11",
+    "20",
+    "30",
+    "60",
+    "70",
+    "71",
+    "Personen»",
+    "bis",
+    "«30"
+   ],
+   "59": [
+    "30",
+    "332",
+    "400",
+    "400/350"
+   ],
+   "62": [
+    "(VA)",
+    "3.1-1"
+   ],
+   "64": [
+    "150+GF"
+   ],
+   "65": [
+    "40+1ESV/VF",
+    "40+GF"
+   ],
+   "66": [
+    "+GF",
+    "150",
+    "28",
+    "5m²"
+   ],
+   "68": [
+    "150+GF",
+    "Beulen"
+   ],
+   "71": [
+    "3.4-1)."
+   ],
+   "73": [
+    "Betan-"
+   ],
+   "74": [
+    "90°)."
+   ],
+   "75": [
+    "25",
+    "7.1",
+    "7.2",
+    "8.2",
+    "Normaltüren",
+    "mm?"
+   ],
+   "76": [
+    "(VA)",
+    "8.4",
+    "8.7",
+    "vollständig"
+   ],
+   "77": [
+    "usw.)"
+   ]
+  }
+ }
+}

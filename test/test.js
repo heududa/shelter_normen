@@ -250,6 +250,13 @@ const path0 = path.join(__dirname, 'daten');
   assert.equal(await p.evaluate(() => window.__nb.S.lib.dokumente.find(d => d.id === 'd-tws82-1').bestaetigt.length), 2);
   await p.selectOption('#pl-art', 'einheit'); await p.waitForFunction(() => window.__nb.S.pl.art === 'einheit' && window.__nb.S.pl.liste); assert.ok((await pls()).von > 50);
   await p.keyboard.press('v'); await p.waitForSelector('#vgl'); await p.keyboard.press('Escape'); await p.waitForSelector('.edgrid');
+  // Vorschläge der Zweitlesung (TWP 1984): annehmen legt eine OCR-Korrektur an, ablehnen nicht
+  await p.evaluate(() => { const S = window.__nb.S; S.ed.dok = 'd-twp84-1'; S.ed.seite = 1; window.__nb.oeffne('twp84', 'edit'); }); await p.waitForSelector('.seite[data-fertig]');
+  await p.click('[data-act=pl-auf]'); await p.waitForSelector('#pl-art'); await p.selectOption('#pl-art', 'vorschlag'); await p.waitForFunction(() => window.__nb.S.pl.art === 'vorschlag' && window.__nb.S.pl.liste);
+  const vz = await pls(); assert.ok(vz.von >= 40, 'Vorschläge: ' + vz.von); await p.waitForFunction(() => { const i = document.querySelector('.plbild img'); return i && i.naturalWidth > 100; }); await p.screenshot({ path: D + 'm_vorschlag.png' });
+  const aeV = await p.evaluate(() => window.__nb.S.lib.aenderungen.length + window.__nb.S.lib.uebernahmen.length);
+  await p.keyboard.press('x'); await p.keyboard.press('Enter'); await p.waitForFunction(() => window.__nb.S.pl.i === 2);
+  assert.equal(await p.evaluate(() => window.__nb.S.lib.aenderungen.length + window.__nb.S.lib.uebernahmen.length), aeV + 1); assert.equal(await p.evaluate(() => window.__nb.S.lib.dokumente.find(d => d.id === 'd-twp84-1').vorschlagErledigt.length), 2);
   // Ohne Webserver: Startschirm mit Ordnerwahl
   const p3 = await b.newPage(); p3.on('pageerror', e => errs.push('file: ' + e.message)); await p3.goto('file://' + R + '/index.html'); await p3.waitForSelector('.startschirm [data-act=ordner]');
   srv.close();

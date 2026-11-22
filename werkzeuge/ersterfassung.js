@@ -9,7 +9,7 @@ const pdfjsNode = require('pdfjs-dist/legacy/build/pdf.js');
 const VERSION = '0.11.0';
 const lib = {
   schema: 1, meta: { titel: 'Normenbibliothek Schutzraum', programm: VERSION, erstellt: '2026-11-20', bearbeiter: '' },
-  themen: d.THEMEN, herausgeber: d.herausgeber, werke: d.werke, verknuepfungen: d.verknuepfungen, regeln: d.regeln, anmerkungen: [], dokumente: [], titelbilder: {}, seitentext: {}, elemente: {}, unsicher: {}, ocr: {}, aenderungen: [], struktur: {}, formate: [], uebernahmen: [], glossar: [], abschnitte: [], versionen: [], verlauf: [],
+  themen: d.THEMEN, herausgeber: d.herausgeber, werke: d.werke, verknuepfungen: d.verknuepfungen, regeln: d.regeln, anmerkungen: [], dokumente: [], titelbilder: {}, seitentext: {}, elemente: {}, unsicher: {}, ocr: {}, vorschlaege: {}, zweitlesung: {}, aenderungen: [], struktur: {}, formate: [], uebernahmen: [], glossar: [], abschnitte: [], versionen: [], verlauf: [],
 };
 // Original-PDF aus pdf/ erfassen: Prüfsumme, Seitenmasse, Seitentext, Struktur und Titelbild.
 const zaehler = {}, texte = {}, rohSeiten = {}, erfasst = [];
@@ -136,6 +136,13 @@ for (const e of erfasst) {
   }
   console.log((w.kurz + (q.teil ? ' / ' + q.teil : '')).slice(0, 58).padEnd(60), String(e.seitenT.length).padStart(4) + ' S.', na ? na + ' Abschnitte' : 'ohne Text', e.ocr ? '· neu erkannt: ' + e.ocr.seiten.length + ' S.' : '');
 }
+// Zweitlesung: Vorschläge und bestätigte Stellen (werkzeuge/zweitlesung.json). Nur Vorschläge, deren Stelle im Text oder in einer Tabelle der Seite steht.
+if (fs.existsSync(path.join(__dirname, 'zweitlesung.json'))) {
+  const z = JSON.parse(fs.readFileSync(path.join(__dirname, 'zweitlesung.json'), 'utf8')); let nv = 0, weg = 0;
+  z.vorschlaege.forEach(v => { const t = (lib.seitentext[v.dok] || [])[v.s - 1] || '', tab = (lib.elemente[v.dok] || []).some(e => e.s === v.s && e.zeilen && e.zeilen.some(r => r.some(c => c.includes(v.alt)))); if (!t.includes(v.alt) && !tab) { weg++; return; } const d = lib.vorschlaege[v.dok] = lib.vorschlaege[v.dok] || {}; (d[v.s] = d[v.s] || []).push({ alt: v.alt, neu: v.neu, grund: v.grund }); nv++; });
+  lib.zweitlesung = { datum: z.datum, hinweis: z.hinweis, stimmt: z.stimmt || {} };
+  console.log('Zweitlesung:', nv, 'Vorschläge,', weg, 'ohne Stelle im Text');
+}
 fs.writeFileSync(path.join('daten', 'ocr', 'bericht.json'), JSON.stringify({ datum: '2026-11-21', umlaute, dokumente: bericht }, null, 1));
 Object.keys(texte).forEach(id => { const x = texte[id]; lib.werke.find(w => w.id === id).import = { datum: '2026-11-20', name: 'Ersterfassung', datei: x.dateien.join(', ') + ' (Text aus dem PDF)', pruefsumme: crypto.createHash('sha256').update(x.txt).digest('hex'), abschnitte: x.n }; });
 // Jede Norm mit PDF beginnt als «Ungeprüft»: Die digitale Fassung ist noch nicht mit dem Original verglichen.
@@ -166,10 +173,10 @@ const entwurf = lib.regeln.filter(r => d.entwurfIds.includes(r.id));
 lib.regeln = lib.regeln.filter(r => !d.entwurfIds.includes(r.id));
 app.neueVersion(lib, 'Ersterfassung', 'Ersterfassung: Regeln und Glossar aus dem Projektwissen (OCR-Auswertung), Original-PDF des BABS im Ordner pdf/ (TWS 1982 und TWO 1977 zu je einem PDF zusammengefügt). Gescannte Seiten neu erkannt, Tabellen und Skizzen getrennt erfasst. Kein Wert am Original geprüft.', '2026-11-20');
 lib.regeln = lib.regeln.concat(entwurf);
-const kern = {}; Object.keys(lib).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder', 'elemente', 'unsicher', 'ocr'].includes(k)) kern[k] = lib[k]; });
+const kern = {}; Object.keys(lib).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder', 'elemente', 'unsicher', 'ocr', 'vorschlaege', 'zweitlesung'].includes(k)) kern[k] = lib[k]; });
 fs.mkdirSync('daten', { recursive: true });
 fs.writeFileSync('daten/bibliothek.json', JSON.stringify(kern, null, 1));
-fs.writeFileSync('daten/texte.json', JSON.stringify({ seitentext: lib.seitentext, abschnitte: lib.abschnitte, struktur: lib.struktur, elemente: lib.elemente, unsicher: lib.unsicher, ocr: lib.ocr }));
+fs.writeFileSync('daten/texte.json', JSON.stringify({ seitentext: lib.seitentext, abschnitte: lib.abschnitte, struktur: lib.struktur, elemente: lib.elemente, unsicher: lib.unsicher, ocr: lib.ocr, vorschlaege: lib.vorschlaege, zweitlesung: lib.zweitlesung }));
 fs.writeFileSync('daten/titelbilder.json', JSON.stringify(lib.titelbilder));
 ['bibliothek', 'texte', 'titelbilder'].forEach(n => console.log('daten/' + n + '.json', (fs.statSync('daten/' + n + '.json').size / 1024).toFixed(0) + ' kB'));
 console.log(lib.werke.length + ' Werke, ' + lib.dokumente.length + ' PDF, ' + lib.regeln.length + ' Regeln, ' + lib.glossar.length + ' Glossareinträge');

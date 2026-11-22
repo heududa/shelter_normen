@@ -18,6 +18,13 @@ Werkzeuge für den Vergleich mit dem Original.
 - **Berichtigen** legt eine OCR-Korrektur an (oder ändert die Tabellenzelle) und ist wie jede Änderung versioniert.
 - **Bestätigte Stellen** erscheinen nicht mehr in der Liste. Sind alle gleichen Wörter einer Seite bestätigt, entfällt die gelbe Markierung im Text. Seiten, die als verglichen markiert sind, lässt die Liste aus.
 
+### Zweitlesung der TWP 1984 (Probe)
+- Ich habe alle 222 unsicher gelesenen Stellen der TWP 1984 am Ausschnitt des Scans gegengelesen. Ergebnis: 56 Vorschläge zur Berichtigung, 165 Stellen stimmen, 1 Stelle war am Ausschnitt nicht zu entscheiden.
+- Die Vorschläge stehen in der Prüfliste unter «Vorschläge der Zweitlesung»: annehmen (legt eine OCR-Korrektur an), ablehnen oder anders berichtigen. Bei den übrigen Stellen zeigt die Prüfliste den Hinweis «Zweitlesung: stimmt».
+- Typische Funde: ≥ als Ziffer gelesen (≥217 als «2217», ≥2,8 kN als «22,8»), Fussnotenziffern (40¹⁾ als «40%», SP¹⁾), verwechselte Ziffern (16/76, 31/37, 51/57, 15/75, 111/1117), Tiefstellungen (b_min, B_max), m³/h als «m°/h», CO₂.
+- Quelle im Repo: `werkzeuge/zweitlesung.json`. Es ist eine Lesung, keine Prüfung; an den Daten ändert sich erst etwas, wenn ein Prüfer einen Vorschlag annimmt.
+- Nicht gegengelesen: die übrigen Normen und alles, was die Texterkennung nicht als unsicher markiert hat.
+
 ### Annahmen (Status „zu bestätigen“)
 | Nr. | Annahme |
 |---|---|
@@ -27,6 +34,7 @@ Werkzeuge für den Vergleich mit dem Original.
 | P4 | Die Prüfliste gibt es nur für neu erkannte (gescannte) Seiten. Bei digital entstandenen PDF ist der Text das Original. |
 | P5 | Bestätigungen in der Prüfliste werden je Sitzung und Liste einmal im Verlauf vermerkt, nicht je Stelle. Sie stehen aber einzeln in den Daten. |
 | P6 | Eine bestätigte Stelle ist kein Ersatz für «Seite verglichen»: Die Prüfliste prüft Wörter, nicht ob etwas fehlt. |
+| P7 | Tiefstellungen schlägt die Zweitlesung als einfachen Text vor (bmin, Bmax), Fussnotenziffern hochgestellt (¹⁾). |
 
 ## 0.13.0 – 22.11.2026
 
