@@ -29,10 +29,10 @@ Menüführung: vier Arbeitsweisen der Norm, Aufklappmenüs, knapper Kopf.
 ### Annahmen (Status „zu bestätigen“)
 | Nr. | Annahme |
 |---|---|
-| S1 | Eine Norm öffnet sich wie bisher in «Bearbeiten». Wer «Lesen» wählt, bleibt für die Sitzung dabei. Ein Sprung aus der Liste der Änderungen oder der Prüfliste führt immer nach «Bearbeiten». |
-| S2 | «Lesen» zeigt eine Seite auf einmal, nicht die ganze Norm als durchlaufenden Text. |
-| S3 | «Prüfen» belegt weiterhin das ganze Fenster ohne Seitenleiste. |
-| S4 | Die Knöpfe an den Regelkarten (fünf je Regel) und in den übrigen Ansichten sind unverändert. |
+| T1 | Eine Norm öffnet sich wie bisher in «Bearbeiten». Wer «Lesen» wählt, bleibt für die Sitzung dabei. Ein Sprung aus der Liste der Änderungen oder der Prüfliste führt immer nach «Bearbeiten». |
+| T2 | «Lesen» zeigt eine Seite auf einmal, nicht die ganze Norm als durchlaufenden Text. |
+| T3 | «Prüfen» belegt weiterhin das ganze Fenster ohne Seitenleiste. |
+| T4 | Die Knöpfe an den Regelkarten (fünf je Regel) und in den übrigen Ansichten sind unverändert. |
 
 ## 0.16.0 – 22.11.2026
 
