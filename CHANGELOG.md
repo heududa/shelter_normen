@@ -1,5 +1,41 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.14.1 – 22.11.2026
+
+Zweitlesung aller gescannten Normen.
+
+### Ergebnis
+Ich habe jede unsicher gelesene Stelle der gescannten Normen am Ausschnitt des Scans gegengelesen (3107 Stellen in 14 Dokumenten).
+
+| Norm | Stellen | Vorschläge | stimmt | nicht zu entscheiden |
+|---|---|---|---|---|
+| TWP 1984 | 222 | 56 | 165 | 1 |
+| TWO 1977 | 2176 | 691 | 1456 | 29 |
+| TWS 1982 | 396 | 127 | 267 | 2 |
+| TWE 1994 | 80 | 19 | 56 | 5 |
+| TMB 002 | 95 | 19 | 76 | 0 |
+| TPH 02 | 29 | 13 | 15 | 1 |
+| Bedarfsplanung Schutzanlagen 2024 | 36 | 7 | 29 | 0 |
+| Schutzraumtechnik 1988 | 30 | 8 | 18 | 4 |
+| TPH 01 | 13 | 8 | 5 | 0 |
+| Präzisierung 2011, TMB 001, TMB 004, TPH 15, Material Polycom | 30 | 5 | 25 | 0 |
+| **Summe** | **3107** | **953** | **2112** | **42** |
+
+- Die Vorschläge stehen in der Prüfliste unter «Vorschläge der Zweitlesung». An den Daten ändert sich erst etwas, wenn ein Prüfer einen Vorschlag annimmt.
+- Typische Funde in der TWO 1977: Malzeichen als «X» oder «x» gelesen (2×30, 140×220), tiefgestellte Zeichen in Formeln (p_D, AF₃, D_zul, II_red), Hochzahlen (m², 10⁻⁸), Fussnotenziffern, «1» vor einem Wort als «l» gelesen (1 Antennenanschluss), Abschnittsnummern mit Komma statt Punkt (2.82), Störzeichen aus Rastern und Linien.
+
+### Grenzen
+- Formelzeichen mit Tilde, Index und Hochzahl (z. B. m̃₂⁻) lassen sich als Text nur annähernd schreiben. Diese 145 Vorschläge sind mit «Formelzeichen» begründet; der Prüfer entscheidet, ob er sie annimmt oder die Formel als Bild übernimmt.
+- 42 Stellen waren am Ausschnitt nicht zu entscheiden (abgeschnitten oder in einer Skizze). Sie bleiben als unsicher in der Prüfliste.
+- Gegengelesen ist nur, was die Texterkennung als unsicher markiert hat. Die Zweitlesung ersetzt den Vergleich durch einen Prüfer nicht; alle Normen bleiben «Ungeprüft».
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| Q1 | Störzeichen aus Linien, Rastern und quer gesetzter Schrift werden zum Entfernen vorgeschlagen (leerer Ersatz). |
+| Q2 | Tiefgestellte Zusätze, für die es kein Unicode-Zeichen gibt, stehen in normaler Schrift (IIred, Dzul, pD). |
+| Q3 | Seitenzahlen, die als Wort im Text gelandet sind, werden als Zahl berichtigt, nicht entfernt. |
+
 ## 0.14.0 – 22.11.2026
 
 Werkzeuge für den Vergleich mit dem Original.

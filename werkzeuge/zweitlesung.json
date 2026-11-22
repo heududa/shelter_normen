@@ -1,565 +1,8886 @@
 {
- "hinweis": "Zweitlesung durch Claude am 22.11.2026: jede unsicher gelesene Stelle der TWP 1984 am Ausschnitt des Scans gegengelesen. Vorschläge sind keine Prüfung; der Prüfer nimmt sie in der Prüfliste an oder lehnt sie ab.",
- "datum": "2026-11-22",
- "vorschlaege": [
-  {
-   "dok": "d-twp84-1",
-   "s": 1,
-   "alt": "50008",
-   "neu": "1750.00/8 d",
-   "grund": "Nummer auf dem Titelblatt"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 3,
-   "alt": "19762,",
-   "neu": "1976²⁾,",
-   "grund": "Fussnotenziffer"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 3,
-   "alt": "1976.",
-   "neu": "1976⁵⁾.",
-   "grund": "Fussnotenziffer"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 4,
-   "alt": "2)SR",
-   "neu": "²⁾ SR",
-   "grund": "Fussnotenziffer"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 4,
-   "alt": "76",
-   "neu": "16",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 4,
-   "alt": "37",
-   "neu": "31",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 4,
-   "alt": "2SR",
-   "neu": "²⁾ SR",
-   "grund": "Fussnotenziffer; die Ziffer selbst bitte am Original prüfen"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 8,
-   "alt": "Anzahl!",
-   "neu": "Anzahl",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 8,
-   "alt": "TWK1994",
-   "neu": "TWK 1994",
-   "grund": "Stempel auf der Seite"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 12,
-   "alt": "57",
-   "neu": "51",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 14,
-   "alt": "10kt",
-   "neu": "10 kt",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 15,
-   "alt": "übertebt.",
-   "neu": "überlebt.",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 16,
-   "alt": "erg/9).",
-   "neu": "erg/g).",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 16,
-   "alt": "1bar-Abstand",
-   "neu": "1 bar-Abstand",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 17,
-   "alt": "Notfall!",
-   "neu": "Notfall",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 19,
-   "alt": "km©®.",
-   "neu": "km².",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 24,
-   "alt": "2A",
-   "neu": "",
-   "grund": "Störzeichen aus einer gestrichelten Linie"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 30,
-   "alt": "(VA).",
-   "neu": "(VA),",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 35,
-   "alt": "9m?)",
-   "neu": "9 m²)",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 35,
-   "alt": "UFuNGFSSTONM",
-   "neu": "Grundrissform",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 35,
-   "alt": "FIGUr",
-   "neu": "Figur",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 36,
-   "alt": "75",
-   "neu": "15",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 36,
-   "alt": "271",
-   "neu": "≥21",
-   "grund": "Grösser-gleich-Zeichen"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 37,
-   "alt": "253",
-   "neu": "≥53",
-   "grund": "Grösser-gleich-Zeichen"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 37,
-   "alt": "nr)",
-   "neu": "m²)",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 37,
-   "alt": "261m",
-   "neu": "≥61 m²",
-   "grund": "Grösser-gleich-Zeichen"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 37,
-   "alt": "nr)",
-   "neu": "m²)",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 39,
-   "alt": "2217",
-   "neu": "≥217",
-   "grund": "Grösser-gleich-Zeichen"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 42,
-   "alt": "=p-d2",
-   "neu": "= ρ·d ≥",
-   "grund": "Formelzeichen"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 43,
-   "alt": "Baax",
-   "neu": "Bmax",
-   "grund": "Tiefstellung max"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 43,
-   "alt": "Apin",
-   "neu": "Amin",
-   "grund": "Tiefstellung min"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 49,
-   "alt": "b.in=0,80",
-   "neu": "bmin = 0,80",
-   "grund": "Tiefstellung min"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 49,
-   "alt": "m/h.in",
-   "neu": "m/hmin",
-   "grund": "Tiefstellung min"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 49,
-   "alt": "600mm",
-   "neu": "600 mm",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 57,
-   "alt": "m/1.20",
-   "neu": "m/1,20",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 58,
-   "alt": "10SP",
-   "neu": "10 SP",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 58,
-   "alt": "1117",
-   "neu": "111",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 61,
-   "alt": "m°/h",
-   "neu": "m³/h",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 61,
-   "alt": "CO„-Konzentration",
-   "neu": "CO₂-Konzentration",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 61,
-   "alt": "CO„-Konzentration",
-   "neu": "CO₂-Konzentration",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 61,
-   "alt": "(Handbhetrieb)",
-   "neu": "(Handbetrieb)",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 62,
-   "alt": "(ESVM/VF)",
-   "neu": "(ESV/VF)",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 62,
-   "alt": "Kondenswassermammler",
-   "neu": "Kondenswassersammler",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 63,
-   "alt": "2,7",
-   "neu": "2.7",
-   "grund": "Abschnittsnummer"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 64,
-   "alt": "40%",
-   "neu": "40¹⁾",
-   "grund": "Fussnotenziffer"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 66,
-   "alt": "—>Über-",
-   "neu": "→ Über-",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 68,
-   "alt": "315P",
-   "neu": "31 SP",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 68,
-   "alt": "SP\"",
-   "neu": "SP¹⁾",
-   "grund": "Fussnotenziffer"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 68,
-   "alt": "5P",
-   "neu": "SP",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 68,
-   "alt": "SP\"",
-   "neu": "SP¹⁾",
-   "grund": "Fussnotenziffer"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 68,
-   "alt": "75,2ESV/VF",
-   "neu": "75, 2 ESV/VF",
-   "grund": ""
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 70,
-   "alt": "22,8",
-   "neu": "≥2,8",
-   "grund": "Grösser-gleich-Zeichen"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 72,
-   "alt": "_'struktionen,",
-   "neu": "struktionen,",
-   "grund": "vom Stempel überdeckt"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 72,
-   "alt": "LJLJFLFPFPPA",
-   "neu": "",
-   "grund": "Störzeichen aus einer Linie"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 74,
-   "alt": "6,3",
-   "neu": "6.3",
-   "grund": "Abschnittsnummer"
-  },
-  {
-   "dok": "d-twp84-1",
-   "s": 74,
-   "alt": "rmaaren",
-   "neu": "Normaltüren",
-   "grund": ""
-  }
- ],
- "stimmt": {
-  "d-twp84-1": {
-   "2": [
-    "Bundesamtes"
-   ],
-   "3": [
-    "Januar"
-   ],
-   "4": [
-    "22.",
-    "24",
-    "24,",
-    "25",
-    "Oktober"
-   ],
-   "7": [
-    "1.4",
-    "2.34",
-    "2.42"
-   ],
-   "9": [
-    "4.57",
-    "4.6"
-   ],
-   "10": [
-    "1.1-1"
-   ],
-   "14": [
-    "0,8",
-    "0,9",
-    "100",
-    "6,5"
-   ],
-   "15": [
-    "16",
-    "Schutzraum."
-   ],
-   "22": [
-    "Neubauten"
-   ],
-   "24": [
-    "Schutzplatzzahl.",
-    "nale",
-    "nungsvorgang)"
-   ],
-   "30": [
-    "(BF)"
-   ],
-   "34": [
-    "0,70"
-   ],
-   "35": [
-    "2.4-3"
-   ],
-   "36": [
-    "2.4-10",
-    "2.4-8a"
-   ],
-   "40": [
-    "(Bauingenieur)"
-   ],
-   "42": [
-    "500"
-   ],
-   "44": [
-    "Splitter"
-   ],
-   "45": [
-    "2.6-6",
-    "46"
-   ],
-   "48": [
-    "0,60/0,80"
-   ],
-   "49": [
-    "(Konus).",
-    "(LF)",
-    "Ø0,30"
-   ],
-   "50": [
-    "0,20"
-   ],
-   "51": [
-    "2.7-5).",
-    "Bei",
-    "einer"
-   ],
-   "52": [
-    "0,25"
-   ],
-   "54": [
-    "2.7-10",
-    "Fenster"
-   ],
-   "56": [
-    "(vgl.",
-    "2.8-2)."
-   ],
-   "57": [
-    "58"
-   ],
-   "58": [
-    "11",
-    "20",
-    "30",
-    "60",
-    "70",
-    "71",
-    "Personen»",
-    "bis",
-    "«30"
-   ],
-   "59": [
-    "30",
-    "332",
-    "400",
-    "400/350"
-   ],
-   "62": [
-    "(VA)",
-    "3.1-1"
-   ],
-   "64": [
-    "150+GF"
-   ],
-   "65": [
-    "40+1ESV/VF",
-    "40+GF"
-   ],
-   "66": [
-    "+GF",
-    "150",
-    "28",
-    "5m²"
-   ],
-   "68": [
-    "150+GF",
-    "Beulen"
-   ],
-   "71": [
-    "3.4-1)."
-   ],
-   "73": [
-    "Betan-"
-   ],
-   "74": [
-    "90°)."
-   ],
-   "75": [
-    "25",
-    "7.1",
-    "7.2",
-    "8.2",
-    "Normaltüren",
-    "mm?"
-   ],
-   "76": [
-    "(VA)",
-    "8.4",
-    "8.7",
-    "vollständig"
-   ],
-   "77": [
-    "usw.)"
-   ]
-  }
- }
+"hinweis": "Zweitlesung durch Claude am 22.11.2026: jede unsicher gelesene Stelle der gescannten Normen am Ausschnitt des Scans gegengelesen. Vorschläge sind keine Prüfung; der Prüfer nimmt sie in der Prüfliste an oder lehnt sie ab.",
+"datum": "2026-11-22",
+"vorschlaege": [
+{
+"dok": "d-twp84-1",
+"s": 1,
+"alt": "50008",
+"neu": "1750.00/8 d",
+"grund": "Nummer auf dem Titelblatt"
+},
+{
+"dok": "d-twp84-1",
+"s": 3,
+"alt": "19762,",
+"neu": "1976²⁾,",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twp84-1",
+"s": 3,
+"alt": "1976.",
+"neu": "1976⁵⁾.",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twp84-1",
+"s": 4,
+"alt": "2)SR",
+"neu": "²⁾ SR",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twp84-1",
+"s": 4,
+"alt": "76",
+"neu": "16",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 4,
+"alt": "37",
+"neu": "31",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 4,
+"alt": "2SR",
+"neu": "²⁾ SR",
+"grund": "Fussnotenziffer; die Ziffer selbst bitte am Original prüfen"
+},
+{
+"dok": "d-twp84-1",
+"s": 8,
+"alt": "Anzahl!",
+"neu": "Anzahl",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 8,
+"alt": "TWK1994",
+"neu": "TWK 1994",
+"grund": "Stempel auf der Seite"
+},
+{
+"dok": "d-twp84-1",
+"s": 12,
+"alt": "57",
+"neu": "51",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 14,
+"alt": "10kt",
+"neu": "10 kt",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 15,
+"alt": "übertebt.",
+"neu": "überlebt.",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 16,
+"alt": "erg/9).",
+"neu": "erg/g).",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 16,
+"alt": "1bar-Abstand",
+"neu": "1 bar-Abstand",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 17,
+"alt": "Notfall!",
+"neu": "Notfall",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 19,
+"alt": "km©®.",
+"neu": "km².",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 24,
+"alt": "2A",
+"neu": "",
+"grund": "Störzeichen aus einer gestrichelten Linie"
+},
+{
+"dok": "d-twp84-1",
+"s": 30,
+"alt": "(VA).",
+"neu": "(VA),",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 35,
+"alt": "9m?)",
+"neu": "9 m²)",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 35,
+"alt": "UFuNGFSSTONM",
+"neu": "Grundrissform",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 35,
+"alt": "FIGUr",
+"neu": "Figur",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 36,
+"alt": "75",
+"neu": "15",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 36,
+"alt": "271",
+"neu": "≥21",
+"grund": "Grösser-gleich-Zeichen"
+},
+{
+"dok": "d-twp84-1",
+"s": 37,
+"alt": "253",
+"neu": "≥53",
+"grund": "Grösser-gleich-Zeichen"
+},
+{
+"dok": "d-twp84-1",
+"s": 37,
+"alt": "nr)",
+"neu": "m²)",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 37,
+"alt": "261m",
+"neu": "≥61 m²",
+"grund": "Grösser-gleich-Zeichen"
+},
+{
+"dok": "d-twp84-1",
+"s": 37,
+"alt": "nr)",
+"neu": "m²)",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 39,
+"alt": "2217",
+"neu": "≥217",
+"grund": "Grösser-gleich-Zeichen"
+},
+{
+"dok": "d-twp84-1",
+"s": 42,
+"alt": "=p-d2",
+"neu": "= ρ·d ≥",
+"grund": "Formelzeichen"
+},
+{
+"dok": "d-twp84-1",
+"s": 43,
+"alt": "Baax",
+"neu": "Bmax",
+"grund": "Tiefstellung max"
+},
+{
+"dok": "d-twp84-1",
+"s": 43,
+"alt": "Apin",
+"neu": "Amin",
+"grund": "Tiefstellung min"
+},
+{
+"dok": "d-twp84-1",
+"s": 49,
+"alt": "b.in=0,80",
+"neu": "bmin = 0,80",
+"grund": "Tiefstellung min"
+},
+{
+"dok": "d-twp84-1",
+"s": 49,
+"alt": "m/h.in",
+"neu": "m/hmin",
+"grund": "Tiefstellung min"
+},
+{
+"dok": "d-twp84-1",
+"s": 49,
+"alt": "600mm",
+"neu": "600 mm",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 57,
+"alt": "m/1.20",
+"neu": "m/1,20",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 58,
+"alt": "10SP",
+"neu": "10 SP",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 58,
+"alt": "1117",
+"neu": "111",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 61,
+"alt": "m°/h",
+"neu": "m³/h",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 61,
+"alt": "CO„-Konzentration",
+"neu": "CO₂-Konzentration",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 61,
+"alt": "CO„-Konzentration",
+"neu": "CO₂-Konzentration",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 61,
+"alt": "(Handbhetrieb)",
+"neu": "(Handbetrieb)",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 62,
+"alt": "(ESVM/VF)",
+"neu": "(ESV/VF)",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 62,
+"alt": "Kondenswassermammler",
+"neu": "Kondenswassersammler",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 63,
+"alt": "2,7",
+"neu": "2.7",
+"grund": "Abschnittsnummer"
+},
+{
+"dok": "d-twp84-1",
+"s": 64,
+"alt": "40%",
+"neu": "40¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twp84-1",
+"s": 66,
+"alt": "—>Über-",
+"neu": "→ Über-",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 68,
+"alt": "315P",
+"neu": "31 SP",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 68,
+"alt": "SP\"",
+"neu": "SP¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twp84-1",
+"s": 68,
+"alt": "5P",
+"neu": "SP",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 68,
+"alt": "SP\"",
+"neu": "SP¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twp84-1",
+"s": 68,
+"alt": "75,2ESV/VF",
+"neu": "75, 2 ESV/VF",
+"grund": ""
+},
+{
+"dok": "d-twp84-1",
+"s": 70,
+"alt": "22,8",
+"neu": "≥2,8",
+"grund": "Grösser-gleich-Zeichen"
+},
+{
+"dok": "d-twp84-1",
+"s": 72,
+"alt": "_'struktionen,",
+"neu": "struktionen,",
+"grund": "vom Stempel überdeckt"
+},
+{
+"dok": "d-twp84-1",
+"s": 72,
+"alt": "LJLJFLFPFPPA",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-twp84-1",
+"s": 74,
+"alt": "6,3",
+"neu": "6.3",
+"grund": "Abschnittsnummer"
+},
+{
+"dok": "d-twp84-1",
+"s": 74,
+"alt": "rmaaren",
+"neu": "Normaltüren",
+"grund": ""
+},
+{
+"dok": "d-bedplas24-1",
+"s": 2,
+"alt": "_Schutzanlagen",
+"neu": "Schutzanlagen",
+"grund": "Aufzählungspunkt als Zeichen gelesen"
+},
+{
+"dok": "d-bedplas24-1",
+"s": 2,
+"alt": "_Schutzanlagen",
+"neu": "Schutzanlagen",
+"grund": "Aufzählungspunkt als Zeichen gelesen"
+},
+{
+"dok": "d-bedplas24-1",
+"s": 3,
+"alt": "50°000",
+"neu": "50’000",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-bedplas24-1",
+"s": 3,
+"alt": "I1*,",
+"neu": "II*,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-bedplas24-1",
+"s": 3,
+"alt": "I1*,",
+"neu": "II*,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-bedplas24-1",
+"s": 3,
+"alt": "_BSA",
+"neu": "BSA",
+"grund": "Aufzählungspunkt als Zeichen gelesen"
+},
+{
+"dok": "d-bedplas24-1",
+"s": 3,
+"alt": "_BSA",
+"neu": "BSA",
+"grund": "Aufzählungspunkt als Zeichen gelesen"
+},
+{
+"dok": "d-matpolycom-1",
+"s": 31,
+"alt": "34-—",
+"neu": "34 –",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-praez11-1",
+"s": 1,
+"alt": "6820-10",
+"neu": "620-10",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-praez11-1",
+"s": 2,
+"alt": "22",
+"neu": "2/2",
+"grund": "Seitenzahl"
+},
+{
+"dok": "d-st88-1",
+"s": 3,
+"alt": "Art'10",
+"neu": "Art 10",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-st88-1",
+"s": 4,
+"alt": "‚3.2",
+"neu": "3.2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-st88-1",
+"s": 4,
+"alt": "4.1.",
+"neu": "4.1",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-st88-1",
+"s": 4,
+"alt": "\"Schleusehsteckdose",
+"neu": "Schleusensteckdose",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-st88-1",
+"s": 5,
+"alt": "EEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-st88-1",
+"s": 5,
+"alt": "Elektro-‘",
+"neu": "Elektro-",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-st88-1",
+"s": 5,
+"alt": "Abweichungen’gegenüber",
+"neu": "Abweichungen gegenüber",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-st88-1",
+"s": 9,
+"alt": "‚ren;",
+"neu": "ren;",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "2+2VA",
+"neu": "2 + 2 VA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "2+2VA",
+"neu": "2 + 2 VA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1IIl)/BSA",
+"neu": "II)/BSA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1I)/BSA",
+"neu": "II)/BSA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1I)/BSA",
+"neu": "II)/BSA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1I)/BSA",
+"neu": "II)/BSA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1l)/SanHist",
+"neu": "II)/SanHist",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "11)/SanPo",
+"neu": "II)/SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "11)/SanPo",
+"neu": "II)/SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1)/SanHist",
+"neu": "I)/SanHist",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1)/SanPo",
+"neu": "I)/SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1)/SanPo",
+"neu": "I)/SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1)/SanPo",
+"neu": "I)/SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "11)/SanPo",
+"neu": "II)/SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1I*(BSA",
+"neu": "I*(BSA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "1)/SanPo",
+"neu": "I)/SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "11)/SanPo",
+"neu": "II)/SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "11*(BSA",
+"neu": "II*(BSA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb002-1",
+"s": 2,
+"alt": "11)/SanPo",
+"neu": "II)/SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tmb004-1",
+"s": 2,
+"alt": "dee",
+"neu": "",
+"grund": "Störzeichen aus einer Punktlinie"
+},
+{
+"dok": "d-tph01-1",
+"s": 2,
+"alt": "17",
+"neu": "11",
+"grund": "Seitenzahl"
+},
+{
+"dok": "d-tph01-1",
+"s": 2,
+"alt": "Schutzanilagen",
+"neu": "Schutzanlagen",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph01-1",
+"s": 2,
+"alt": "Zivisschutzbauten",
+"neu": "Zivilschutzbauten",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph01-1",
+"s": 2,
+"alt": "Schutzanilagen",
+"neu": "Schutzanlagen",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph01-1",
+"s": 2,
+"alt": "Zivisschutz-Material",
+"neu": "Zivilschutz-Material",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph01-1",
+"s": 2,
+"alt": "0363",
+"neu": "036 3",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph01-1",
+"s": 13,
+"alt": "19",
+"neu": "13",
+"grund": "Seitenzahl"
+},
+{
+"dok": "d-tph01-1",
+"s": 15,
+"alt": "19",
+"neu": "15",
+"grund": "Seitenzahl"
+},
+{
+"dok": "d-tph02-1",
+"s": 6,
+"alt": "9000$",
+"neu": "9000 S",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 6,
+"alt": "[Po]",
+"neu": "[Pa]",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 6,
+"alt": "4200$",
+"neu": "4200S",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 6,
+"alt": "5400$",
+"neu": "5400S",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 6,
+"alt": "7200$",
+"neu": "7200S",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 6,
+"alt": "8400$",
+"neu": "8400S",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 6,
+"alt": "s0ug-",
+"neu": "saug-",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 9,
+"alt": "42005",
+"neu": "4200 S",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 9,
+"alt": "Keilrlkemen",
+"neu": "Keilriemen",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 9,
+"alt": "n]ı=2/3n2",
+"neu": "n 1 = 2/3 n 2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 9,
+"alt": "ZD)",
+"neu": "ZL)",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 13,
+"alt": "55",
+"neu": "5.5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph02-1",
+"s": 13,
+"alt": "PrandtHirohr.",
+"neu": "Prandtlrohr.",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tph15-2",
+"s": 3,
+"alt": "fed6ral",
+"neu": "fédéral",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 3,
+"alt": "1963!",
+"neu": "1963¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twe94-1",
+"s": 3,
+"alt": "4728",
+"neu": "47 28",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 3,
+"alt": "2)SR",
+"neu": "²⁾ SR",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twe94-1",
+"s": 16,
+"alt": "3,5",
+"neu": "3.5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 29,
+"alt": "prü--",
+"neu": "prü-",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 32,
+"alt": "Cherheit",
+"neu": "cherheit",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 37,
+"alt": "von’mindestens",
+"neu": "von mindestens",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 39,
+"alt": "Al:",
+"neu": "A1:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 39,
+"alt": "A2;:",
+"neu": "A2:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 43,
+"alt": "SCHUTZPLATZZAHL):",
+"neu": "SCHUTZPLATZZAHL¹⁾:",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twe94-1",
+"s": 47,
+"alt": "SMETKUNSE",
+"neu": "Bemerkungen",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 47,
+"alt": "Stahlbetondecke”)",
+"neu": "Stahlbetondecke¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twe94-1",
+"s": 47,
+"alt": "Stahlbetondecke”?",
+"neu": "Stahlbetondecke¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twe94-1",
+"s": 47,
+"alt": "0,35m",
+"neu": "0,35 m",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 47,
+"alt": "Stahlbetondecke‘?",
+"neu": "Stahlbetondecke¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-twe94-1",
+"s": 47,
+"alt": "=0,70",
+"neu": "= 0,70",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 55,
+"alt": "C-5:;",
+"neu": "C-5:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 63,
+"alt": "entsorgen.",
+"neu": "entsorgen.*)",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-twe94-1",
+"s": 63,
+"alt": "abbrechen.",
+"neu": "abbrechen.*)",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 3,
+"alt": "19631)",
+"neu": "1963¹)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 3,
+"alt": "1965°)",
+"neu": "1965⁶)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 3,
+"alt": "1966?)",
+"neu": "1966⁹)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 3,
+"alt": "1967'°).",
+"neu": "1967¹⁰).",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 3,
+"alt": "196817).",
+"neu": "1968¹¹).",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 7,
+"alt": "2.566",
+"neu": "2.56",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 8,
+"alt": "I1*",
+"neu": "II*",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 8,
+"alt": "2,82",
+"neu": "2.82",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 8,
+"alt": "2,9",
+"neu": "2.9",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 15,
+"alt": "0,2.",
+"neu": "0,2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 15,
+"alt": "1.MT",
+"neu": "1 MT",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 15,
+"alt": "1,5km",
+"neu": "1,5 km",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 15,
+"alt": "3;2",
+"neu": "3,2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 16,
+"alt": "Straombahnen",
+"neu": "Strombahnen",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 23,
+"alt": "II;ed",
+"neu": "IIred",
+"grund": "«red» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 27,
+"alt": "11*",
+"neu": "II*",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 27,
+"alt": "2,82",
+"neu": "2.82",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 27,
+"alt": "2,9",
+"neu": "2.9",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 33,
+"alt": "m?2",
+"neu": "m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 34,
+"alt": "2,83",
+"neu": "2.83",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 35,
+"alt": "2,33",
+"neu": "2.33",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 35,
+"alt": "240",
+"neu": "7,5 m",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 36,
+"alt": "LL.:",
+"neu": "i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 36,
+"alt": "3.34,2)",
+"neu": "3.34.2)",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 36,
+"alt": "ca.10m²",
+"neu": "ca. 10 m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 36,
+"alt": "LL.:",
+"neu": "i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 37,
+"alt": "1verschliessbarer",
+"neu": "1 verschliessbarer",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 37,
+"alt": "min.:3,20:m",
+"neu": "min. 3,20 m",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 37,
+"alt": "und.:technische",
+"neu": "und technische",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 37,
+"alt": "1.Dusche",
+"neu": "1 Dusche",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 37,
+"alt": "1:Bodenablauf",
+"neu": "1 Bodenablauf",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 38,
+"alt": "5X",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 38,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 39,
+"alt": "iL.:",
+"neu": "i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 39,
+"alt": "1.Schalter/Steckdose",
+"neu": "1 Schalter/Steckdose",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 39,
+"alt": "1.Steckdose",
+"neu": "1 Steckdose",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 39,
+"alt": "1:Boiler",
+"neu": "1 Boiler",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 39,
+"alt": "1.Lavabo",
+"neu": "1 Lavabo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 39,
+"alt": "1:Ausguss",
+"neu": "1 Ausguss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 39,
+"alt": "2-Tablare",
+"neu": "2 Tablare",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 46,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 47,
+"alt": "LL.:",
+"neu": "i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 47,
+"alt": "LL.:",
+"neu": "i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 47,
+"alt": "41",
+"neu": "1",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 47,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 47,
+"alt": "—ableiter",
+"neu": "ableiter",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 47,
+"alt": "—ableiter",
+"neu": "ableiter",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 48,
+"alt": "a7",
+"neu": "",
+"grund": "Störzeichen aus dem Raster"
+},
+{
+"dok": "d-two77-1",
+"s": 48,
+"alt": "10.",
+"neu": "10",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 50,
+"alt": "10X2",
+"neu": "10×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 50,
+"alt": "1,0x",
+"neu": "1,0×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 50,
+"alt": "0,5Xx",
+"neu": "0,5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 52,
+"alt": "-Apparatebedingte",
+"neu": "Apparatebedingte",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 53,
+"alt": "80x",
+"neu": "80×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 53,
+"alt": "35x",
+"neu": "35×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 53,
+"alt": ":Raumbeleuchtung",
+"neu": "Raumbeleuchtung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 53,
+"alt": "1-Steckdose",
+"neu": "1 Steckdose",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 53,
+"alt": "1-:Steckdose",
+"neu": "1 Steckdose",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 54,
+"alt": "222",
+"neu": "",
+"grund": "Störzeichen aus dem Raster"
+},
+{
+"dok": "d-two77-1",
+"s": 54,
+"alt": "77.",
+"neu": "",
+"grund": "Störzeichen aus dem Raster"
+},
+{
+"dok": "d-two77-1",
+"s": 54,
+"alt": "jeca.5mlang",
+"neu": "je ca. 5 m lang",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 54,
+"alt": ".-Kleiderhaken",
+"neu": "Kleiderhaken",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 56,
+"alt": "8x",
+"neu": "8×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 57,
+"alt": "2X2",
+"neu": "2×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 57,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 59,
+"alt": "._.-Raumbeleuchtung",
+"neu": "Raumbeleuchtung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 59,
+"alt": "-Nachtbeleuchtung",
+"neu": "Nachtbeleuchtung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 59,
+"alt": "-Dispersionsanstrich",
+"neu": "Dispersionsanstrich",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 59,
+"alt": "-<Dispersionsanstrich",
+"neu": "Dispersionsanstrich",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 61,
+"alt": ":-Raumbeleuchtung",
+"neu": "Raumbeleuchtung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 62,
+"alt": "“Raumbeleuchtung",
+"neu": "Raumbeleuchtung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 62,
+"alt": "„Schalter/Steckdose",
+"neu": "Schalter/Steckdose",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 64,
+"alt": "HöheLL.:",
+"neu": "Höhe i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 65,
+"alt": "1-Hängeschrank",
+"neu": "1 Hängeschrank",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 69,
+"alt": "2,.52.2",
+"neu": "2.52.2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 69,
+"alt": "2,5-2,",
+"neu": "2.5-2,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 74,
+"alt": "HöheLLL.:",
+"neu": "Höhe i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 74,
+"alt": "2x",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 76,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 77,
+"alt": "“Belüftung",
+"neu": "Belüftung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 77,
+"alt": "100.Lux",
+"neu": "100 Lux",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 77,
+"alt": "“ca.",
+"neu": "ca.",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 78,
+"alt": "2WC",
+"neu": "2 WC",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 78,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 78,
+"alt": "10X2",
+"neu": "10×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 79,
+"alt": "ca.1,0Xx0,5x",
+"neu": "ca. 1,0×0,5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 79,
+"alt": "52x",
+"neu": "52×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 81,
+"alt": "1.:Wandentnahmestelle",
+"neu": "1 Wandentnahmestelle",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 81,
+"alt": "jeca.2",
+"neu": "je ca. 2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 82,
+"alt": "80x",
+"neu": "80×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 82,
+"alt": "35x",
+"neu": "35×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 82,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 83,
+"alt": "72",
+"neu": "",
+"grund": "Störzeichen aus dem Raster"
+},
+{
+"dok": "d-two77-1",
+"s": 84,
+"alt": "oder.",
+"neu": "oder",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 85,
+"alt": "=-1-Spültisch",
+"neu": "1 Spültisch",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 86,
+"alt": "“cu",
+"neu": "",
+"grund": "Störzeichen aus dem Raster"
+},
+{
+"dok": "d-two77-1",
+"s": 86,
+"alt": "25",
+"neu": "",
+"grund": "Störzeichen aus dem Raster"
+},
+{
+"dok": "d-two77-1",
+"s": 86,
+"alt": "ZDispersionsanstrich",
+"neu": "Dispersionsanstrich",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 87,
+"alt": "1501",
+"neu": "150 l",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 87,
+"alt": "1:Feuerlöscher",
+"neu": "1 Feuerlöscher",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 88,
+"alt": "18x",
+"neu": "18×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 89,
+"alt": "2X2",
+"neu": "2×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 89,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 89,
+"alt": "1Doppelrampe",
+"neu": "1 Doppelrampe",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 89,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 89,
+"alt": "„Dispersionsanstrich",
+"neu": "Dispersionsanstrich",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 91,
+"alt": "1.L::'2,60",
+"neu": "i.L.: 2,60",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 91,
+"alt": "1.Schalter/Steckdose",
+"neu": "1 Schalter/Steckdose",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 92,
+"alt": "100.",
+"neu": "100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 93,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 94,
+"alt": "frz",
+"neu": "",
+"grund": "Störzeichen aus dem Raster"
+},
+{
+"dok": "d-two77-1",
+"s": 95,
+"alt": ".Dispersionsanstrich",
+"neu": "Dispersionsanstrich",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 101,
+"alt": "IlIred",
+"neu": "IIred",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 101,
+"alt": "Typ!ll!",
+"neu": "Typ III",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 102,
+"alt": "Typ:",
+"neu": "Typ I:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 102,
+"alt": "Typ:",
+"neu": "Typ II:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 104,
+"alt": "Typ11:200",
+"neu": "Typ I 1:200",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 105,
+"alt": "1.L.:",
+"neu": "i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 106,
+"alt": "min;2,00.m",
+"neu": "min. 2,00 m",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 107,
+"alt": "1Bodenablauf",
+"neu": "1 Bodenablauf",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 108,
+"alt": "5x",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 108,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 108,
+"alt": "10x",
+"neu": "10×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 109,
+"alt": "5X",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 109,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 109,
+"alt": "20,3",
+"neu": "2×0,3",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 110,
+"alt": "5X",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 110,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 111,
+"alt": "10X",
+"neu": "10×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 111,
+"alt": "52",
+"neu": "5×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 111,
+"alt": "5X",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 111,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 112,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 114,
+"alt": "21",
+"neu": "2 l",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 114,
+"alt": "5X",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 115,
+"alt": "-Zementüberzug",
+"neu": "Zementüberzug",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 115,
+"alt": "_..Dispersionsanstrich",
+"neu": "Dispersionsanstrich",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 115,
+"alt": "—-BZS",
+"neu": "BZS",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 116,
+"alt": "1WC",
+"neu": "1 WC",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 116,
+"alt": "34",
+"neu": "3–4",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 117,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 117,
+"alt": "mit.",
+"neu": "mit",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 120,
+"alt": "2.64.22",
+"neu": "2.64.2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 121,
+"alt": "Anschlusskasten5",
+"neu": "Anschlusskasten 5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 121,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 121,
+"alt": "5x",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 121,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 122,
+"alt": "5X",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 122,
+"alt": "20,3",
+"neu": "2×0,3",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 124,
+"alt": "102",
+"neu": "10×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 124,
+"alt": "5X2",
+"neu": "5×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 124,
+"alt": "5X",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 126,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 128,
+"alt": "5x",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 128,
+"alt": "5X",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 128,
+"alt": "5x2",
+"neu": "5×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 128,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 130,
+"alt": "2,6-7",
+"neu": "2.6-7",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 131,
+"alt": "5X",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 132,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 132,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 132,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 132,
+"alt": "1Antennenanschluss",
+"neu": "1 Antennenanschluss",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 132,
+"alt": "mttief,",
+"neu": "m tief,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 132,
+"alt": "‚Ortschefbüro:",
+"neu": "Ortschefbüro:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 132,
+"alt": "\"Kommandoraum:",
+"neu": "Kommandoraum:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 136,
+"alt": "I1*",
+"neu": "II*",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 136,
+"alt": "11*:",
+"neu": "II*:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 137,
+"alt": "2,.72.3",
+"neu": "2.72.3",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 138,
+"alt": "HöheiL.:",
+"neu": "Höhe i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 139,
+"alt": "iL.:",
+"neu": "i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 139,
+"alt": "2,20.",
+"neu": "2,20",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 141,
+"alt": "10x",
+"neu": "10×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 142,
+"alt": "21",
+"neu": "2 l",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 144,
+"alt": "1-:Notabortausrüstung",
+"neu": "1 Notabortausrüstung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 145,
+"alt": "1.Doppelspültisch",
+"neu": "1 Doppelspültisch",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 145,
+"alt": "1.Schalter/Steckdose",
+"neu": "1 Schalter/Steckdose",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 145,
+"alt": "75:1.mit",
+"neu": "75 l mit",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 146,
+"alt": "iL.:",
+"neu": "i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 146,
+"alt": "iL.:",
+"neu": "i.L.:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 146,
+"alt": "72,60m",
+"neu": "2,60 m",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 153,
+"alt": "1.mtief,",
+"neu": "1 m tief,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 154,
+"alt": "11*",
+"neu": "II*",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 155,
+"alt": "2Antennenanschlüsse,",
+"neu": "2 Antennenanschlüsse,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 155,
+"alt": "mlang",
+"neu": "m lang",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 155,
+"alt": "Typ.",
+"neu": "Typ I.",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 156,
+"alt": "1.Hängeschrank,",
+"neu": "1 Hängeschrank,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 160,
+"alt": "mtief,",
+"neu": "m tief,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 161,
+"alt": "I1+BSA",
+"neu": "II+BSA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 161,
+"alt": "11*).",
+"neu": "II*).",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 164,
+"alt": "TypI1+",
+"neu": "Typ I +",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 164,
+"alt": "loder1*",
+"neu": "I oder I*",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 164,
+"alt": "SanhHist",
+"neu": "SanHist",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 164,
+"alt": "II\"",
+"neu": "II",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 164,
+"alt": "II.24",
+"neu": "IIred +",
+"grund": "«red» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 164,
+"alt": "!II.eahandelt.",
+"neu": "IIred handelt.",
+"grund": "«red» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 165,
+"alt": "2,84.1",
+"neu": "2.84.1",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 165,
+"alt": "2,8-1",
+"neu": "2.8-1",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 166,
+"alt": "KPI+BSAHNT1:",
+"neu": "KP II+ BSA II 1:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 170,
+"alt": "(1X",
+"neu": "(1×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 170,
+"alt": "(1X",
+"neu": "(1×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 170,
+"alt": "(1X",
+"neu": "(1×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 170,
+"alt": "(1X",
+"neu": "(1×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 170,
+"alt": "(1X",
+"neu": "(1×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 170,
+"alt": "(1X",
+"neu": "(1×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 170,
+"alt": "11",
+"neu": "II",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 171,
+"alt": "71:",
+"neu": "1:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 172,
+"alt": "1X",
+"neu": "1×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 172,
+"alt": "1X",
+"neu": "1×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 176,
+"alt": "2Xx30",
+"neu": "2×30",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 176,
+"alt": "30—-",
+"neu": "30–",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 176,
+"alt": "2x",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 177,
+"alt": "led",
+"neu": "IIred",
+"grund": "«red» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "80185",
+"neu": "80×185",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "100X",
+"neu": "100×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "140220",
+"neu": "140×220",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "60X",
+"neu": "60×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "60X",
+"neu": "60×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "80X",
+"neu": "80×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "100.185",
+"neu": "100×185",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "140x220",
+"neu": "140×220",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "PTO.:",
+"neu": "PTO",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "240X",
+"neu": "240×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 179,
+"alt": "(1atü)",
+"neu": "(1 atü)",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 180,
+"alt": "PT1,DT1",
+"neu": "PT1, DT1",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 182,
+"alt": "1I*/PSR",
+"neu": "II*/PSR",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 184,
+"alt": "2.566",
+"neu": "2.56",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 185,
+"alt": "I1*",
+"neu": "II*",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 185,
+"alt": "2,82",
+"neu": "2.82",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 185,
+"alt": "2,9",
+"neu": "2.9",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 189,
+"alt": "CO2-Konzentration",
+"neu": "CO₂-Konzentration",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 190,
+"alt": "CO2-Konzentration,",
+"neu": "CO₂-Konzentration,",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 190,
+"alt": "CO2-Konzentration",
+"neu": "CO₂-Konzentration",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 190,
+"alt": "CO2-Konzentration",
+"neu": "CO₂-Konzentration",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 192,
+"alt": "+20%",
+"neu": "±20%",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 192,
+"alt": "FRLm3/h",
+"neu": "FRL m³/h",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 192,
+"alt": "X?2)",
+"neu": "×²)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 192,
+"alt": "II;og",
+"neu": "IIred",
+"grund": "«red» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 193,
+"alt": "FILm3/h",
+"neu": "FIL m³/h",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 193,
+"alt": "FRLm3/h",
+"neu": "FRL m³/h",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 193,
+"alt": "2XGF",
+"neu": "2×GF",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 193,
+"alt": "3XGF",
+"neu": "3×GF",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 193,
+"alt": "valLFig.3.2-10",
+"neu": "vgl. Fig. 3.2-10",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 193,
+"alt": "4XGF",
+"neu": "4×GF",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 193,
+"alt": "8XGF",
+"neu": "8×GF",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 195,
+"alt": "OÖlheizung",
+"neu": "Ölheizung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 197,
+"alt": "‚elüftung",
+"neu": "Belüftung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 197,
+"alt": "m83/h,",
+"neu": "m³/h,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "AIL-",
+"neu": "FIL",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "tree",
+"neu": "tRE",
+"grund": "«RE» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "+20.",
+"neu": "+20",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "tre+20",
+"neu": "tRE+20",
+"grund": "«RE» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "kW”",
+"neu": "kW",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "2.600",
+"neu": "2 600",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "2400')",
+"neu": "2400¹)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "19.‘",
+"neu": "19",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "‘32000,",
+"neu": "32 000",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "64000,",
+"neu": "64 000",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 202,
+"alt": "4800')",
+"neu": "4800¹)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 204,
+"alt": "ZDüber500mm:",
+"neu": "∅ über 500 mm:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 209,
+"alt": "0SO",
+"neu": "OSO",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 209,
+"alt": "Nd:NS",
+"neu": "und",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 218,
+"alt": "67",
+"neu": "6 7",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 221,
+"alt": "3.34,6",
+"neu": "3.34.6",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 223,
+"alt": "5/a'’",
+"neu": "5/4″",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 223,
+"alt": "1V2”',",
+"neu": "1½″,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 234,
+"alt": "Kommandoposten:=K",
+"neu": "Kommandoposten",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 234,
+"alt": "I1*",
+"neu": "II*",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 237,
+"alt": "202",
+"neu": "0,2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 237,
+"alt": "VA-150-",
+"neu": "VA 150",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 237,
+"alt": "501",
+"neu": "50 l",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 238,
+"alt": "Öltank*)",
+"neu": "Öltank⁴)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 238,
+"alt": "KPTypI",
+"neu": "KP Typ I",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 238,
+"alt": "Typ!",
+"neu": "Typ I",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 238,
+"alt": "+SanPo",
+"neu": "+ SanPo",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 239,
+"alt": "3.43,4).",
+"neu": "3.43.4).",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 245,
+"alt": "Hüifsschütz",
+"neu": "Hilfsschütz",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 246,
+"alt": "Hilfsbetriebe')",
+"neu": "Hilfsbetriebe¹)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 250,
+"alt": "%ı-Last",
+"neu": "¾-Last",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 253,
+"alt": "«WEISS»",
+"neu": "«weiss»",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 253,
+"alt": "4000—4500°",
+"neu": "4000–4500°",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 254,
+"alt": "NBV",
+"neu": "ηB · v",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "0,1.",
+"neu": "0,1",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "PS/1,5'kW",
+"neu": "PS/1,5 kW",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "1,50.",
+"neu": "1,5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "100...",
+"neu": "100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "440,2",
+"neu": "0,2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "501;",
+"neu": "50 l;",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "6,02)",
+"neu": "6,0²)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "100;",
+"neu": "100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "06",
+"neu": "0,6",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "50.",
+"neu": "50",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "27",
+"neu": "2,7",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "45",
+"neu": "4,5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "100.",
+"neu": "100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "4,5%)",
+"neu": "4,5⁴)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "100,",
+"neu": "100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "‘100",
+"neu": "100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "32",
+"neu": "3,2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "27",
+"neu": "2,7",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "40",
+"neu": "4,0",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "40",
+"neu": "4,0",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "200",
+"neu": "2,0",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 257,
+"alt": "319,",
+"neu": "31,9",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 259,
+"alt": "7.952)",
+"neu": "7,5²)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 259,
+"alt": "501;",
+"neu": "50 l;",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 259,
+"alt": "5:5",
+"neu": "5,5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 259,
+"alt": "27",
+"neu": "2,7",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 259,
+"alt": "2:2",
+"neu": "2,2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 271,
+"alt": "II,ag)",
+"neu": "IIred)",
+"grund": "«red» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 271,
+"alt": "55",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-two77-1",
+"s": 271,
+"alt": "28",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-two77-1",
+"s": 271,
+"alt": "95",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-two77-1",
+"s": 271,
+"alt": "Re]",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-two77-1",
+"s": 278,
+"alt": "II;ea",
+"neu": "IIred",
+"grund": "«red» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 279,
+"alt": "II,gg",
+"neu": "IIred",
+"grund": "«red» tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 281,
+"alt": "3.54.22",
+"neu": "3.54.2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 281,
+"alt": "Räume",
+"neu": "Raume",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 281,
+"alt": "Tahleau",
+"neu": "Tableau",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 282,
+"alt": "6(2X3)",
+"neu": "6 (2×3)",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 282,
+"alt": "15Xx2",
+"neu": "15×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 284,
+"alt": "2x2",
+"neu": "2×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 284,
+"alt": "70:",
+"neu": "70",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 284,
+"alt": "5x2",
+"neu": "5×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 284,
+"alt": "75:",
+"neu": "75",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 284,
+"alt": "10X2",
+"neu": "10×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 284,
+"alt": "391.",
+"neu": "391",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 284,
+"alt": "75:",
+"neu": "75",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 284,
+"alt": "15x",
+"neu": "15×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 284,
+"alt": "584.",
+"neu": "584",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 286,
+"alt": "95",
+"neu": "25",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 286,
+"alt": "3.5-34.",
+"neu": "3.5-34",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 288,
+"alt": "10X2",
+"neu": "10×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 288,
+"alt": "5X2",
+"neu": "5×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 288,
+"alt": "2X2",
+"neu": "2×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 288,
+"alt": "2X2",
+"neu": "2×2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 290,
+"alt": "Typ,",
+"neu": "Typ I,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 290,
+"alt": "11*,",
+"neu": "II*,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 290,
+"alt": "3:5-41",
+"neu": "3.5-41",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 291,
+"alt": "N20)",
+"neu": "N₂O)",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 293,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 293,
+"alt": "2X",
+"neu": "2×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 294,
+"alt": "(40",
+"neu": "(40×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 300,
+"alt": "2.566",
+"neu": "2.56",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 301,
+"alt": "I1*",
+"neu": "II*",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 301,
+"alt": "2,82",
+"neu": "2.82",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 301,
+"alt": "2,9",
+"neu": "2.9",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 303,
+"alt": "4,5",
+"neu": "4.5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 306,
+"alt": "“0:05%",
+"neu": "0,05%",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 306,
+"alt": "Nebenrichtung‘",
+"neu": "Nebenrichtung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 306,
+"alt": "0,05%?)",
+"neu": "0,05%¹)",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-two77-1",
+"s": 313,
+"alt": "4271",
+"neu": "4.2-1",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 313,
+"alt": "Tab.4.2-1-",
+"neu": "Tab. 4.2-1",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 313,
+"alt": "4,3-18",
+"neu": "4.3-18",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 315,
+"alt": "4,32.8",
+"neu": "4.32.8",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 316,
+"alt": "4444141442",
+"neu": "",
+"grund": "Störzeichen aus einer Skizze"
+},
+{
+"dok": "d-two77-1",
+"s": 316,
+"alt": "Pv*+PN+9gp",
+"neu": "pv+pN+gD",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 316,
+"alt": "1:atü",
+"neu": "1 atü",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 316,
+"alt": "3.atü",
+"neu": "3 atü",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 318,
+"alt": "PD+Ow",
+"neu": "pD+gW",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 318,
+"alt": "(pg—po)",
+"neu": "(pB−po)",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 318,
+"alt": "=0,11Lx*",
+"neu": "= 0,11 Lx*",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 318,
+"alt": "—2S)",
+"neu": "−2S)",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 319,
+"alt": "0,15-pg",
+"neu": "0,15 · pB",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 319,
+"alt": "(ps",
+"neu": "(pB",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 319,
+"alt": "—Po)‘",
+"neu": "−po) ·",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 319,
+"alt": "—5,0)-",
+"neu": "−5,0) ·",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 319,
+"alt": "5:7",
+"neu": "5 · 7",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 319,
+"alt": "=011)°Lx*",
+"neu": "= 0,11 · Lx*",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 319,
+"alt": "0,55m",
+"neu": "0,55 m",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 319,
+"alt": "2S(L+L—25$)",
+"neu": "2S(Lx*+ Ly*−2S)",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 319,
+"alt": "=2-0,55(5",
+"neu": "= 2 · 0,55 (5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 320,
+"alt": "pv+Pn",
+"neu": "pv+pN+gD+gW",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 320,
+"alt": "+9pD",
+"neu": "+gD",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 320,
+"alt": "9w",
+"neu": "gW",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 320,
+"alt": "pD+gw",
+"neu": "pD+gW",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 320,
+"alt": "pp+9gw",
+"neu": "pD+gW",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 320,
+"alt": "pz:",
+"neu": "pE",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 321,
+"alt": "Mp/m®?",
+"neu": "Mp/m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 321,
+"alt": "Mp/m?",
+"neu": "Mp/m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 322,
+"alt": "4,3-7):",
+"neu": "4.3-7):",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 323,
+"alt": "‘Druck",
+"neu": "Druck",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 323,
+"alt": "3atü",
+"neu": "3 atü",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 323,
+"alt": "2,6ätü",
+"neu": "2,6 atü",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 323,
+"alt": "Fi,",
+"neu": "F₁,",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 323,
+"alt": "F2:",
+"neu": "F₂:",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 323,
+"alt": "P2:",
+"neu": "p₂:",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 324,
+"alt": "F2:",
+"neu": "F₂:",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 324,
+"alt": "P2:",
+"neu": "p₂:",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 324,
+"alt": "FF;",
+"neu": "F₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 324,
+"alt": "F2:",
+"neu": "F₂:",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 325,
+"alt": "1,5c",
+"neu": "1,5 c",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 327,
+"alt": "2,6atü",
+"neu": "2,6 atü",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 327,
+"alt": "FA/F8",
+"neu": "FA/FB",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 327,
+"alt": "P2/p:",
+"neu": "p₂/p₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 327,
+"alt": "=0,94-",
+"neu": "= 0,94 ·",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 327,
+"alt": "P2/p;",
+"neu": "p₂/p₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "260-260",
+"neu": "260 · 260",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "P2/Pp4",
+"neu": "p₂/p₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "pD/ps",
+"neu": "pD/pB",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "Fo/Fe",
+"neu": "FD/FE",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "F/Fo=",
+"neu": "F₁/F₂ =",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "P2/p1",
+"neu": "p₂/p₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "P2/p1",
+"neu": "p₂/p₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "P2/Pp1",
+"neu": "p₂/p₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "P2/p+",
+"neu": "p₂/p₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 328,
+"alt": "pa/p8B",
+"neu": "pA/pB",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 329,
+"alt": "erfolgüwie",
+"neu": "erfolgt wie",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 332,
+"alt": "Mp/m?",
+"neu": "Mp/m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "+PN+9D+9w",
+"neu": "pN+gD+gW",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "Ppv:",
+"neu": "pv:",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "+Psog)",
+"neu": "+psog)+pE",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "dgleichmässig",
+"neu": "gleichmässig",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "260700",
+"neu": "260×700",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "10mm",
+"neu": "∅ 10 mm",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "012mm",
+"neu": "∅ 12 mm amax = 15 cm",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "260X700",
+"neu": "260×700",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "10mm",
+"neu": "10 mm",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 333,
+"alt": "12mm",
+"neu": "∅ 12 mm",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 335,
+"alt": "3atü",
+"neu": "3 atü",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 335,
+"alt": "20.",
+"neu": "20",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 335,
+"alt": "30°",
+"neu": "30",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 335,
+"alt": "‘20",
+"neu": "20",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 337,
+"alt": "Dzui",
+"neu": "Dzul",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 337,
+"alt": "Dz41",
+"neu": "Dzul",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "11m®",
+"neu": "1 t/m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "+12",
+"neu": "+l₂",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "Iz-+14:",
+"neu": "l₃+l₄:",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "14/d",
+"neu": "l₄/d",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "I4",
+"neu": "l₄",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "a4",
+"neu": "α₄",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "AF|,",
+"neu": "AFl₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "412",
+"neu": "+ l₂",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "AFa,",
+"neu": "AFα₂",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "AFız",
+"neu": "AFl₃+",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "414",
+"neu": "l₄",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "AFa,",
+"neu": "AFα₄",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "AFız",
+"neu": "AFl₅",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "AFly",
+"neu": "AFl₁",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "+12",
+"neu": "+ l₂",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "AFız414",
+"neu": "AFl₃+l₄",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 340,
+"alt": "AFas",
+"neu": "AFα₄",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 341,
+"alt": "4.33.44",
+"neu": "4.33.4",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 343,
+"alt": "Dzu!",
+"neu": "Dzul",
+"grund": "Index tiefgestellt"
+},
+{
+"dok": "d-two77-1",
+"s": 343,
+"alt": "00",
+"neu": "100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 343,
+"alt": "2,04+0,3",
+"neu": "2,0+0,3",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 343,
+"alt": "Dzu!",
+"neu": "Dzul",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 343,
+"alt": "SFer$",
+"neu": "SFerf",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 343,
+"alt": "300",
+"neu": "200",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "1,0>X",
+"neu": "1,0×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "5785",
+"neu": "1,85",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "t/m®;",
+"neu": "t/m²;",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "AFw",
+"neu": "AFM",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "AF,",
+"neu": "AF₁",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "AF,",
+"neu": "AF₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "AF;=",
+"neu": "AF₃ =",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "22-4",
+"neu": "22 · 4",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "13",
+"neu": "l₃",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "3,10m",
+"neu": "3,10 m",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "<2,aber!,/d;",
+"neu": "< 2, aber l₂/d₁",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 344,
+"alt": "+13",
+"neu": "+l₃",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "1,/d,",
+"neu": "l₁/d₁",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "AF‚=",
+"neu": "AF₁ =",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "AF,-",
+"neu": "AF₂ ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "AF;:",
+"neu": "AF₃ ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "AFı",
+"neu": "AF₄",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "AFs=1-6-32-4-4=",
+"neu": "AF₅ = 1 · 6 · 32 · 4 · 4 =",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "Dzui",
+"neu": "Dzul",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "10000",
+"neu": "10 000",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "45°,",
+"neu": "45°.",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "AF,:",
+"neu": "AF₂:",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "2,1X",
+"neu": "2,1×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 345,
+"alt": "2,4",
+"neu": "×2,4",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 347,
+"alt": "Punkt1",
+"neu": "Punkt 1",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 347,
+"alt": "Dzuı",
+"neu": "Dzul",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 347,
+"alt": "2,04+0,55",
+"neu": "2,0+0,55",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 347,
+"alt": "AFMm",
+"neu": "AFM",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 348,
+"alt": "Dzui",
+"neu": "Dzul",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 348,
+"alt": "Do.",
+"neu": "D₀",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 348,
+"alt": "26",
+"neu": "2,6",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 348,
+"alt": "AF2",
+"neu": "AF₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 348,
+"alt": "Dzui",
+"neu": "Dzul",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 349,
+"alt": "AFv",
+"neu": "AFM",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 349,
+"alt": "AFay<AFb)",
+"neu": "AFa)< AFb)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 349,
+"alt": "AFpyj=",
+"neu": "AFb)=",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 349,
+"alt": "AF,=4",
+"neu": "AF₃ = 4",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 349,
+"alt": "AFı=32:6:4=",
+"neu": "AF₃ = 32 · 6 · 4 =",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 349,
+"alt": "Dzuı",
+"neu": "Dzul",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 349,
+"alt": "SFı",
+"neu": "SF₄",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 349,
+"alt": "SF3",
+"neu": "SF₃",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 349,
+"alt": "Dzuy",
+"neu": "Dzul",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 351,
+"alt": "107%",
+"neu": "10⁻⁸",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 351,
+"alt": "5x",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 351,
+"alt": "10-100",
+"neu": "10–100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 351,
+"alt": "107°",
+"neu": "10⁻⁶",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 353,
+"alt": "10-100",
+"neu": "10–100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 354,
+"alt": "5x",
+"neu": "5×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 354,
+"alt": "107*",
+"neu": "10⁻⁸",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 354,
+"alt": "4.43,5",
+"neu": "4.43.5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 355,
+"alt": "4,4-2).",
+"neu": "4.4-2).",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 361,
+"alt": "tir=",
+"neu": "τr =",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 362,
+"alt": "0,95:",
+"neu": "0,95 · Fe ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 362,
+"alt": "-Fe-:ocf",
+"neu": "· Fe · σf",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "(Fe,”,",
+"neu": "(Fe₁⁻,",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "Fe”,",
+"neu": "Fe₂⁻,",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "DD,",
+"neu": "p̃,",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "AT1-4",
+"neu": "A1-4",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "Mo-",
+"neu": "M̃₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "<Mir",
+"neu": "< M̃₁⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "<2Mt*,",
+"neu": "< 2 M̃⁺.",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "(M27).",
+"neu": "(M₂⁻).",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "M2”",
+"neu": "M₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "MM,”",
+"neu": "M̃₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 363,
+"alt": "Mi\"",
+"neu": "M̃₁⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 364,
+"alt": "My\"",
+"neu": "M̃₁⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 364,
+"alt": "Mo\"",
+"neu": "M̃₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 364,
+"alt": "BL?",
+"neu": "p̃ · L²",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 364,
+"alt": "+MI=",
+"neu": "+ M̃⁺ =",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 364,
+"alt": "+M2”",
+"neu": "+ M̃₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 364,
+"alt": "teilten",
+"neu": "telten",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 365,
+"alt": "CB‘",
+"neu": "αB ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 365,
+"alt": "Vie",
+"neu": "0,2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 365,
+"alt": "1,4",
+"neu": "1,2",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 365,
+"alt": "16",
+"neu": "1,6",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 366,
+"alt": "MM,",
+"neu": "m̃₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 366,
+"alt": "Fe,”",
+"neu": "Fe₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 366,
+"alt": "WW)",
+"neu": "μ)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 367,
+"alt": "AT1-9",
+"neu": "A1-9",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 368,
+"alt": "kp/cm*",
+"neu": "kp/cm²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 368,
+"alt": "Z/oc+",
+"neu": "Z/σf",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 368,
+"alt": "AT1-11",
+"neu": "A1-11",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 368,
+"alt": "M4:",
+"neu": "m̃₁:",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 368,
+"alt": "M2:",
+"neu": "m̃₂:",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 368,
+"alt": "Az:",
+"neu": "A₂:",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 368,
+"alt": "Ar—-Az2—",
+"neu": "A₁−A₂ −",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 368,
+"alt": "+M2+As;",
+"neu": "+m̃₂+A₁",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 368,
+"alt": "0,9567",
+"neu": "0,95 · σf",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 369,
+"alt": "(BP)",
+"neu": "(p̃)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 369,
+"alt": "(pP)",
+"neu": "(p̃)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 369,
+"alt": "ho/2",
+"neu": "h₀/2",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 369,
+"alt": "‘ho",
+"neu": "· h₀",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 369,
+"alt": "L4*",
+"neu": "L₁ ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 369,
+"alt": "T12",
+"neu": "τ₁,₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 369,
+"alt": "ho/2",
+"neu": "h₀/2",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 369,
+"alt": "F2",
+"neu": "F₁,₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 370,
+"alt": "h,/2",
+"neu": "h₀/2",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 370,
+"alt": "PLıuft-/Erdstoss",
+"neu": "pLuft-/Erdstoss",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 370,
+"alt": "ı(P5)",
+"neu": "τ(p̃)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 371,
+"alt": "ıTp.",
+"neu": "τD.",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 371,
+"alt": "Zh-u",
+"neu": "h · u",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 371,
+"alt": "BD.",
+"neu": "p̃.",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 371,
+"alt": "BD:",
+"neu": "∅:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 371,
+"alt": "Pıpmax",
+"neu": "P(pmax)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 371,
+"alt": "(pP)",
+"neu": "P(p̃)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 371,
+"alt": "Prpmax)",
+"neu": "P(pmax)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 371,
+"alt": "Prpmax)",
+"neu": "P(pmax)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 372,
+"alt": "e,>3",
+"neu": "e₂>3",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 372,
+"alt": "A1-15).",
+"neu": "A 1-15).",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 375,
+"alt": "lin",
+"neu": "l in",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 376,
+"alt": "kp/cm®",
+"neu": "kp/cm²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 376,
+"alt": "12kp/cm®",
+"neu": "12 kp/cm²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 376,
+"alt": "1,5cm",
+"neu": "1,5 cm",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 376,
+"alt": "Pvt+PN+9gp",
+"neu": "pv+pN+gD",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 376,
+"alt": "Dry",
+"neu": "pv",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 376,
+"alt": "0,8mM",
+"neu": "0,8 m",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 376,
+"alt": "Mp/m®",
+"neu": "Mp/m³",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 376,
+"alt": "Mp/m®",
+"neu": "Mp/m³",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 377,
+"alt": "A1-217",
+"neu": "A1-21",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 378,
+"alt": "F2",
+"neu": "F₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 378,
+"alt": "425",
+"neu": "4,25 ·",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 378,
+"alt": "452m²",
+"neu": "4,52 m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 378,
+"alt": "T1",
+"neu": "τ₁",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 378,
+"alt": "kp/cm“",
+"neu": "kp/cm²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 378,
+"alt": "T7ho",
+"neu": "L₁ · h₀",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 378,
+"alt": "F2:BP",
+"neu": "F₂ · p̃",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 378,
+"alt": "T2",
+"neu": "τ₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 378,
+"alt": "L2-ho",
+"neu": "L₂ · h₀",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 379,
+"alt": "Mpm/m'",
+"neu": "Mpm/m¹",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 379,
+"alt": "0,95-",
+"neu": "0,95 ·",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 379,
+"alt": "Mpm/m'",
+"neu": "Mpm/m¹",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 379,
+"alt": "+Fx2”",
+"neu": "+ m̃x2⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 379,
+"alt": "228",
+"neu": "22,8",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 379,
+"alt": "068",
+"neu": "0,68",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 379,
+"alt": "Axt",
+"neu": "m̃x⁺",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 380,
+"alt": "Mxt",
+"neu": "m̃x⁺",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 380,
+"alt": "33-228",
+"neu": "33 · 22,8",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 380,
+"alt": "7338",
+"neu": "= 33,3",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 380,
+"alt": "4752",
+"neu": "4,75²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 381,
+"alt": "Mp/m'",
+"neu": "Mp/m¹",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 381,
+"alt": "(MM",
+"neu": "(M̃",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 381,
+"alt": "6f",
+"neu": "σf",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 381,
+"alt": "0,95-6r-h-",
+"neu": "0,95 · σf · h⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 381,
+"alt": "\"0,95-6-0,52",
+"neu": "0,95 · 6 · 0,52",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 381,
+"alt": "0,95-cfh*",
+"neu": "0,95 · σf · h⁺",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 382,
+"alt": "W675",
+"neu": "μb⁻ =",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 382,
+"alt": "57h\"",
+"neu": "b · h⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 382,
+"alt": "77.62",
+"neu": "77 · 52",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 382,
+"alt": "L+P2-€e2=",
+"neu": "L + p₂ · e₂ =",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 382,
+"alt": "1t(Pia)",
+"neu": "τ(Pid)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 383,
+"alt": "tTp",
+"neu": "τD",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 383,
+"alt": "814",
+"neu": "8 ∅ 14",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 383,
+"alt": "A117",
+"neu": "· 117",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 383,
+"alt": "cm?",
+"neu": "cm²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 383,
+"alt": "89012",
+"neu": "8 ∅ 12",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 384,
+"alt": "1/0,50\\2?",
+"neu": "0,50)²",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 384,
+"alt": "PP)",
+"neu": "τ(p̃)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 384,
+"alt": "\"77-507",
+"neu": "77 · 50",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 384,
+"alt": "Baha",
+"neu": "b · h₀",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 385,
+"alt": "Hp”",
+"neu": "μb⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 385,
+"alt": "1x”",
+"neu": "μx⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 385,
+"alt": "er:",
+"neu": "e₁ ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 385,
+"alt": "25-38",
+"neu": "25 · 38",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 385,
+"alt": "810",
+"neu": "8 ∅ 10.",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 385,
+"alt": "700",
+"neu": "100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 385,
+"alt": "A1-317",
+"neu": "A1-31",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 386,
+"alt": "1,45°",
+"neu": "1,45²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 386,
+"alt": "-cf-h*",
+"neu": "· σf · h⁺",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 386,
+"alt": "0,95-6-",
+"neu": "0,95 · 6 ·",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 387,
+"alt": "up”",
+"neu": "μb⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 387,
+"alt": "4128",
+"neu": "124",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "9,27",
+"neu": "0,27",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "51-124",
+"neu": "· 51 · 124",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "14,4",
+"neu": "",
+"grund": "Störzeichen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "700",
+"neu": "100",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "0.14",
+"neu": "0,14",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "cm?",
+"neu": "cm²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "184000",
+"neu": "184 000",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "kp/cm“®",
+"neu": "kp/cm²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "25-38",
+"neu": "25 · 38",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "er.",
+"neu": "e₁ ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 388,
+"alt": "er”",
+"neu": "e₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 389,
+"alt": "1t(P;a)",
+"neu": "τ(Pid)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 392,
+"alt": "8x",
+"neu": "ex⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 392,
+"alt": "1:7",
+"neu": "1,7 cm",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 392,
+"alt": "2-Ly",
+"neu": "2 · Ly",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 392,
+"alt": "2:6,75",
+"neu": "2 · 6,75",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 392,
+"alt": "cm“/m",
+"neu": "cm²/m¹",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 392,
+"alt": "77",
+"neu": "2 · Lx",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 394,
+"alt": "Ly*—-2S",
+"neu": "Ly*−2S",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 394,
+"alt": "Lx*-2$S",
+"neu": "Lx*−2S",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 394,
+"alt": "cm?/m'",
+"neu": "cm²/m¹",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 394,
+"alt": "0.48",
+"neu": "48",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 394,
+"alt": "0x",
+"neu": "m̃x⁺",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 394,
+"alt": "3,9",
+"neu": "3,9²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 395,
+"alt": "cm?/m'",
+"neu": "cm²/m¹",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 396,
+"alt": "0,2h",
+"neu": "0,2 h",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 397,
+"alt": "Pur",
+"neu": "p₁ ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 397,
+"alt": "p2",
+"neu": "p₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 397,
+"alt": "1,952?",
+"neu": "1,95²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 397,
+"alt": "46",
+"neu": "16",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 399,
+"alt": "3(0,80",
+"neu": "(0,80 m",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 399,
+"alt": "+0,55",
+"neu": "+ 0,55 m +",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 401,
+"alt": "DB)",
+"neu": "p̃)",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 401,
+"alt": "pw:L?",
+"neu": "pw · L²",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 401,
+"alt": "21,7—",
+"neu": "21,7−",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 401,
+"alt": "21,8+°",
+"neu": "21,8 +",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 404,
+"alt": "—-HR=",
+"neu": "− μR =",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 404,
+"alt": "My,",
+"neu": "m̃₁⁻,",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 404,
+"alt": "M27",
+"neu": "m̃₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 404,
+"alt": "M2\"",
+"neu": "m₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 404,
+"alt": "27",
+"neu": "m̃₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 404,
+"alt": "A1-57",
+"neu": "A1-51",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 405,
+"alt": "cm?/m'",
+"neu": "cm²/m¹",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 405,
+"alt": "cm?2/m'",
+"neu": "cm²/m¹",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 405,
+"alt": "0,95:",
+"neu": "0,95 ·",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 405,
+"alt": "or:",
+"neu": "σf ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 405,
+"alt": "2er",
+"neu": "2 σf",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 405,
+"alt": "(Fe——",
+"neu": "(Fe−N₁",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 405,
+"alt": "5.6",
+"neu": "2 · 6",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 405,
+"alt": "mM\"",
+"neu": "m₂⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 405,
+"alt": "MM,",
+"neu": "m̃₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 414,
+"alt": "0,2‘",
+"neu": "0,2 ·",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 414,
+"alt": "cm?/m'",
+"neu": "cm²/m¹",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 414,
+"alt": "Fee,",
+"neu": "Feerf",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 416,
+"alt": "40cm",
+"neu": "40 cm",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 416,
+"alt": "Mp/m®",
+"neu": "Mp/m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 416,
+"alt": "pP:",
+"neu": "p ·",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 416,
+"alt": "L2",
+"neu": "Lx²",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 416,
+"alt": "30-",
+"neu": "30 ·",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 416,
+"alt": "2228",
+"neu": "8",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 417,
+"alt": "0,95-cfh",
+"neu": "0,95 · σf · h",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 417,
+"alt": "0,95-6-0,38",
+"neu": "0,95 · 6 · 0,38",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 417,
+"alt": "Mp/m*®",
+"neu": "Mp/m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 418,
+"alt": "Wand",
+"neu": "Wand k",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-two77-1",
+"s": 419,
+"alt": "F2",
+"neu": "F₂",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 419,
+"alt": "ho/2",
+"neu": "h₀/2",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 419,
+"alt": "e4,",
+"neu": "e₁,",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 419,
+"alt": "ev,",
+"neu": "e1v,",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 419,
+"alt": "62",
+"neu": "e2v",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 419,
+"alt": "h7",
+"neu": "h⁻",
+"grund": "Formelzeichen (Index, Hochzahl oder Tilde)"
+},
+{
+"dok": "d-two77-1",
+"s": 420,
+"alt": "1t/m³",
+"neu": "1 t/m³",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 2,
+"alt": "nen)",
+"neu": "nen¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-tws82-1",
+"s": 3,
+"alt": "EEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 7,
+"alt": "10kt",
+"neu": "10 kt",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 7,
+"alt": "ijonisierenden",
+"neu": "ionisierenden",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 10,
+"alt": "km?",
+"neu": "km²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 15,
+"alt": "Bodenflaäche",
+"neu": "Bodenfläche",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 15,
+"alt": "Toilettenraume",
+"neu": "Toilettenräume",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 15,
+"alt": "Bodenflaäche",
+"neu": "Bodenfläche",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 15,
+"alt": "Bodenflache",
+"neu": "Bodenfläche",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 15,
+"alt": "Schutzraäume",
+"neu": "Schutzräume",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 19,
+"alt": "5,46.",
+"neu": "5.46.",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 21,
+"alt": "trümmerfrei‘)",
+"neu": "trümmerfrei¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-tws82-1",
+"s": 29,
+"alt": "_Pissständen,",
+"neu": "Pissständen,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 29,
+"alt": "_Mehrzweckraum",
+"neu": "Mehrzweckraum",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 39,
+"alt": "m2je",
+"neu": "m² je",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 40,
+"alt": "1,86",
+"neu": "1,85",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 42,
+"alt": "Regel!",
+"neu": "Regel",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 42,
+"alt": "Regel!",
+"neu": "Regel",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 46,
+"alt": "II,",
+"neu": "III,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "DDDE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "ODDD",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "DDP",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "ESP",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "m9/h",
+"neu": "m³/h",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "OBQ",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "7VA300+",
+"neu": "7 VA 300 +",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "8GF300",
+"neu": "8 GF 300",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "9VA300",
+"neu": "9 VA 300",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "8GF600",
+"neu": "8 GF 600",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "55",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "GF600",
+"neu": "GF 600",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "ET)",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "GF600",
+"neu": "GF 600",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "GF600",
+"neu": "GF 600",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "23250",
+"neu": "3250",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 50,
+"alt": "GF600",
+"neu": "GF 600",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 51,
+"alt": "eventuell!",
+"neu": "eventuell",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 57,
+"alt": "Oberdruckventil",
+"neu": "Überdruckventil",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 57,
+"alt": "(0V)",
+"neu": "(ÜV)",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 64,
+"alt": "EDEL",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 64,
+"alt": "inne",
+"neu": "rinne",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 64,
+"alt": "1m",
+"neu": "",
+"grund": "Störzeichen aus einer Skizze"
+},
+{
+"dok": "d-tws82-1",
+"s": 65,
+"alt": "101",
+"neu": "10",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 65,
+"alt": "Wasserrinno",
+"neu": "Wasserrinne",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 65,
+"alt": "Umden",
+"neu": "Um den",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 66,
+"alt": "Offnung",
+"neu": "Öffnung",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 72,
+"alt": "(600",
+"neu": "(~600",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 74,
+"alt": "NEST",
+"neu": "",
+"grund": "Störzeichen aus einer Skizze"
+},
+{
+"dok": "d-tws82-1",
+"s": 76,
+"alt": "EEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 76,
+"alt": "3X",
+"neu": "3 ×",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 78,
+"alt": "EEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 78,
+"alt": "EEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 79,
+"alt": "2uÖfÄ@m",
+"neu": "91",
+"grund": "Seitenzahl"
+},
+{
+"dok": "d-tws82-1",
+"s": 79,
+"alt": "ERRP)Q)LLLLLKLLLLLLLNNhHhmHLmLL",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 81,
+"alt": "DEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 81,
+"alt": "grösse')",
+"neu": "grösse¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-tws82-1",
+"s": 82,
+"alt": "EEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 84,
+"alt": "AAN",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 85,
+"alt": "AAHLLLLhh",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 85,
+"alt": "297",
+"neu": "97",
+"grund": "Seitenzahl"
+},
+{
+"dok": "d-tws82-1",
+"s": 86,
+"alt": "Amperemeter",
+"neu": "Ampèremeter",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 86,
+"alt": "Amperemeter",
+"neu": "Ampèremeter",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 87,
+"alt": "6270‘)",
+"neu": "6270¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-tws82-1",
+"s": 87,
+"alt": "von40",
+"neu": "von 40",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 87,
+"alt": "1s",
+"neu": "1 s",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 87,
+"alt": "Federkraftanlasser®)",
+"neu": "Federkraftanlasser²⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-tws82-1",
+"s": 87,
+"alt": "SL...",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 89,
+"alt": "2.42,3).",
+"neu": "2.42.3).",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 90,
+"alt": "Add",
+"neu": "102",
+"grund": "Seitenzahl"
+},
+{
+"dok": "d-tws82-1",
+"s": 90,
+"alt": "a0",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 91,
+"alt": "2.42,3).",
+"neu": "2.42.3).",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 92,
+"alt": "83,8",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-tws82-1",
+"s": 92,
+"alt": "CI5<",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-tws82-1",
+"s": 92,
+"alt": "SSSSEEEEPESS",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-tws82-1",
+"s": 92,
+"alt": "32363",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-tws82-1",
+"s": 92,
+"alt": "35",
+"neu": "",
+"grund": "Störzeichen aus quer gesetzter Schrift"
+},
+{
+"dok": "d-tws82-1",
+"s": 93,
+"alt": "105",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 94,
+"alt": "37",
+"neu": "3,7",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 96,
+"alt": "TEIL",
+"neu": "mit",
+"grund": "durchgestrichener Bildtitel"
+},
+{
+"dok": "d-tws82-1",
+"s": 96,
+"alt": "TUE",
+"neu": "rund",
+"grund": "durchgestrichener Bildtitel"
+},
+{
+"dok": "d-tws82-1",
+"s": 96,
+"alt": "e4",
+"neu": "24",
+"grund": "durchgestrichener Bildtitel"
+},
+{
+"dok": "d-tws82-1",
+"s": 96,
+"alt": "OLIIULLIGUTTT",
+"neu": "Schutzraum",
+"grund": "durchgestrichener Bildtitel"
+},
+{
+"dok": "d-tws82-1",
+"s": 96,
+"alt": "RETTEN",
+"neu": "Schutzplätzen",
+"grund": "durchgestrichener Bildtitel"
+},
+{
+"dok": "d-tws82-1",
+"s": 97,
+"alt": "103,",
+"neu": "109",
+"grund": "Seitenzahl"
+},
+{
+"dok": "d-tws82-1",
+"s": 97,
+"alt": "EEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 97,
+"alt": "mes,",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 97,
+"alt": "DL,",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 101,
+"alt": "DILL",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 101,
+"alt": "Den",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 102,
+"alt": "1m²",
+"neu": "1 m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 103,
+"alt": "eLLLLLLLLLLLLLLLLLLL)LLLLLhHhLh——NH)G)L",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 103,
+"alt": "RL)LLLLLLLLLNnNnhmH?U",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 104,
+"alt": "m?2,",
+"neu": "m²,",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 106,
+"alt": "LE“",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 106,
+"alt": "BELLA",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 115,
+"alt": "Schutzplätze?)",
+"neu": "Schutzplätze¹⁾",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-tws82-1",
+"s": 116,
+"alt": "WEN",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 116,
+"alt": "JAJAJA",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 116,
+"alt": "ESS",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 117,
+"alt": "EHE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 123,
+"alt": "Pfliegearbeitsplatz",
+"neu": "Pflegearbeitsplatz",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 123,
+"alt": ".5-3.0m",
+"neu": "2.5 - 3.0 m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 123,
+"alt": "Fliächenangaben",
+"neu": "Flächenangaben",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 123,
+"alt": "Waschplatz'",
+"neu": "Waschplatz¹",
+"grund": "Fussnotenziffer"
+},
+{
+"dok": "d-tws82-1",
+"s": 123,
+"alt": "_Behinderten-",
+"neu": "Behinderten-",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 123,
+"alt": "_Gesamt-",
+"neu": "Gesamt-",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 123,
+"alt": "7m®",
+"neu": "7 m²",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 125,
+"alt": "v6",
+"neu": "0.6",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 125,
+"alt": "00H",
+"neu": "0.9",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 125,
+"alt": "00",
+"neu": "400",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 125,
+"alt": "fand",
+"neu": "Brand:",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 129,
+"alt": "3LNPE/3",
+"neu": "3 LNPE/ 3",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 130,
+"alt": "768",
+"neu": "76",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 130,
+"alt": "2VA",
+"neu": "2 VA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 130,
+"alt": "1VA",
+"neu": "1 VA",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 133,
+"alt": "1ll)",
+"neu": "III)",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 133,
+"alt": "Kiemmenkasten",
+"neu": "Klemmenkasten",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 136,
+"alt": "51",
+"neu": "5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 136,
+"alt": "15",
+"neu": "5",
+"grund": "am Scan gegengelesen"
+},
+{
+"dok": "d-tws82-1",
+"s": 142,
+"alt": "Een",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 142,
+"alt": "WET",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 143,
+"alt": "SEELE.",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 145,
+"alt": "FRE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 145,
+"alt": "DNS.",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 146,
+"alt": "EEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 146,
+"alt": "EEE",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+},
+{
+"dok": "d-tws82-1",
+"s": 147,
+"alt": "a5",
+"neu": "",
+"grund": "Störzeichen aus einer Linie"
+}
+],
+"stimmt": {
+"d-twp84-1": {
+"2": [
+"Bundesamtes"
+],
+"3": [
+"Januar"
+],
+"4": [
+"22.",
+"24",
+"24,",
+"25",
+"Oktober"
+],
+"7": [
+"1.4",
+"2.34",
+"2.42"
+],
+"9": [
+"4.57",
+"4.6"
+],
+"10": [
+"1.1-1"
+],
+"14": [
+"0,8",
+"0,9",
+"100",
+"6,5"
+],
+"15": [
+"16",
+"Schutzraum."
+],
+"22": [
+"Neubauten"
+],
+"24": [
+"Schutzplatzzahl.",
+"nale",
+"nungsvorgang)"
+],
+"30": [
+"(BF)"
+],
+"34": [
+"0,70"
+],
+"35": [
+"2.4-3"
+],
+"36": [
+"2.4-10",
+"2.4-8a"
+],
+"40": [
+"(Bauingenieur)"
+],
+"42": [
+"500"
+],
+"44": [
+"Splitter"
+],
+"45": [
+"2.6-6",
+"46"
+],
+"48": [
+"0,60/0,80"
+],
+"49": [
+"(Konus).",
+"(LF)",
+"Ø0,30"
+],
+"50": [
+"0,20"
+],
+"51": [
+"2.7-5).",
+"Bei",
+"einer"
+],
+"52": [
+"0,25"
+],
+"54": [
+"2.7-10",
+"Fenster"
+],
+"56": [
+"(vgl.",
+"2.8-2)."
+],
+"57": [
+"58"
+],
+"58": [
+"11",
+"20",
+"30",
+"60",
+"70",
+"71",
+"Personen»",
+"bis",
+"«30"
+],
+"59": [
+"30",
+"332",
+"400",
+"400/350"
+],
+"62": [
+"(VA)",
+"3.1-1"
+],
+"64": [
+"150+GF"
+],
+"65": [
+"40+1ESV/VF",
+"40+GF"
+],
+"66": [
+"+GF",
+"150",
+"28",
+"5m²"
+],
+"68": [
+"150+GF",
+"Beulen"
+],
+"71": [
+"3.4-1)."
+],
+"73": [
+"Betan-"
+],
+"74": [
+"90°)."
+],
+"75": [
+"25",
+"7.1",
+"7.2",
+"8.2",
+"Normaltüren",
+"mm?"
+],
+"76": [
+"(VA)",
+"8.4",
+"8.7",
+"vollständig"
+],
+"77": [
+"usw.)"
+]
+},
+"d-bedplas24-1": {
+"3": [
+"ein",
+"Für",
+"Typ",
+"3—4",
+"II*",
+"1-2"
+]
+},
+"d-matpolycom-1": {
+"31": [
+"50",
+"<1.5",
+"750g",
+"75",
+"-55",
+"36",
+"80"
+]
+},
+"d-praez11-1": {
+"2": [
+"620-10"
+]
+},
+"d-st88-1": {
+"3": [
+"68",
+"Änderungen",
+"1.1",
+"2.1"
+],
+"4": [
+"88",
+"2.2",
+"3.3",
+"kontrolliert",
+"4.2"
+],
+"5": [
+"4.3",
+"geführt",
+"Uem-Installationen"
+],
+"9": [
+"bohren.",
+"Funktionskontrolle",
+"Stand:"
+]
+},
+"d-tmb001-1": {
+"1": [
+"150",
+"300)",
+"20°",
+"TMB-00-1"
+]
+},
+"d-tmb002-1": {
+"1": [
+"Über",
+"1,0",
+"0,6",
+"1,5",
+"0,8",
+"2,2",
+"2,3",
+"2,7",
+"1,2",
+"1/2"
+],
+"2": [
+"II*",
+"3,3",
+"1,5",
+"4,5",
+"2,3",
+"2,2",
+"1,4",
+"4,2",
+"1,1",
+"0,5",
+"0,3",
+"0,7",
+"1,2",
+"0,6",
+"0,8",
+"0,9",
+"2,0",
+"1,0",
+"0,4",
+"1,8",
+"1,7",
+"2/2"
+]
+},
+"d-tmb004-1": {
+"1": [
+"1/2"
+],
+"2": [
+"36",
+"Tel",
+"2/2"
+]
+},
+"d-tph01-1": {
+"2": [
+"Material"
+],
+"6": [
+"/m3"
+],
+"14": [
+"14"
+],
+"16": [
+"16"
+]
+},
+"d-tph02-1": {
+"6": [
+"/m3",
+"8400",
+"4200",
+"4800S",
+"7200",
+"5400",
+"6000S",
+"9000",
+"6600S",
+"7800S",
+"9000S"
+],
+"13": [
+"55dBA"
+]
+},
+"d-tph15-2": {
+"3": [
+"120°",
+"95°",
+"h/120°",
+"50°"
+]
+},
+"d-twe94-1": {
+"1": [
+"BUNDESAMT",
+"1750-015-d",
+"Schutzplätzen."
+],
+"3": [
+"61",
+"40"
+],
+"7": [
+"10",
+"11",
+"12",
+"13"
+],
+"8": [
+"Erneuerungsmassnahmen",
+"A4",
+"B1"
+],
+"10": [
+"oder"
+],
+"13": [
+"A1"
+],
+"16": [
+"5.0"
+],
+"17": [
+"\"Fallroste\"",
+"Ausstiegschächte"
+],
+"18": [
+"direkt"
+],
+"23": [
+"A1"
+],
+"27": [
+"3.4-4",
+"3.4-5"
+],
+"30": [
+"3.5-1"
+],
+"31": [
+"3.5-2"
+],
+"33": [
+"33",
+"[mm]"
+],
+"39": [
+"Anhang"
+],
+"40": [
+"A1"
+],
+"43": [
+"Objekt-Nr",
+"Die",
+"kleinere",
+"Schutzplatzzahl."
+],
+"47": [
+"47",
+"Beurteilung",
+"0,25",
+"0,40",
+"0,50"
+],
+"51": [
+"51"
+],
+"52": [
+"B1"
+],
+"55": [
+"A1"
+],
+"59": [
+"Nr:",
+"1964"
+],
+"63": [
+"150"
+],
+"65": [
+"65"
+]
+},
+"d-two77-1": {
+"3": [
+"Oktober",
+"1965",
+"301-212"
+],
+"4": [
+"36",
+"24"
+],
+"8": [
+"2.83",
+"2.84",
+"3.44"
+],
+"9": [
+"3.6",
+"283",
+"A2.4"
+],
+"11": [
+"23.",
+"März",
+"Art.",
+"68,",
+"Abs.",
+"11.",
+"August"
+],
+"15": [
+"bzw.",
+"0,3",
+"10",
+"1,2",
+"2,6",
+"5,6"
+],
+"16": [
+"10",
+"000"
+],
+"19": [
+"Wasserschwall"
+],
+"27": [
+"2.83",
+"2.84",
+"3.44"
+],
+"28": [
+"3.6",
+"283",
+"A2.4"
+],
+"35": [
+"2.3-1",
+"2.3-2",
+"200",
+"OSO-Anlage"
+],
+"36": [
+"1,70",
+"2,70",
+"Höhe",
+"2,20",
+"2-Komponenten-Farbanstrich",
+"3,50",
+"1,70-2,50"
+],
+"37": [
+"33",
+"50",
+"2-Komponenten-Farbanstrich",
+"15—20"
+],
+"39": [
+"ca.",
+"Höhe",
+"2-Komponenten-Farbanstrich",
+"1,5",
+"0,3",
+"0,70"
+],
+"45": [
+"2.4-3"
+],
+"46": [
+"Bis",
+"90°"
+],
+"47": [
+"30",
+"3,0",
+"2,20",
+"13",
+"2-Komponenten-Farbanstrich",
+"1,20",
+"2,70",
+"50",
+"50%",
+"5—7"
+],
+"48": [
+"44",
+"2-Komponenten-Farbanstrich",
+"3,50",
+"1,70-2,50",
+"4,50",
+"2,20",
+"4polig,",
+"15—20",
+"3,0"
+],
+"49": [
+"Bodenablauf",
+"Einrichtungen:",
+"100",
+"13",
+"2-Komponenten-Farbanstrich",
+"30",
+"70",
+"4,0",
+"2,60"
+],
+"50": [
+"BZS:",
+"2,60",
+"200",
+"13",
+"erteiler",
+"2-Komp",
+"0,6",
+"4,0",
+"0,3",
+"2,0",
+"40,4",
+"65,6",
+"145",
+"104",
+"52",
+"41,5"
+],
+"51": [
+"2-Komponenten-Farbanstrich",
+"0,4",
+"15"
+],
+"52": [
+"Operationsbeleuchtung",
+"Medizinalgasversorgung:"
+],
+"53": [
+"0,6",
+"3,5",
+"0,3",
+"0,5",
+"0,8",
+"300",
+"13",
+"15"
+],
+"54": [
+"Farbanstrich",
+"Decke:",
+"0,6",
+"Gestell",
+"200"
+],
+"55": [
+"200",
+"2-Komponenten-",
+"100",
+"50"
+],
+"56": [
+"35",
+"100",
+"200",
+"13",
+"2-Komponenten-Farbanstrich",
+"12",
+"48",
+"24",
+"16",
+"egestellen"
+],
+"57": [
+"2-Komponenten-Farbanstrich",
+"0,6",
+"20"
+],
+"59": [
+"Direkte",
+"50",
+"13",
+"2-Komponenten-Farbanstrich",
+"10-15",
+"0,6",
+"3-4"
+],
+"60": [
+"Diverses:",
+"200",
+"13",
+"2-Komponenten-Farbanstrich"
+],
+"61": [
+"200",
+"13",
+"2-Komponenten-Farbanstrich",
+"1,0",
+"0,3",
+"0,7",
+"1,9",
+"0,5",
+"2stöckig",
+"0,15",
+"3.5)"
+],
+"62": [
+"Raumbeleuchtung",
+"100",
+"13",
+"75",
+"2-Komponenten-Farbanstrich",
+"lang",
+"0,3",
+"7m",
+"einrichtung"
+],
+"63": [
+"1,5",
+"0,3"
+],
+"64": [
+"15-20",
+"3m²",
+"2,60",
+"100",
+"Zementüberzug",
+"40-50"
+],
+"65": [
+"0,8",
+"1,5",
+"0,4"
+],
+"71": [
+"67",
+"2.5-2"
+],
+"73": [
+"2.53.2"
+],
+"74": [
+"1,70",
+"15%",
+"50"
+],
+"75": [
+"kein",
+"2-Komponenten-Farbanstrich"
+],
+"76": [
+"72",
+"min.",
+"1,20",
+"2,70",
+"50",
+"min.2,20",
+"50%",
+"5—7",
+"2-Komponenten-Farbanstrich",
+"2-Komponenten-",
+"ca.10",
+"min.2,70"
+],
+"77": [
+"73",
+"verschliessbarer",
+"50",
+"13",
+"4polig,",
+"2-Komponenten-Farbanstrich",
+"ca.35",
+"min.",
+"min.2,20",
+"54",
+"140",
+"min.5,0",
+"2,60"
+],
+"78": [
+"Einrichtungen:",
+"100",
+"13"
+],
+"79": [
+"2-Komponenten-Farbanstrich",
+"ca.5",
+"ca.2",
+"2,0",
+"40,4",
+"65,6",
+"104",
+"Schalter/Steckdose",
+"ca.45"
+],
+"80": [
+"2.54.1"
+],
+"82": [
+"180"
+],
+"83": [
+"0,6",
+"ca.2",
+"200",
+"13",
+"ca.5"
+],
+"84": [
+"80",
+"13",
+"2-Komponenten-",
+"0,6",
+"ca.4"
+],
+"85": [
+"Direkte",
+"Einrichtungen:",
+"200",
+"13",
+"15",
+"2-Komponenten-",
+"0,6",
+"1,5",
+"0,4",
+"1,2",
+"ca.2",
+"0,3",
+"ca.0,6"
+],
+"86": [
+"13",
+"1,5",
+"12",
+"ca.4"
+],
+"87": [
+"ca.5",
+"ca.3",
+"0,3",
+"ca.8",
+"13",
+"Wände:"
+],
+"88": [
+"0,6",
+"ca.0,7",
+"1,5",
+"ca.4",
+"35",
+"630",
+"100",
+"200",
+"13",
+"16",
+"2-Komponenten-Farbanstrich"
+],
+"89": [
+"28",
+"56",
+"24",
+"16",
+"290",
+"2,60"
+],
+"90": [
+"ca.3",
+"ca.2",
+"0,5",
+"ca.",
+"30",
+"2.55.1"
+],
+"91": [
+"ca.",
+"70"
+],
+"92": [
+"auf",
+"ca.0,6",
+"Lux",
+"13",
+"2-Komponenten-Farbanstrich"
+],
+"93": [
+"200"
+],
+"94": [
+"2-Komponenten-Farbanstrich",
+"ca.3",
+"ca.2"
+],
+"95": [
+"Zementüberzug",
+"2-Komponenten-Farbanstrich",
+"ca.",
+"30"
+],
+"96": [
+"ca.3",
+"ca.2",
+"25",
+"0,4",
+"ca.",
+"2.56.1"
+],
+"97": [
+"ca.",
+"35",
+"2-3",
+"2,60",
+"100",
+"15",
+"65",
+"i.L.:"
+],
+"98": [
+"0,8",
+"2.57.1",
+"2.57.2",
+"130—150"
+],
+"99": [
+"2.57.3",
+"PLR,"
+],
+"101": [
+"2.61"
+],
+"102": [
+"70—80",
+"Ilred:",
+"15-20"
+],
+"103": [
+"2.6-1"
+],
+"104": [
+"IIred"
+],
+"105": [
+"verschliessbarer",
+"10"
+],
+"106": [
+"2-Komponenten-Farbanstrich",
+"2-Komponenten-",
+"6-8"
+],
+"108": [
+"200",
+"2-Komponenten-Farbanstrich",
+"0,8"
+],
+"109": [
+"12",
+"14",
+"0,6",
+"0,3",
+"ca.9-12",
+"0,8",
+"3.5)"
+],
+"110": [
+"0,6",
+"0,8"
+],
+"111": [
+"200",
+"13",
+"34,",
+"Antennenverteiler",
+"2-Komponenten-Farbanstrich"
+],
+"112": [
+"10-12",
+"0,6",
+"8-10",
+"0,8",
+"1,5",
+"ca.3",
+"10-15",
+"2,60",
+"ca.1",
+"0,7",
+"1,9"
+],
+"113": [
+"3.5)"
+],
+"114": [
+"13"
+],
+"115": [
+"2-Komponenten-Farbanstrich",
+"13",
+"190",
+"Effekten-/Garderobengestelle,"
+],
+"116": [
+"112",
+"1—2",
+"Waschplatz",
+"1,5-3"
+],
+"117": [
+"200",
+"13",
+"15",
+"2-Komponenten-Farbanstrich",
+"1,5",
+"3m"
+],
+"118": [
+"ca.",
+"4-6"
+],
+"119": [
+"20",
+"Höhe",
+"2,60",
+"2-Komponenten-Farbanstrich"
+],
+"121": [
+"2-Komponenten-Farbanstrich",
+"0,75"
+],
+"122": [
+"2-Komponenten-Farbanstrich",
+"10-12",
+"7-9",
+"0,3",
+"3.5)"
+],
+"123": [
+"Direkte",
+"200",
+"0,6",
+"5,5",
+"0,8",
+"2teilig,"
+],
+"124": [
+"200"
+],
+"125": [
+"Figur"
+],
+"127": [
+"2-Komponenten-Farbanstrich",
+"0,6",
+"3,75",
+"1,5",
+"ca.",
+"0,8"
+],
+"128": [
+"Direkte",
+"200",
+"13",
+"34,",
+"0,8",
+"1,5",
+"2teilig,"
+],
+"130": [
+"1:200"
+],
+"132": [
+"Direkte",
+"200",
+"13",
+"15",
+"0,6",
+"4,5",
+"1,5",
+"0,8",
+"0,3",
+"0,7",
+"1,9"
+],
+"135": [
+"II*:"
+],
+"136": [
+"Typ",
+"II*",
+"II:",
+"Figur"
+],
+"137": [
+"Typ",
+"Figur"
+],
+"138": [
+"2,5-3",
+"2,3",
+"15%",
+"10"
+],
+"139": [
+"4polig,"
+],
+"140": [
+"2-Komponenten-Farbanstrich",
+"100",
+"Lux",
+"13"
+],
+"141": [
+"13",
+"2-Komponenten-Farbanstrich",
+"ca.",
+"4,5",
+"ca.4,5",
+"3-5"
+],
+"143": [
+"70",
+"190",
+"0,3",
+"ca.0,9"
+],
+"144": [
+"30",
+"10",
+"0,6",
+"100",
+"13",
+"3-4",
+"2-Komponenten-Farbanstrich",
+"0,15"
+],
+"145": [
+"100",
+"Boiler",
+"0,3",
+"ca."
+],
+"146": [
+"ca.",
+"10",
+"15-20"
+],
+"147": [
+"Einrichtungen:",
+"100",
+"1,5",
+"ca.",
+"2.73.5"
+],
+"149": [
+"0,6—1",
+"6-10"
+],
+"150": [
+"Typ",
+"2.7-4"
+],
+"153": [
+"100",
+"0,6—1",
+"10"
+],
+"155": [
+"10",
+"2,5",
+"1,5"
+],
+"156": [
+"ca.",
+"12",
+"2,60",
+"0,4"
+],
+"157": [
+"110",
+"2,60",
+"100",
+"13",
+"15"
+],
+"158": [
+"0,6—1",
+"Figur"
+],
+"159": [
+"2.76.4"
+],
+"160": [
+"0,6—1"
+],
+"162": [
+"Nachteile"
+],
+"164": [
+"II*»",
+"II*+"
+],
+"165": [
+"2.84"
+],
+"168": [
+"200"
+],
+"170": [
+"2-Komponenten-Farb-",
+"O2R/LeiR"
+],
+"171": [
+"2.9-2",
+"Figur",
+"200"
+],
+"172": [
+"ca.",
+"12"
+],
+"173": [
+"2.8",
+"80",
+"2.9-4a)"
+],
+"174": [
+"90",
+"50",
+"30-50"
+],
+"175": [
+"75—120",
+"60—100",
+"100",
+"75-120",
+"40"
+],
+"176": [
+"75-120",
+"40",
+"75",
+"60"
+],
+"177": [
+"20"
+],
+"179": [
+"185",
+"120",
+"210",
+"Öffnung"
+],
+"180": [
+"PT4",
+"Figur"
+],
+"182": [
+"200",
+"1-2"
+],
+"185": [
+"2.83",
+"2.84",
+"3.44"
+],
+"186": [
+"3.6",
+"283",
+"A2.4"
+],
+"191": [
+"3.22.5"
+],
+"192": [
+"1200-4800-Belüftungssytem",
+"Abluftieitung,",
+"150",
+"1140",
+"1200",
+"980",
+"1960",
+"460",
+"920",
+"300",
+"BSA",
+"1120",
+"II*",
+"490",
+"310",
+"620",
+"330",
+"660",
+"4820"
+],
+"193": [
+"150",
+"3.2-9",
+"2400",
+"1200",
+"600",
+"1800",
+"4800",
+"9600"
+],
+"194": [
+"Ventilator",
+"Umluft",
+"teilung"
+],
+"195": [
+"3.24.4"
+],
+"196": [
+"3.24.5"
+],
+"197": [
+"2,5—4"
+],
+"198": [
+"filterkammer."
+],
+"199": [
+"3.25.4"
+],
+"200": [
+"3.25.5",
+"kann,"
+],
+"201": [
+"Lufterhitzer",
+"Angaben",
+"3.2-10"
+],
+"202": [
+"13°C",
+"5°C",
+"+20",
+"2000",
+"1200",
+"8000",
+"9,5",
+"16000",
+"1800",
+"12000",
+"14",
+"24000",
+"32000",
+"38",
+"20",
+"20%"
+],
+"203": [
+"Figur",
+"3.2-12a"
+],
+"204": [
+"0,4",
+"0,8"
+],
+"205": [
+"2400-4800"
+],
+"209": [
+"Wasserversorgungsnetz."
+],
+"215": [
+"10",
+"11",
+"12",
+"13"
+],
+"216": [
+"10",
+"11",
+"12",
+"13",
+"14",
+"15"
+],
+"217": [
+"3.3-10"
+],
+"218": [
+"Figur",
+"3.3-11",
+"10",
+"11",
+"13"
+],
+"220": [
+"3.34.5",
+"30",
+"55"
+],
+"222": [
+"3.3-17",
+"Unterhaltsleitung",
+"Installationen",
+"200",
+"400",
+"500",
+"45",
+"90",
+"135",
+"180",
+"1,1",
+"2,2",
+"5,5"
+],
+"223": [
+"3/8”"
+],
+"224": [
+"3/8”"
+],
+"225": [
+"Figur",
+"3.3-21"
+],
+"226": [
+"50"
+],
+"233": [
+"3.4-1",
+"2,8"
+],
+"235": [
+"3.4-3",
+"3.4-4"
+],
+"237": [
+"4,5",
+"Motorvakuumpumpe",
+"0,7",
+"2,5",
+"0,2",
+"0,02",
+"12",
+"150",
+"3,6",
+"10",
+"0,1",
+"6,0",
+"75",
+"7,5"
+],
+"238": [
+"Typ",
+"cos",
+"32",
+"20/25",
+"24/33",
+"600",
+"16/20",
+"20/27",
+"200",
+"31",
+"34",
+"65",
+"52/65",
+"60/82",
+"500",
+"SanHist",
+"130",
+"110/137",
+"127/173",
+"13",
+"700",
+"SanPo",
+"38",
+"33",
+"aller"
+],
+"240": [
+"10",
+"11"
+],
+"241": [
+"Figur",
+"10",
+"12"
+],
+"243": [
+"3.4-15"
+],
+"244": [
+"10",
+"12"
+],
+"245": [
+"7.1"
+],
+"248": [
+"11",
+"Dieselmotor",
+"21"
+],
+"249": [
+"3.4-26",
+"10",
+"12",
+"13",
+"15",
+"17",
+"18",
+"19",
+"11",
+"3.4-27"
+],
+"250": [
+"10",
+"11",
+"12",
+"13",
+"14",
+"17",
+"Öldruckwächter",
+"19",
+"21",
+"22",
+"23"
+],
+"254": [
+"Bei"
+],
+"256": [
+"4.43.8"
+],
+"257": [
+"0,1",
+"100",
+"2,2",
+"1,5",
+"0,33",
+"PS/0,25",
+"0,2",
+"9,5",
+"50",
+"5,0",
+"6,0",
+"4-Plattenrechaud",
+"8,0",
+"1,2",
+"7,5",
+"PS/5,5",
+"5,5",
+"4,5",
+"0,05",
+"64",
+"3,2",
+"80",
+"43,8"
+],
+"258": [
+"Typ"
+],
+"259": [
+"0,3",
+"100",
+"150;",
+"0,33",
+"PS/0,25",
+"1,0",
+"12,0",
+"50",
+"6,0",
+"0,2",
+"75",
+"7,5",
+"4-Plattenrechaud",
+"8,0",
+"4,0",
+"1,2",
+"0,6",
+"PS/5,5",
+"44",
+"2,2",
+"80",
+"1,8",
+"120",
+"3,0",
+"43,9",
+"30,5",
+"13,8"
+],
+"282": [
+"1000"
+],
+"284": [
+"92",
+"198",
+"90"
+],
+"287": [
+"3.54.4"
+],
+"288": [
+"690",
+"390",
+"150",
+"490",
+"290"
+],
+"290": [
+"3.5-43",
+"3.5-44",
+"3.5-41"
+],
+"291": [
+"Sanitätsposten",
+"216",
+"280",
+"346",
+"432",
+"24",
+"30",
+"36",
+"48",
+"540",
+"54",
+"45"
+],
+"294": [
+"(60",
+"30",
+"(100",
+"3000",
+"3.63.5"
+],
+"301": [
+"2.83",
+"2.84",
+"3.44"
+],
+"302": [
+"3.6",
+"283",
+"A2.4"
+],
+"305": [
+"30"
+],
+"306": [
+"und",
+"0,05%"
+],
+"308": [
+"4.2-5"
+],
+"309": [
+"Figur",
+"parallel"
+],
+"313": [
+"4.33)",
+"4.33",
+"4.3-18"
+],
+"318": [
+"2S",
+"(Lx*"
+],
+"319": [
+"5,00",
+"0,80",
+"0,55",
+"2,5",
+"0,11",
+"5,0"
+],
+"320": [
+"1,3",
+"4.32.5"
+],
+"324": [
+"0,9",
+"4.3-12"
+],
+"327": [
+"220",
+"0,94",
+"2,4",
+"pA/pB",
+"8,0",
+"9,9"
+],
+"328": [
+"2,4",
+"atü",
+"100",
+"185",
+"1,4",
+"pE/pD"
+],
+"329": [
+"4.32.3"
+],
+"332": [
+"4.32.8"
+],
+"333": [
+"(vgl.",
+"10",
+"Abschnitt",
+"4.32.4.",
+"(ph",
+"4.3-17",
+"30"
+],
+"336": [
+"10",
+"000"
+],
+"337": [
+"30°"
+],
+"339": [
+"4.3-21",
+"Öffnung"
+],
+"340": [
+"mit",
+"4.3-22:",
+"3,5;"
+],
+"343": [
+"10",
+"000"
+],
+"344": [
+"7,02",
+"0,5",
+"Dzul"
+],
+"345": [
+"Figur",
+"4.3-22:",
+"3072",
+">SFerf",
+"100",
+"5,04"
+],
+"347": [
+"60",
+"000",
+"2,0",
+"2,6"
+],
+"348": [
+"60",
+"000"
+],
+"349": [
+"1,85",
+"60",
+"000"
+],
+"354": [
+"4.43.8"
+],
+"355": [
+"Figur",
+"4.44.2"
+],
+"358": [
+"4.53",
+"4.55"
+],
+"362": [
+"A1-1",
+"0,5%:",
+"0,5%",
+"1,0%:",
+"0,90",
+"A1-2"
+],
+"363": [
+"A1-3"
+],
+"364": [
+"A1-5",
+"A1-6"
+],
+"365": [
+"A1-7",
+"1,4"
+],
+"366": [
+"A1-8"
+],
+"367": [
+"A1-10"
+],
+"369": [
+"A1-12",
+"2pLuft-/Erdstoss"
+],
+"370": [
+"A1-13).",
+"A1-13"
+],
+"371": [
+"den",
+"Für",
+"A1-14)."
+],
+"372": [
+"A1-15"
+],
+"373": [
+"A1-16",
+"A1-17"
+],
+"374": [
+"A1-18"
+],
+"375": [
+"Wechsel"
+],
+"376": [
+"0,8",
+"2,0",
+"A1-20"
+],
+"378": [
+"A1-22",
+"33,3",
+"12",
+"6,25",
+"0,50",
+"70,8",
+"7,1",
+"A1-23"
+],
+"379": [
+"A1-24",
+"0,95",
+"22,8"
+],
+"380": [
+"A1-25"
+],
+"381": [
+"A1-26",
+"4,15",
+"verwendet.)",
+"0,95",
+"0,53"
+],
+"382": [
+"A1-27",
+"25"
+],
+"383": [
+"51"
+],
+"384": [
+"A1-29"
+],
+"385": [
+"A1-21.",
+"5,7",
+"A1-30"
+],
+"386": [
+"0,95",
+"1,45"
+],
+"387": [
+"18"
+],
+"388": [
+"16",
+"194"
+],
+"389": [
+"A1-32"
+],
+"390": [
+"A1-33"
+],
+"391": [
+"A1-34"
+],
+"392": [
+"A1-35"
+],
+"393": [
+"A1-36"
+],
+"394": [
+"12"
+],
+"395": [
+"14/15;"
+],
+"396": [
+"5,4",
+"A1-39",
+"Wechsel"
+],
+"397": [
+"A1-40",
+"Wechsel",
+"91,6",
+"50,1",
+"A1-41).",
+"A1-41"
+],
+"399": [
+"A1-42",
+"A1-43",
+"(vgl.",
+"Abschnitt"
+],
+"400": [
+"A1-45"
+],
+"401": [
+"A1-46",
+"15,8"
+],
+"402": [
+"A1-47",
+"A1-48"
+],
+"403": [
+"Lx/Ly",
+"A1-49"
+],
+"404": [
+"A1-50",
+"Wandfläche"
+],
+"405": [
+"0,95",
+"6,7",
+"A1-52"
+],
+"407": [
+"A1-53"
+],
+"408": [
+"A1-54"
+],
+"409": [
+"A1-55"
+],
+"410": [
+"398",
+"A1-56",
+"A1-57"
+],
+"414": [
+"11,4"
+],
+"415": [
+"A1-60"
+],
+"416": [
+"A1-61"
+],
+"417": [
+"A1-62"
+],
+"418": [
+"A1-47",
+"Wand"
+],
+"420": [
+"0,1"
+]
+},
+"d-tws82-1": {
+"2": [
+"Bei",
+"einer",
+"A1)."
+],
+"6": [
+"1.41"
+],
+"7": [
+"1.4-2",
+"0,6",
+"2,6",
+"5,6",
+"22"
+],
+"9": [
+"Nuklearexpliosion"
+],
+"15": [
+"Detailangaben:",
+"Schutzräume",
+"Öltank",
+"70"
+],
+"16": [
+"steifes",
+"Öffnungen",
+"Öllager"
+],
+"21": [
+"601—1000",
+"1001-1500"
+],
+"22": [
+"(Nassinstallation)"
+],
+"23": [
+"H/2-Trümmerbereiches",
+"201—400",
+"401-600",
+"601-1000",
+"1001-1500",
+"1501-2000",
+"Öffnung"
+],
+"24": [
+"0,80"
+],
+"25": [
+"1,00"
+],
+"26": [
+"Aufenthaltsräume",
+"2.1-11a"
+],
+"31": [
+"Figur",
+"2.1-16"
+],
+"32": [
+"1001"
+],
+"33": [
+"Belüftung:",
+"Belüftung",
+"mit",
+"Schutzräume",
+"Nothandleuchte",
+"Übermittlung",
+"Schutzplätzen)",
+"Oberflächenbehandlung",
+"Gestell"
+],
+"34": [
+"15-20",
+"8-12",
+"801-1500"
+],
+"35": [
+"ca."
+],
+"37": [
+"46"
+],
+"39": [
+"abzuschliessen."
+],
+"40": [
+"DT1"
+],
+"41": [
+"50"
+],
+"43": [
+"2.1-28"
+],
+"48": [
+"58"
+],
+"49": [
+"59",
+"(CO2).",
+"CO2-Konzentration",
+"CO2-"
+],
+"50": [
+"300",
+"266",
+"601",
+"10",
+"666",
+"11",
+"12",
+"13",
+"14",
+"15",
+"300."
+],
+"51": [
+"2.2-2"
+],
+"57": [
+"1,80—2,00"
+],
+"60": [
+"0,4",
+"0,8"
+],
+"63": [
+"2.3-1",
+"Entleerung"
+],
+"64": [
+"75",
+"2.31.4"
+],
+"67": [
+"2.3-5)."
+],
+"69": [
+"2.3-6"
+],
+"71": [
+"2.3-8",
+"2.3-9"
+],
+"72": [
+"wasser-Installationen"
+],
+"77": [
+"2.4-1",
+"Kühlung"
+],
+"78": [
+"90",
+"2.4-2.",
+"2.4-2",
+"zwei"
+],
+"79": [
+"2.4-3.",
+"2.4-3"
+],
+"81": [
+"4poliger",
+"2.4-4",
+"Belüftung",
+"2.4-5",
+"Schutzplätze"
+],
+"82": [
+"2.4-6",
+"1065"
+],
+"83": [
+"2.4-7",
+"2.4-8"
+],
+"84": [
+"2.4-9",
+"2.4-10"
+],
+"85": [
+"2.4-11",
+"(ESV)",
+"2.4-12).",
+"2.4-12"
+],
+"86": [
+"2.4-13",
+"2.4-14"
+],
+"87": [
+"99",
+"50"
+],
+"88": [
+"2.4-17).",
+"2.4-17"
+],
+"90": [
+"15",
+"2.4-21"
+],
+"92": [
+"2.4-19",
+"2.4-20"
+],
+"93": [
+"105",
+"2.4-21"
+],
+"94": [
+"2.4-22",
+"9,0",
+"50",
+"4,0",
+"29,6"
+],
+"95": [
+"2.4-23"
+],
+"97": [
+"2.4-25"
+],
+"102": [
+"Räume",
+"51—",
+"13-14"
+],
+"103": [
+"0,51—1,50"
+],
+"104": [
+"Öffnungen",
+"Belüftung",
+"Wände,"
+],
+"105": [
+"Schutzplätze",
+"Schutzplätzen",
+"Schutzplätzen:"
+],
+"106": [
+"Mögliche",
+"Wände,"
+],
+"109": [
+"(Grundriss)"
+],
+"114": [
+"Figur",
+"3.1-10",
+"(Grundriss)"
+],
+"115": [
+"75",
+"76—100",
+"101-150",
+"151—200"
+],
+"123": [
+"Platzbedarf",
+"91-120",
+"10"
+],
+"124": [
+"110"
+],
+"125": [
+"0.2",
+"0.3",
+"0.4",
+"0.7",
+"lent"
+],
+"126": [
+"3.5"
+],
+"128": [
+"2.00",
+"0.85",
+"1.70",
+"1.60",
+"ausbau"
+],
+"129": [
+"400"
+],
+"130": [
+"150",
+"75"
+],
+"132": [
+"externen"
+],
+"136": [
+"5.80",
+"15"
+],
+"140": [
+"5.12.4"
+],
+"141": [
+"Maximal"
+],
+"143": [
+"5.16.4"
+],
+"144": [
+"Öffnungen",
+"5.17"
+],
+"148": [
+"Öffnungen"
+]
+}
+}
 }
