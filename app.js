@@ -423,7 +423,7 @@ if (typeof document !== 'undefined') (function () {
     return `<header class="kopf">
       <div class="ort"><nav class="pfad" aria-label="Ort"><a href="#" data-act="ansicht" data-typ="start">Bibliothek</a>${ort ? `<span aria-hidden="true">/</span><b>${h(ort)}</b>` : ''}</nav>
         <p class="stand">${v ? `Version ${v.nr} vom ${datumCH(v.datum)}` : 'Noch keine Version freigegeben'}${n ? `, ${n} ${n === 1 ? 'Änderung' : 'Änderungen'} nicht freigegeben` : ''}</p></div>
-      <label class="suche"><span class="sr">Suchen</span><input type="search" id="q" value="${h(S.q)}" placeholder="In Regeln, Texten und Anmerkungen suchen"></label>
+      <label class="suche"><span class="sr">Suchen</span><input type="search" id="q" value="${h(S.q)}" placeholder="In allen Normen, Regeln und Anmerkungen suchen"></label>
       <div class="werkzeug">
         ${M.an ? `<button data-act="m-konto" aria-haspopup="dialog">${h(M.ich.anzeige)} · ${ROLLE[M.ich.rolle]}</button>` : ''}
         <button data-act="freigeben" ${n && (!M.an || darfFreigeben()) ? '' : 'disabled'} ${M.an && !darfFreigeben() ? 'title="Versionen freigeben dürfen nur Prüfer"' : ''}>Änderungen freigeben</button>
@@ -1350,19 +1350,38 @@ if (typeof document !== 'undefined') (function () {
       <h3>Änderungen</h3><ol class="logliste">${logs || '<li class="leer">Seit der Ersterfassung wurde nichts geändert.</li>'}</ol></section>`;
   }
 
+  // ----- Suche über alles: mehrere Wörter in beliebiger Reihenfolge, "Wortfolge" in Anführungszeichen, Filter nach Gruppe und Norm
+  function suchWorte(q) { const out = []; String(q).toLowerCase().replace(/["«„“]([^"»“”]+)["»“”]|(\S+)/g, (_, a, b) => { const w = (a || b || '').trim(); if (w && !out.includes(w)) out.push(w); }); return out; }
+  const suchPasst = (text, worte) => { const k = String(text).toLowerCase(); return worte.every(w => k.includes(w)); };
+  function suchMark(text, worte, von, bis) { // Ausschnitt mit allen gefundenen Wörtern hervorgehoben
+    const s = String(text).slice(von, bis), k = s.toLowerCase(), r = []; worte.forEach(w => { let p = 0; while ((p = k.indexOf(w, p)) >= 0) { r.push([p, p + w.length]); p += w.length; } });
+    r.sort((a, b) => a[0] - b[0]); let out = '', pos = 0; r.forEach(([a, b]) => { if (a < pos) { if (b > pos) { out += `<mark>${h(s.slice(pos, b))}</mark>`; pos = b; } return; } out += h(s.slice(pos, a)) + `<mark>${h(s.slice(a, b))}</mark>`; pos = b; });
+    return (von > 0 ? '… ' : '') + (out + h(s.slice(pos))).replace(/\s+/g, ' ') + (bis < String(text).length ? ' …' : '');
+  }
   function suchAnsicht() {
-    const q = S.q.trim().toLowerCase(); if (q.length < 2) return `<section class="blatt"><h2>Suchen</h2><p class="lead">Mindestens zwei Zeichen eingeben.</p></section>`;
-    const tr = L().regeln.filter(r => [r.id, r.titel, r.text, r.abschnitt, r.begruendung].concat(r.params.map(p => p.k + ' ' + p.v + ' ' + p.e)).join(' ').toLowerCase().includes(q));
-    const tg = L().glossar.filter(g => (g.begriff + ' ' + g.bedeutung).toLowerCase().includes(q)).slice(0, 40);
-    const tn = L().anmerkungen.filter(a => [a.text, a.autor, a.zitat || ''].concat((a.antworten || []).map(r => r.text + ' ' + r.autor)).join(' ').toLowerCase().includes(q));
-    const vt = volltextSuche(q), nSeiten = vt.reduce((n, x) => n + x.seiten.length, 0);
+    const worte = suchWorte(S.q); if (!worte.length || worte.join('').length < 2) return `<section class="blatt"><h2>Suchen</h2><p class="lead">Mindestens zwei Zeichen eingeben.</p></section>`;
+    const F = S.sf = S.sf || { gruppe: '', werk: '' }, gruppen = [...new Set(L().werke.map(w => w.gruppe).filter(Boolean))]; if (F.werk && !werk(F.werk)) F.werk = ''; if (F.gruppe && !gruppen.includes(F.gruppe)) F.gruppe = '';
+    const wahl = L().werke.filter(w => !F.gruppe || w.gruppe === F.gruppe); if (F.werk && !wahl.some(w => w.id === F.werk)) F.werk = '';
+    const inW = id => F.werk ? id === F.werk : !F.gruppe || (werk(id) || {}).gruppe === F.gruppe, filter = !!(F.werk || F.gruppe);
+    const tw = L().werke.filter(w => inW(w.id) && suchPasst([w.kurz, w.titel, w.ausgabe, w.inKraft, w.status, w.geltung, w.gruppe, w.notiz, (hg(w.herausgeberId) || {}).name].join(' '), worte));
+    const tr = L().regeln.filter(r => inW(r.werkId) && suchPasst([r.id, r.titel, r.text, r.abschnitt, r.begruendung].concat(r.params.map(p => p.k + ' ' + p.v + ' ' + p.e)).join(' '), worte));
+    const tg = L().glossar.filter(g => (!filter || inW(g.werkId)) && suchPasst(g.begriff + ' ' + g.bedeutung, worte)), tgZ = tg.slice(0, 40);
+    const tn = L().anmerkungen.filter(a => inW(a.werkId) && suchPasst([a.text, a.autor, a.zitat || ''].concat((a.antworten || []).map(r => r.text + ' ' + r.autor)).join(' '), worte));
+    const ta = L().aenderungen.filter(a => !a.zurueckgezogen && a.art === 'fachlich' && inW(a.werkId) && suchPasst([a.id, a.begruendung, stellen(diffWorte(a.vorher, a.nachher)).map(s => s.alt + ' ' + s.neu).join(' ')].join(' '), worte));
+    const tv = alleLinks().filter(v => werk(v.von) && werk(v.nach) && (inW(v.von) || inW(v.nach)) && suchPasst([werk(v.von).kurz, TYPEN[v.typ][0], werk(v.nach).kurz, v.bereich, v.notiz, v.zitat || ''].join(' '), worte));
+    const vt = volltextSuche(worte, d => inW(d.werkId)), nSeiten = vt.reduce((n, x) => n + x.seiten.length, 0);
+    const kopf = (titel, n) => `<h3>${titel} (${n})</h3>`, summe = tw.length + tr.length + tg.length + tn.length + ta.length + tv.length + nSeiten;
     return `<section class="blatt"><h2>Suche nach „${h(S.q)}“</h2>
-      <h3>Regeln (${tr.length})</h3>${tr.map(r => `<p class="treffer-werk">${h((werk(r.werkId) || {}).kurz)}</p>${regelKarte(r)}`).join('') || '<p class="leer">Keine Regel gefunden.</p>'}
-      ${tg.length ? `<h3>Glossar (${tg.length})</h3><ul class="vglliste">${tg.map(g => `<li><a href="#" data-act="glossar-zeige" data-id="${h(g.id)}"><b>${h(g.begriff)}</b></a><span>${h(g.bedeutung)}</span><span class="notiz">${h((werk(g.werkId) || {}).kurz || '')}</span></li>`).join('')}</ul>` : ''}
-      <h3>Anmerkungen im PDF (${tn.length})</h3>${tn.map(a => `<p class="treffer-werk">${h((werk(a.werkId) || {}).kurz)}</p>${anmKarte(a)}`).join('') || '<p class="leer">Keine Anmerkung gefunden.</p>'}
-      <h3>Text der Normen (${nSeiten} ${nSeiten === 1 ? 'Seite' : 'Seiten'} in ${vt.length} ${vt.length === 1 ? 'PDF' : 'PDF'})</h3>
-      ${vt.slice(0, 40).map(x => { const w = werk(x.d.werkId) || { kurz: '?' }; return `<div class="volltreffer"><p class="treffer-werk"><b>${h(w.kurz)}</b>${x.d.teil ? ', ' + h(x.d.teil) : ''}: ${x.seiten.length} ${x.seiten.length === 1 ? 'Seite' : 'Seiten'}</p>${x.seiten.slice(0, 4).map(t => `<p class="treffer"><a href="#" data-act="pdf-seite" data-id="${h(x.d.werkId)}" data-dok="${h(x.d.id)}" data-seite="${t.n}">Seite ${t.n}</a><span>${h(t.vor)}<mark>${h(t.wort)}</mark>${h(t.nach)}</span></p>`).join('')}${x.seiten.length > 4 ? `<p class="treffer mehr">weitere Seiten: ${x.seiten.slice(4, 44).map(t => `<a href="#" data-act="pdf-seite" data-id="${h(x.d.werkId)}" data-dok="${h(x.d.id)}" data-seite="${t.n}">${t.n}</a>`).join(' ')}${x.seiten.length > 44 ? ' …' : ''}</p>` : ''}</div>`; }).join('') || '<p class="leer">Kein Treffer im Text der Normen.</p>'}
-      ${vt.length > 40 ? `<p class="hinweis">Weitere ${vt.length - 40} PDF mit Treffern sind nicht aufgeführt. Die Suche genauer fassen.</p>` : ''}</section>`;
+      <p class="suchfilter"><label>Gruppe<select id="sf-gruppe"><option value="">alle Gruppen</option>${gruppen.map(g => `<option ${g === F.gruppe ? 'selected' : ''}>${h(g)}</option>`).join('')}</select></label><label>Norm<select id="sf-werk"><option value="">alle Normen${F.gruppe ? ' der Gruppe' : ''}</option>${wahl.slice().sort((a, b) => a.kurz.localeCompare(b.kurz)).map(w => `<option value="${h(w.id)}" ${w.id === F.werk ? 'selected' : ''}>${h(w.kurz)}</option>`).join('')}</select></label>${filter ? '<button class="klein" data-act="sf-leer">Filter aufheben</button>' : ''}<span class="hinweis">${summe} Treffer${worte.length > 1 ? `. Alle ${worte.length} Wörter müssen in derselben Regel oder auf derselben Seite stehen; eine Wortfolge in "Anführungszeichen" setzen.` : ''}</span></p>
+      ${tw.length ? kopf('Normen', tw.length) + `<ul class="vglliste">${tw.map(w => `<li><a href="#" data-act="werk-pdf" data-id="${h(w.id)}"><b>${h(w.kurz)}</b></a><span>${suchMark(w.titel, worte, 0, 200)}</span><span class="notiz">${h([w.gruppe, w.ausgabe, w.status].filter(Boolean).join(' · '))}</span></li>`).join('')}</ul>` : ''}
+      ${kopf('Regeln', tr.length)}${tr.map(r => `<p class="treffer-werk">${h((werk(r.werkId) || {}).kurz)}</p>${regelKarte(r)}`).join('') || '<p class="leer">Keine Regel gefunden.</p>'}
+      ${tg.length ? kopf('Glossar', tg.length) + `<ul class="vglliste">${tgZ.map(g => `<li><a href="#" data-act="glossar-zeige" data-id="${h(g.id)}"><b>${h(g.begriff)}</b></a><span>${h(g.bedeutung)}</span><span class="notiz">${h((werk(g.werkId) || {}).kurz || '')}</span></li>`).join('')}</ul>${tg.length > 40 ? `<p class="hinweis">Weitere ${tg.length - 40} Einträge sind nicht aufgeführt.</p>` : ''}` : ''}
+      ${tv.length ? kopf('Beziehungen zwischen Normen', tv.length) + `<ul class="vglliste">${tv.slice(0, 60).map(v => `<li><span><a href="#" data-act="werk" data-id="${h(v.von)}"><b>${h(werk(v.von).kurz)}</b></a> ${h(TYPEN[v.typ][0])} <a href="#" data-act="werk" data-id="${h(v.nach)}"><b>${h(werk(v.nach).kurz)}</b></a>${belegLink(v)}</span><span>${suchMark(v.bereich || '', worte, 0, 200)}</span></li>`).join('')}</ul>${tv.length > 60 ? `<p class="hinweis">Weitere ${tv.length - 60} Beziehungen sind nicht aufgeführt.</p>` : ''}` : ''}
+      ${ta.length ? kopf('Fachliche Textänderungen', ta.length) + ta.map(a => `<p class="treffer-werk">${h((werk(a.werkId) || {}).kurz)}</p>${aendKarte(a)}`).join('') : ''}
+      ${kopf('Anmerkungen im PDF', tn.length)}${tn.map(a => `<p class="treffer-werk">${h((werk(a.werkId) || {}).kurz)}</p>${anmKarte(a)}`).join('') || '<p class="leer">Keine Anmerkung gefunden.</p>'}
+      <h3>Text der Normen (${nSeiten} ${nSeiten === 1 ? 'Seite' : 'Seiten'} in ${vt.length} PDF)</h3>
+      ${vt.slice(0, 40).map(x => { const w = werk(x.d.werkId) || { kurz: '?' }, lnk = t => `<a href="#" data-act="pdf-seite" data-id="${h(x.d.werkId)}" data-dok="${h(x.d.id)}" data-seite="${t.n}">`; return `<div class="volltreffer"><p class="treffer-werk"><b>${h(w.kurz)}</b>${x.d.teil ? ', ' + h(x.d.teil) : ''}: ${x.seiten.length} ${x.seiten.length === 1 ? 'Seite' : 'Seiten'}${F.werk ? '' : ` <button class="klein" data-act="sf-werk" data-id="${h(w.id)}">nur diese Norm</button>`}</p>${x.seiten.slice(0, F.werk ? 30 : 4).map(t => `<p class="treffer">${lnk(t)}Seite ${t.n}</a><span>${t.html}</span></p>`).join('')}${x.seiten.length > (F.werk ? 30 : 4) ? `<p class="treffer mehr">weitere Seiten: ${x.seiten.slice(F.werk ? 30 : 4, 80).map(t => `${lnk(t)}${t.n}</a>`).join(', ')}${x.seiten.length > 80 ? ' …' : ''}</p>` : ''}</div>`; }).join('') || '<p class="leer">Kein Treffer im Text der Normen.</p>'}
+      ${vt.length > 40 ? `<p class="hinweis">Weitere ${vt.length - 40} PDF mit Treffern sind nicht aufgeführt. Die Suche genauer fassen oder nach Gruppe oder Norm filtern.</p>` : ''}</section>`;
   }
   // ----- Volltext und Index über alle Normen
   const VT = { stand: '', seiten: null, klein: null }, IX = { stand: '', map: null };
@@ -1380,9 +1399,10 @@ if (typeof document !== 'undefined') (function () {
     }
     return VT.seiten;
   }
-  function volltextSuche(q) {
+  function volltextSuche(worte, nur) { // Seiten, auf denen alle Wörter stehen; die Seiten mit den meisten Fundstellen zuerst
+    if (typeof worte === 'string') worte = [worte];
     const alle = volltext(), out = [];
-    alle.forEach((x, k) => { const seiten = []; VT.klein[k].forEach((t, i) => { const p = t.indexOf(q); if (p < 0) return; const o = x.t[i]; seiten.push({ n: i + 1, vor: (p > 70 ? '… ' : '') + o.slice(Math.max(0, p - 70), p).replace(/\s+/g, ' '), wort: o.slice(p, p + q.length), nach: o.slice(p + q.length, p + q.length + 110).replace(/\s+/g, ' ') + ' …' }); }); if (seiten.length) out.push({ d: x.d, seiten }); });
+    alle.forEach((x, k) => { if (nur && !nur(x.d)) return; const seiten = []; VT.klein[k].forEach((t, i) => { let p = -1; for (const w of worte) { const q = t.indexOf(w); if (q < 0) return; if (p < 0 || q < p) p = q; } const o = x.t[i]; seiten.push({ n: i + 1, html: suchMark(o, worte, Math.max(0, p - 70), Math.min(o.length, p + 200)) }); }); if (seiten.length) out.push({ d: x.d, seiten }); });
     return out.sort((a, b) => b.seiten.length - a.seiten.length);
   }
   function begriffIndex() { // Vorkommen jedes Glossarbegriffs als ganzes Wort, je PDF und Seite
@@ -2380,6 +2400,8 @@ if (typeof document !== 'undefined') (function () {
     'glossar-edit': el => mitName(() => glossarForm(L().glossar.find(g => g.id === el.dataset.id))),
     'glossar-pruef': el => mitName(() => { const g = L().glossar.find(x => x.id === el.dataset.id); g.geprueft = g.geprueft ? null : { name: L().meta.bearbeiter, datum: heute() }; log(g.geprueft ? 'Glossareintrag am Original geprüft' : 'Prüfvermerk am Glossareintrag entfernt', g.id, g.begriff); render(); }),
     'glossar-weg': el => mitName(() => { const g = L().glossar.find(x => x.id === el.dataset.id); if (standVon(L(), 'glossar', g) === 'neu') { L().glossar = L().glossar.filter(x => x !== g); log('Nicht freigegebener Glossareintrag gelöscht', g.id, g.begriff); } else { g.zurueckgezogen = !g.zurueckgezogen; log(g.zurueckgezogen ? 'Glossareintrag zurückgezogen' : 'Glossareintrag wieder aufgenommen', g.id, g.begriff); } render(); }),
+    'sf-leer': () => { S.sf = { gruppe: '', werk: '' }; },
+    'sf-werk': el => { S.sf = { gruppe: '', werk: el.dataset.id }; },
     'glossar-zeige': el => { const g = L().glossar.find(x => x.id === el.dataset.id); S.view = { typ: 'glossar' }; S.gq = g ? g.begriff : ''; },
     'ed-inhalt': () => { S.ed.inhaltAuf = !S.ed.inhaltAuf; return false; },
     'ed-gehe': el => { if (edGesperrt()) return false; S.ed.seite = +el.dataset.s; S.ed.inhaltAuf = false; },
@@ -2477,6 +2499,7 @@ if (typeof document !== 'undefined') (function () {
     else if (t.id === 'bib-gruppe') { S.bib.gruppe = t.value; render(); }
     else if (t.id === 'bib-status') { S.bib.status = t.value; render(); }
     else if (t.id === 'ed-sprung') { if (!edGesperrt()) S.ed.seite = +t.value || 1; render(); }
+    else if (t.id === 'sf-gruppe' || t.id === 'sf-werk') { S.sf = S.sf || { gruppe: '', werk: '' }; S.sf[t.id.slice(3)] = t.value; if (t.id === 'sf-gruppe') S.sf.werk = ''; render(); }
     else if (t.id === 'ed-dok') { if (!edGesperrt()) { S.ed.dok = t.value; S.ed.seite = 1; } render(); }
     else if (t.id === 'ed-ebene') { if (!edGesperrt()) S.ed.ebene = t.value; render(); }
     else if (t.id === 'daten-datei' && t.files[0]) datenImport(t.files[0]);

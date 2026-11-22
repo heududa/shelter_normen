@@ -1,5 +1,25 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.18.0 – 22.11.2026
+
+Suche über alles ausgebaut.
+
+### Neu
+- **Mehrere Wörter in beliebiger Reihenfolge:** «Überdruckventil Schleuse» findet jede Regel und jede Seite, auf der beide Wörter stehen. Eine feste Wortfolge steht in "Anführungszeichen".
+- **Filter nach Gruppe und Norm** über den Treffern; «nur diese Norm» an jedem PDF mit Treffern. Mit Filter auf eine Norm erscheinen bis zu 30 Seiten mit Ausschnitt.
+- **Zusätzlich durchsucht:** die Angaben der Normen (Kurzname, Titel, Ausgabe, Status, Geltungsbereich, Bemerkung), die Beziehungen zwischen Normen (eigene Verknüpfungen und belegte aus der Durchsicht, samt Wortlaut) und die fachlichen Textänderungen.
+- Im Ausschnitt sind alle gefundenen Wörter hervorgehoben; über den Treffern steht die Gesamtzahl.
+
+### Unverändert
+- Durchsucht werden weiterhin Regeln mit Werten und Einheit, der Text aller PDF mit Tabellen und Beschriftungen, Glossar und Anmerkungen.
+- Gross- und Kleinschreibung spielt keine Rolle; gesucht wird die Zeichenfolge, nicht die Wortform («Ventil» findet «Überdruckventile», «Ventile» findet «Ventil» nicht).
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| U1 | Alle Wörter müssen im selben Treffer stehen (dieselbe Regel, dieselbe Seite). Eine Suche mit «oder» gibt es nicht. |
+| U2 | Der Filter nach Norm gilt für alle Trefferarten; das Glossar zeigt mit Filter nur Einträge, die dieser Norm zugeordnet sind. |
+
 ## 0.17.0 – 22.11.2026
 
 Menüführung: vier Arbeitsweisen der Norm, Aufklappmenüs, knapper Kopf.

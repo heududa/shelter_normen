@@ -612,3 +612,7 @@ details.menue.klein>summary{font-size:.8rem;padding:.12rem .45rem}
 .edleiste label.haken{display:inline-flex;align-items:center;gap:.35rem}
 .edleiste{gap:.4rem .6rem}
 .edleiste #ed-ebene{max-width:11.5rem}
+.suchfilter{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;margin:.4rem 0 1rem}
+.suchfilter label{display:flex;gap:.4rem;align-items:center;font-size:.9rem;color:var(--leise)}
+.suchfilter select{max-width:18rem}
+.vglliste mark{background:var(--orange-hell);color:inherit;padding:0 .1rem}
