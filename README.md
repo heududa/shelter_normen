@@ -16,6 +16,7 @@ Alle Normen an einem Ort: Original-PDF, erkannter Text, Regeln, Änderungen und 
 | `pdf/` | Original-PDF, unverändert |
 | `pdf/eigene/` | PDF, die im Programm hinzugefügt wurden |
 | `werkzeuge/` | Ersterfassung, Texterkennung für Scans, Zusammenfügen von Kapiteldateien, kleiner Webserver |
+| `bilder/eigene/` | Eigene Bilder, die im Text eingefügt wurden (PNG) |
 | `test/` | Prüfläufe im Browser |
 
 ## Benutzen
@@ -63,6 +64,7 @@ Beim ersten Start legt der Server den Benutzer `admin` an und zeigt dessen Passw
 
 - `npm install` holt pdf.js und pdf-lib; die fertigen Dateien liegen bereits in `lib/`.
 - `node test/test.js` prüft den ganzen Ablauf im Browser (Playwright). Geschrieben wird dabei nur nach `test/tmp/`.
+- `node test/anmerkungen.js` prüft Antworten und das Markieren per Textauswahl, `node test/bilder.js` die eigenen Bilder im Text, `node test/mehrnutzer.js` den Server für mehrere Nutzer.
 - `node werkzeuge/ersterfassung.js --ueberschreiben` erzeugt `daten/` neu aus den PDF. **Das ersetzt den Bearbeitungsstand.**
 - `python3 werkzeuge/ocr.py --tessdata <Ordner>` liest die gescannten Seiten neu ein und schreibt `daten/ocr/`. Braucht Tesseract 5 mit `deu.traineddata` aus tessdata_best, poppler, Python mit opencv und pytesseract. Der ganze Lauf dauert auf zwei Kernen rund 35 Minuten. Danach die Ersterfassung laufen lassen.
 - `sh werkzeuge/zusammenfuegen.sh` fügt die Kapiteldateien von TWS 1982 und TWO 1977 zusammen (braucht qpdf).

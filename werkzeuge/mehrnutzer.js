@@ -124,7 +124,7 @@ function mehrnutzer(opt) {
       for (const p of Object.keys(dateien)) schreib(path.join(wurzel, p), dateien[p]);
       stand = { revision: stand.revision + 1, zeit: new Date().toISOString(), name: s.anzeige }; schreib(fStand, JSON.stringify(stand));
       sperre.bis = Date.now() + SPERRE_MS;
-      if (opt.git) execFile('git', ['-C', wurzel, 'add', 'daten', 'pdf/eigene'], () => execFile('git', ['-C', wurzel, '-c', 'user.name=' + s.anzeige, '-c', 'user.email=normenbibliothek@localhost', 'commit', '-q', '-m', `Gespeichert von ${s.anzeige} (Stand ${stand.revision})`], e => { if (e && !/nothing to commit/.test(String(e.stdout || e.message))) console.log('git:', String(e.message).split('\n')[0]); }));
+      if (opt.git) execFile('git', ['-C', wurzel, 'add'].concat(['daten', 'pdf/eigene', 'bilder/eigene'].filter(p => fs.existsSync(path.join(wurzel, p)))), () => execFile('git', ['-C', wurzel, '-c', 'user.name=' + s.anzeige, '-c', 'user.email=normenbibliothek@localhost', 'commit', '-q', '-m', `Gespeichert von ${s.anzeige} (Stand ${stand.revision})`], e => { if (e && !/nothing to commit/.test(String(e.stdout || e.message))) console.log('git:', String(e.message).split('\n')[0]); }));
       return antwort(res, 200, { revision: stand.revision });
     }
     if (pfad === '/api/pdf' && M === 'PUT') {
@@ -133,6 +133,14 @@ function mehrnutzer(opt) {
       if (!/^pdf\/eigene\/[A-Za-z0-9._-]+\.pdf$/i.test(p) || p.includes('..')) return antwort(res, 400, { fehler: 'PDF lassen sich nur in pdf/eigene/ ablegen.' });
       const ziel = path.join(wurzel, p); if (fs.existsSync(ziel)) return antwort(res, 409, { fehler: 'Diese Datei gibt es schon. Originale werden nicht überschrieben.' });
       const b = await koerper(req, 150 * 1024 * 1024); if (b.slice(0, 5).toString('latin1') !== '%PDF-') return antwort(res, 400, { fehler: 'Die Datei ist kein PDF.' });
+      fs.mkdirSync(path.dirname(ziel), { recursive: true }); schreib(ziel, b); return antwort(res, 200, {});
+    }
+    if (pfad === '/api/bild' && M === 'PUT') { // eigene Bilder im Text: nur PNG, nur nach bilder/eigene/, ohne Überschreiben
+      if (s.rolle === 'gast') return antwort(res, 403, { fehler: 'Gäste können keine Bilder hinzufügen.' });
+      const p = new URL(req.url, 'http://x').searchParams.get('pfad') || '';
+      if (!/^bilder\/eigene\/[A-Za-z0-9._-]+\.png$/.test(p) || p.includes('..')) return antwort(res, 400, { fehler: 'Bilder lassen sich nur in bilder/eigene/ ablegen.' });
+      const ziel = path.join(wurzel, p); if (fs.existsSync(ziel)) return antwort(res, 409, { fehler: 'Diese Datei gibt es schon.' });
+      const b = await koerper(req, 20 * 1024 * 1024); if (b.slice(0, 8).toString('hex') !== '89504e470d0a1a0a') return antwort(res, 400, { fehler: 'Die Datei ist kein PNG-Bild.' });
       fs.mkdirSync(path.dirname(ziel), { recursive: true }); schreib(ziel, b); return antwort(res, 200, {});
     }
     if (pfad === '/api/benutzer') {

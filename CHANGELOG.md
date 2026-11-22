@@ -1,5 +1,43 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.13.0 – 22.11.2026
+
+Eigene Bilder im Text: Skizze tauschen, Bild neu einfügen, Grösse, Ausrichtung und Lage einstellen.
+
+### Neu
+- **Skizze durch ein eigenes Bild ersetzen:** An jeder Skizze im Text öffnet «Bild, Grösse, Ausrichtung» den Dialog mit «Durch ein eigenes Bild ersetzen». Das eigene Bild steht danach an der Stelle der Skizze. «Wieder den Ausschnitt aus dem Original zeigen» macht den Tausch rückgängig.
+- **Eigenes Bild neu einfügen:** In der Bearbeitung steht neben «Skizze übernehmen» der Knopf «Eigenes Bild einfügen». Das Bild erscheint zuerst am Ende der Seite.
+- **Grösse und Ausrichtung:** Breite in Prozent der Textbreite (10 bis 100, leer = automatisch) und Ausrichtung links, Mitte oder rechts. Der Dialog zeigt die Wirkung sofort in der Vorschau. Beides gilt auch für Skizzen aus dem Original.
+- **Lage im Text:** Bilder und Tabellen ohne Marke im Text lassen sich mit ↑ und ↓ zeilenweise verschieben. Wer eine feste Stelle will, setzt wie bisher die Marke `[[Skizze 64.2]]` in den Text der Seite.
+- **Formate:** PNG, JPEG, WebP, GIF und SVG. Das Programm legt jedes Bild als PNG ab, längste Seite höchstens 2400 Punkte.
+- **Ablage:** Die Bilder liegen als Dateien in `bilder/eigene/`; im Bearbeitungsstand stehen nur Pfad und Masse. Der Dateiname beginnt mit einer Prüfsumme, eine Datei wird nie überschrieben. Der Server für mehrere Nutzer nimmt Bilder über `api/bild` an (nur PNG, nur in diesen Ordner, nicht von Gästen) und nimmt sie mit `--git` in die Sicherung auf.
+- **Versioniert:** Tausch, Einfügen, Grösse, Ausrichtung und Lage sind Einträge der Liste «Tabelle/Skizze», stehen unter «Änderungen» und werden wie alles andere freigegeben.
+- **Druck und Word:** Beide zeigen das eigene Bild in der eingestellten Breite und Ausrichtung.
+- Das Original-PDF bleibt unverändert. Der Scan links zeigt weiterhin die Skizze des Originals.
+
+### Behoben
+- **Sicherung mit `--git`:** Fehlte der Ordner `pdf/eigene`, brach `git add` ab und der Server legte keinen Commit an. Der Server übergibt jetzt nur vorhandene Ordner.
+
+### Prüflauf
+- `node test/bilder.js` (neu): Skizze ersetzen, Breite und Ausrichtung messen, speichern, neu laden, Original zurückholen, neues Bild einfügen und verschieben, Druck, Word-Datei (Bildbreite in der Datei nachgemessen), entfernen.
+- `node test/mehrnutzer.js`: zusätzlich `api/bild` (falscher Ordner, falsche Endung, kein PNG, Gast, Überschreiben).
+- `node test/test.js` und `node test/anmerkungen.js`: ohne Fehler.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| O1 | Ein eigenes Bild ist im Text eine «Skizze» mit eigener Nummer (z. B. Skizze 64.2). Eine eigene Bezeichnung «Bild» gibt es nicht. |
+| O2 | Das Bild steht als eigener Block zwischen den Zeilen; Text fliesst nicht seitlich um das Bild. |
+| O3 | Verschieben mit ↑ ↓ geht zeilenweise und nur bei Elementen ohne Marke im Text. Mehrere Schritte hintereinander ergeben einen Eintrag im Verlauf. |
+| O4 | Alle Formate werden zu PNG mit weissem Grund. Vektorbilder (SVG) verlieren damit die freie Skalierbarkeit; Fotos werden als PNG grösser als als JPEG. |
+| O5 | Schemas, die als PDF vorliegen, lassen sich nicht direkt einfügen; sie müssen vorher als Bild gespeichert werden. |
+| O6 | Ein entferntes oder ersetztes Bild bleibt als Datei in `bilder/eigene/` liegen, damit freigegebene Versionen es weiter zeigen können. |
+| O7 | Die Erstfreigabe einer Norm bestätigt die Übereinstimmung mit dem Original. Ein getauschtes Bild weicht davon ab; es ist im Text mit «eigenes Bild» bezeichnet, aber nicht als Abweichung einer Schicht (Kanton, Hersteller) geführt. |
+
+### Offen
+- Ohne Server und ohne verbundenen Ordner (nur heruntergeladene `bibliothek.json`) sind neu eingefügte Bilder nicht enthalten; das Programm meldet das.
+- Der PDF-Export (Originalseiten mit Änderungsblättern) zeigt eigene Bilder nicht, nur der Druck und die Word-Datei.
+
 ## 0.12.0 – 22.11.2026
 
 Antworten auf Anmerkungen und Markieren per Textauswahl.

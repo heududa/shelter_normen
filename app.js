@@ -247,7 +247,7 @@ function elementeVon(lib, dokId, seite) {
   const out = ((lib.elemente || {})[dokId] || []).filter(e => e.s === seite).map(e => Object.assign({ dokId }, e));
   (lib.uebernahmen || []).filter(u => u.dokId === dokId && u.seite === seite).forEach(u => {
     const i = out.findIndex(e => e.nr === u.nr);
-    const o = { nr: u.nr, s: seite, dokId, typ: u.typ, box: u.box, titel: u.titel || '', zeilen: u.zeilen, ohneKopf: !!u.ohneKopf, hand: true, uid: u.id, text: i >= 0 ? out[i].text || '' : '' };
+    const o = { nr: u.nr, s: seite, dokId, typ: u.typ, box: u.box, titel: u.titel || '', zeilen: u.zeilen, ohneKopf: !!u.ohneKopf, hand: true, uid: u.id, text: i >= 0 ? out[i].text || '' : '', bild: u.bild || null, breite: u.breite || 0, ausr: u.ausr || '', nach: u.nach == null ? null : u.nach };
     if (u.weg) { if (i >= 0) out.splice(i, 1); } else if (i >= 0) out[i] = o; else out.push(o);
   });
   return out.sort((a, b) => a.box[1] - b.box[1] || a.box[0] - b.box[0]);
@@ -447,7 +447,7 @@ if (typeof document !== 'undefined') (function () {
   // ----- Original-PDF und Anmerkungen
   const anm = id => L().anmerkungen.find(a => a.id === id);
   // ----- Ablage: verbundener Ordner (lesen und schreiben) oder Webserver (nur lesen)
-  const A = { dir: null, alt: null, neuPdf: new Map(), cache: new Map(), fehler: '', laedt: true };
+  const A = { dir: null, alt: null, neuPdf: new Map(), neuBild: new Map(), cache: new Map(), fehler: '', laedt: true };
   const webModus = /^https?:$/.test(location.protocol), kannOrdner = !!window.showDirectoryPicker;
   function idb(op, wert) { return new Promise(res => { try { const r = indexedDB.open('normenbibliothek', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onerror = () => res(null); r.onsuccess = () => { try { const st = r.result.transaction('kv', op === 'get' ? 'readonly' : 'readwrite').objectStore('kv'), q = op === 'get' ? st.get('ordner') : st.put(wert, 'ordner'); q.onsuccess = () => res(q.result || null); q.onerror = () => res(null); } catch (e) { res(null); } }; } catch (e) { res(null); } }); }
   async function dateiHandle(pfad, anlegen) { let d = A.dir; const t = pfad.split('/'); for (const n of t.slice(0, -1)) d = await d.getDirectoryHandle(n, { create: !!anlegen }); return d.getFileHandle(t[t.length - 1], { create: !!anlegen }); }
@@ -980,7 +980,7 @@ if (typeof document !== 'undefined') (function () {
       case 'aenderungen': return `${x.id}, Seite ${x.seite}: ${x.begruendung}`;
       case 'glossar': return `${x.begriff}: ${x.bedeutung}`;
       case 'formate': return `Seite ${x.seite}: „${x.text.slice(0, 60)}“ ist ${FV[x.typ]}`;
-      case 'uebernahmen': return `Seite ${x.seite}: ${x.typ === 'tabelle' ? 'Tabelle' : 'Skizze'} ${x.nr}${x.weg ? ' entfernt' : x.titel ? ' ' + x.titel : ''}`;
+      case 'uebernahmen': return `Seite ${x.seite}: ${x.typ === 'tabelle' ? 'Tabelle' : 'Skizze'} ${x.nr}${x.weg ? ' entfernt' : (x.bild ? ' (eigenes Bild)' : '') + (x.titel ? ' ' + x.titel : '')}`;
       case 'dokumente': return x.datei;
       case 'werke': return x.kurz + ' ' + x.titel;
       case 'herausgeber': return x.kurz;
@@ -1263,7 +1263,39 @@ if (typeof document !== 'undefined') (function () {
       } catch (e) { return ''; }
     }));
   }
-  function schnitteMount() { document.querySelectorAll('img.ausschnitt[data-box]').forEach(img => { const b = img.dataset.box.split(',').map(Number); img.removeAttribute('data-box'); ausschnitt(img.dataset.dok, +img.dataset.seite, b).then(u => { if (u) img.src = u; else img.alt = 'Das PDF liegt nicht in der Ablage; der Ausschnitt lässt sich nicht zeigen.'; }); }); }
+  // ----- Eigene Bilder im Text: PNG-Dateien in bilder/eigene/, im Bearbeitungsstand stehen nur Pfad und Masse
+  const b64 = u8 => { let t = ''; for (let i = 0; i < u8.length; i += 32766) t += String.fromCharCode.apply(null, u8.subarray(i, i + 32766)); return btoa(t); };
+  function bildUrl(pfad) {
+    P.bilder = P.bilder || new Map(); if (P.bilder.has(pfad)) return Promise.resolve(P.bilder.get(pfad));
+    return (A.neuBild.has(pfad) ? Promise.resolve(A.neuBild.get(pfad)) : liesBytes(pfad)).then(b => { const u = 'data:image/png;base64,' + b64(b); P.bilder.set(pfad, u); return u; }).catch(() => '');
+  }
+  async function bildAusDatei(file) { // jedes Bildformat des Browsers wird ein PNG, längste Seite höchstens 2400 Punkte
+    const url = URL.createObjectURL(file);
+    try {
+      const img = new Image(); img.src = url; await img.decode();
+      const b0 = img.naturalWidth || 1600, h0 = img.naturalHeight || 1200, f = Math.min(1, 2400 / Math.max(b0, h0)), c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(b0 * f)); c.height = Math.max(1, Math.round(h0 * f)); const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
+      const blob = await new Promise(ok => c.toBlob(ok, 'image/png')), bytes = new Uint8Array(await blob.arrayBuffer()), kern = b64(bytes);
+      const name = file.name.replace(/\.[A-Za-z0-9]+$/, '').replace(/[^A-Za-z0-9_-]+/g, '_').slice(0, 40) || 'bild';
+      return { bytes, b: c.width, h: c.height, url: 'data:image/png;base64,' + kern, pfad: 'bilder/eigene/' + sha256(kern).slice(0, 12) + '_' + name + '.png', datei: file.name };
+    } finally { URL.revokeObjectURL(url); }
+  }
+  function bildImg(bild, alt, w) { const src = P.bilder && P.bilder.get(bild.pfad); return `<img class="ausschnitt eigen" alt="${h(alt)}" data-w="${w}" style="aspect-ratio:${bild.b}/${bild.h}" ${src ? `src="${src}"` : `data-bild="${h(bild.pfad)}"`}>`; }
+  const hatBox = e => !!(e.box && e.box[2] > 0 && e.box[3] > 0);
+  function ueVorschau() { // Vorschau im Dialog: gewähltes oder vorhandenes Bild in der eingestellten Breite und Ausrichtung
+    const v = $('#ue-vorschau'), f = v && v.closest('form'); if (!v || !UE) return;
+    const b = UE.bildNeu || (f.elements.original && f.elements.original.checked ? null : UE.bild), br = f.elements.breite && +f.elements.breite.value, au = f.elements.ausr ? f.elements.ausr.value : 'links';
+    v.innerHTML = b ? (UE.bildNeu ? `<img class="ausschnitt eigen" alt="Gewähltes Bild" src="${b.url}">` : bildImg(b, 'Eigenes Bild', 88)) : hatBox(UE) ? schnittImg(UE.dokId, UE.s, UE.box, 'Ausschnitt aus dem Original') : '<p class="leer">Noch kein Bild gewählt.</p>';
+    v.className = 'uevorschau' + (UE.typ === 'skizze' ? ' bild ausr-' + au : ''); v.style.setProperty('--b', br >= 10 && br <= 100 ? br + '%' : 'auto'); schnitteMount();
+  }
+  document.addEventListener('change', async ev => {
+    if (ev.target.id !== 'ue-datei' || !UE) return; const file = ev.target.files[0], st = UE; if (!file) return;
+    const fe = $('#dlg .fehler'); fe.hidden = true;
+    try { const b = await bildAusDatei(file); if (UE !== st) return; st.bildNeu = b; const o = $('#dlg input[name=original]'); if (o) o.checked = false; ueVorschau(); }
+    catch (e) { if (UE !== st) return; st.bildNeu = null; ev.target.value = ''; fe.textContent = 'Die Datei lässt sich nicht als Bild lesen. Möglich sind PNG, JPEG, WebP, GIF und SVG.'; fe.hidden = false; }
+  });
+  document.addEventListener('input', ev => { if (UE && ev.target.closest && ev.target.closest('#dlg .bildwahl')) ueVorschau(); });
+  function schnitteMount() { document.querySelectorAll('img.ausschnitt[data-bild]').forEach(img => { const p = img.dataset.bild; img.removeAttribute('data-bild'); bildUrl(p).then(u => { if (u) img.src = u; else img.alt = 'Das Bild liegt nicht in der Ablage.'; }); }); document.querySelectorAll('img.ausschnitt[data-box]').forEach(img => { const b = img.dataset.box.split(',').map(Number); img.removeAttribute('data-box'); ausschnitt(img.dataset.dok, +img.dataset.seite, b).then(u => { if (u) img.src = u; else img.alt = 'Das PDF liegt nicht in der Ablage; der Ausschnitt lässt sich nicht zeigen.'; }); }); }
   function schnittImg(dId, n, box, alt, kl) {
     const d = dokId(dId), m = (d && d.masse[n - 1]) || [210, 297], src = P.schnitte.get(schnittKey(dId, n, box));
     return `<img class="ausschnitt${kl ? ' ' + kl : ''}" alt="${h(alt)}" data-w="${Math.round(box[2] * 100)}" style="aspect-ratio:${(box[2] * m[0]).toFixed(1)}/${(box[3] * m[1]).toFixed(1)}" ${src ? `src="${src}"` : `data-dok="${h(dId)}" data-seite="${n}" data-box="${box.join(',')}"`}>`;
@@ -1273,19 +1305,27 @@ if (typeof document !== 'undefined') (function () {
     const kopf = e.ohneKopf || Z.length < 2 ? '' : `<thead><tr>${Z[0].map(c => zelle(c, 'th')).join('')}</tr></thead>`;
     return `<div class="uerahmen"><table class="uetab${e.ohneKopf ? ' ohnekopf' : ''}">${kopf}<tbody>${(kopf ? Z.slice(1) : Z).map(z => `<tr>${z.map((c, i) => zelle(c, e.ohneKopf && i === 0 ? 'th' : 'td')).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
-  function elementHtml(e, druck) {
-    const name = (e.typ === 'tabelle' ? 'Tabelle ' : 'Skizze ') + e.nr, nr = `data-nr="${h(e.nr)}"`;
-    const tools = druck ? '' : `<span class="uetools"><button class="klein" data-act="ue-bearbeiten" ${nr}>Bearbeiten</button><button class="klein" data-act="ue-typ" ${nr}>${e.typ === 'tabelle' ? 'Als Bild zeigen' : 'Als Tabelle erfassen'}</button><button class="klein" data-act="ue-weg" ${nr}>Entfernen</button></span>`;
-    const innen = e.typ === 'tabelle' ? tabelleHtml(e, druck) : schnittImg(e.dokId, e.s, e.box, `${name} aus dem Original, Seite ${e.s}${e.text ? '. Beschriftungen: ' + e.text.slice(0, 200) : ''}`);
-    return `<figure class="ue ue-${e.typ}${e.hand ? ' hand' : ''}"${druck ? '' : ' tabindex="0"'} id="ue-${h(e.nr.replace('.', '-'))}">${innen}<figcaption><span>${h(name)}${e.titel ? ': ' + h(e.titel) : ''}${druck ? '' : e.hand ? ' · von Hand übernommen' : ' · automatisch erkannt'}</span>${tools}</figcaption></figure>`;
+  function elementHtml(e, druck, frei) { // frei: das Element hat keine Marke im Text und lässt sich mit ↑ ↓ verschieben
+    const name = (e.typ === 'tabelle' ? 'Tabelle ' : 'Skizze ') + e.nr, nr = `data-nr="${h(e.nr)}"`, sk = e.typ === 'skizze', eigen = sk && e.bild, br = sk && e.breite ? e.breite : 0, au = sk && e.ausr ? e.ausr : '';
+    const schieben = frei ? `<button class="klein" data-act="ue-pos" data-d="-1" ${nr} aria-label="${h(name)} im Text nach oben schieben" title="Im Text nach oben">↑</button><button class="klein" data-act="ue-pos" data-d="1" ${nr} aria-label="${h(name)} im Text nach unten schieben" title="Im Text nach unten">↓</button>` : '';
+    const tools = druck ? '' : `<span class="uetools">${schieben}<button class="klein" data-act="ue-bearbeiten" ${nr}>${sk ? 'Bild, Grösse, Ausrichtung' : 'Bearbeiten'}</button>${eigen && !hatBox(e) ? '' : `<button class="klein" data-act="ue-typ" ${nr}>${e.typ === 'tabelle' ? 'Als Bild zeigen' : 'Als Tabelle erfassen'}</button>`}<button class="klein" data-act="ue-weg" ${nr}>Entfernen</button></span>`;
+    let innen = e.typ === 'tabelle' ? tabelleHtml(e, druck) : eigen ? bildImg(e.bild, `${name}: eigenes Bild${e.titel ? ', ' + e.titel : ''}`, Math.round(88 * Math.min(1, e.bild.b / 1600))) : schnittImg(e.dokId, e.s, e.box, `${name} aus dem Original, Seite ${e.s}${e.text ? '. Beschriftungen: ' + e.text.slice(0, 200) : ''}`);
+    if (sk && (br || au)) innen = innen.replace(/ data-w="(\d+)"/, (m, w) => ` data-w="${br ? Math.round(br * 0.88) : w}"${au ? ` data-ausr="${au}"` : ''}`);
+    return `<figure class="ue ue-${e.typ}${e.hand ? ' hand' : ''}${eigen ? ' eigen' : ''}${br ? ' mitbreite' : ''}${au ? ' ausr-' + au : ''}"${br ? ` style="--b:${br}%"` : ''}${druck ? '' : ' tabindex="0"'} id="ue-${h(e.nr.replace('.', '-'))}">${innen}<figcaption><span>${h(name)}${e.titel ? ': ' + h(e.titel) : ''}${druck ? '' : eigen ? ' · eigenes Bild' : e.hand ? ' · von Hand übernommen' : ' · automatisch erkannt'}</span>${tools}</figcaption></figure>`;
   }
   function mitElementen(html, dok, n, druck) { // Platzhalter [[Tabelle 12.1]] und [[Skizze 12.2]] durch das Element ersetzen
     if (!hatEl(dok.id)) return html;
     const els = elementeVon(L(), dok.id, n), da = new Set();
     html = html.replace(/\n?\[\[(?:Tabelle|Skizze) (\d+\.\d+)\]\]\n?/g, (m, nr) => { const e = els.find(x => x.nr === nr); if (!e || da.has(nr)) return m[0] === '\n' && m.slice(-1) === '\n' ? '\n' : ''; da.add(nr); return elementHtml(e, druck); });
-    return html + els.filter(e => !da.has(e.nr)).map(e => elementHtml(e, druck)).join('');
+    // Elemente ohne Marke: nach der Zeile «nach» (gezählt werden Zeilen mit Inhalt), sonst am Ende der Seite
+    const rest = els.filter(e => !da.has(e.nr)), zl = html.split('\n'), voll = []; zl.forEach((z, i) => { if (z.replace(/<[^>]+>/g, '').trim() || z.includes('<figure')) voll.push(i); });
+    (P.zeilen = P.zeilen || new Map()).set(dok.id + ':' + n, voll.length);
+    const vor = [], hinter = new Map(); let ende = '';
+    rest.forEach(e => { const f = elementHtml(e, druck, true); if (e.nach == null || e.nach >= voll.length) ende += f; else if (e.nach <= 0) vor.push(f); else { const i = voll[e.nach - 1]; hinter.set(i, (hinter.get(i) || '') + f); } });
+    hinter.forEach((f, i) => { zl[i] += f; });
+    return vor.join('') + zl.join('\n') + ende;
   }
-  async function schnitteLaden(ds, wahl) { for (const d of ds) { if (!hatEl(d.id) || !pdfDa(d)) continue; for (const n of (wahl || Array.from({ length: d.seiten }, (_, i) => i + 1))) for (const e of elementeVon(L(), d.id, n)) if (e.typ === 'skizze') await ausschnitt(d.id, n, e.box); } }
+  async function schnitteLaden(ds, wahl) { for (const d of ds) { if (!hatEl(d.id)) continue; for (const n of (wahl || Array.from({ length: d.seiten }, (_, i) => i + 1))) for (const e of elementeVon(L(), d.id, n)) if (e.typ === 'skizze') await (e.bild ? bildUrl(e.bild.pfad) : ausschnitt(d.id, n, e.box)); } }
   async function tabelleImRechteck(dId, seite, box) { // erkannter Text im Rechteck als Zeilen und Spalten
     try { return gitterAus((await seitenWorte(dId, seite)).map(w => ({ t: w.t, x: w.x, w: w.w, y: w.y + w.h / 2, h: w.h })).filter(w => w.x + w.w / 2 >= box[0] && w.x + w.w / 2 <= box[0] + box[2] && w.y >= box[1] && w.y <= box[1] + box[3])); }
     catch (e) { return []; }
@@ -1294,7 +1334,10 @@ if (typeof document !== 'undefined') (function () {
   function ueSetzen(w, e, felder, was) { // Übernahme anlegen oder ändern; ein automatisch erkanntes Element wird dabei überlagert
     let u = L().uebernahmen.find(x => x.dokId === e.dokId && x.nr === e.nr);
     if (!u) { u = { id: uid('u'), werkId: w.id, dokId: e.dokId, seite: e.s, nr: e.nr, typ: e.typ, box: e.box, titel: e.titel || '', zeilen: e.zeilen || null, ohneKopf: !!e.ohneKopf, weg: false }; L().uebernahmen.push(u); }
-    Object.assign(u, felder, { autor: L().meta.bearbeiter, datum: heute() }); log(was, w.id, `Seite ${e.s}, ${u.typ === 'tabelle' ? 'Tabelle' : 'Skizze'} ${e.nr}`); digitalBeruehrt(w);
+    Object.assign(u, felder, { autor: L().meta.bearbeiter, datum: heute() }); ['bild', 'breite', 'ausr'].forEach(k => { if (!u[k]) delete u[k]; }); if (u.nach == null) delete u.nach;
+    const det = `Seite ${e.s}, ${u.typ === 'tabelle' ? 'Tabelle' : 'Skizze'} ${e.nr}`, lz = L().verlauf[L().verlauf.length - 1];
+    if (lz && lz.aktion === was && lz.ziel === w.id && lz.detail === det && lz.name === (L().meta.bearbeiter || '') && was === 'Bild im Text verschoben') S.dirty = true; else log(was, w.id, det);
+    digitalBeruehrt(w);
   }
   let UE = null;
   const ueLesen = form => UE.zeilen.map((z, i) => z.map((c, j) => (form.elements[`c_${i}_${j}`] || { value: c }).value.replace(/\r/g, '').trim()));
@@ -1306,13 +1349,30 @@ if (typeof document !== 'undefined') (function () {
       <p class="aktionen">${op('z+', 'Zeile anfügen')}${op('z-', 'Letzte Zeile entfernen')}${op('s+', 'Spalte anfügen')}${op('s-', 'Letzte Spalte entfernen')}${op('zu', 'Leere Zeilen und Spalten entfernen')}</p>
       <div class="uerahmen"><table class="uegitter">${st.zeilen.map((z, i) => `<tr>${z.map((c, j) => `<td><textarea name="c_${i}_${j}" rows="${Math.max(1, c.split('\n').length, Math.ceil(c.length / 22))}" aria-label="Zeile ${i + 1}, Spalte ${j + 1}">${h(c)}</textarea></td>`).join('')}</tr>`).join('')}</table></div>
       <label class="haken"><input type="checkbox" name="kopf" ${st.ohneKopf ? '' : 'checked'}> Die erste Zeile ist die Kopfzeile</label>`;
-    dialog(`${tab ? 'Tabelle' : 'Skizze'} ${st.nr} ${st.neu ? 'übernehmen' : 'bearbeiten'}`, `<div class="uevorschau">${schnittImg(st.dokId, st.s, st.box, 'Ausschnitt aus dem Original')}</div>
-      ${feld('titel', tab ? 'Titel der Tabelle (optional)' : 'Titel der Skizze (optional)', st.titel || '')}${gitter}
-      ${st.neu ? `<p class="hinweis">Das Element erscheint am Ende der Seite. Mit der Marke <code>[[${tab ? 'Tabelle' : 'Skizze'} ${h(st.nr)}]]</code> im Text der Seite lässt es sich an die richtige Stelle setzen.</p>` : ''}`, (d, form) => {
+    st.bildNeu = null;
+    const bildwahl = tab ? '' : `<fieldset class="bildwahl"><legend>Bild, Grösse und Ausrichtung</legend>
+        <label>${st.bild ? 'Anderes eigenes Bild einsetzen' : hatBox(st) ? 'Durch ein eigenes Bild ersetzen' : 'Eigenes Bild'} (PNG, JPEG, WebP, GIF oder SVG)<input type="file" name="datei" id="ue-datei" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml"></label>
+        ${st.bild && hatBox(st) ? '<label class="haken"><input type="checkbox" name="original"> Wieder den Ausschnitt aus dem Original zeigen</label>' : ''}
+        <div class="bildmass"><label>Breite in Prozent der Textbreite<input type="number" name="breite" min="10" max="100" step="5" value="${st.breite || ''}" placeholder="automatisch"></label>
+        <label>Ausrichtung<select name="ausr">${opt([['links', 'links'], ['mitte', 'Mitte'], ['rechts', 'rechts']], st.ausr || 'links')}</select></label></div>
+        ${hatBox(st) ? '<p class="hinweis">Das Original-PDF bleibt unverändert. Ersetzt wird nur das Bild im Text der Bibliothek.</p>' : ''}</fieldset>`;
+    dialog(st.eigen ? `Eigenes Bild einfügen, Seite ${st.s}` : `${tab ? 'Tabelle' : 'Skizze'} ${st.nr} ${st.neu ? 'übernehmen' : 'bearbeiten'}`, `<div class="uevorschau" id="ue-vorschau"></div>
+      ${feld('titel', tab ? 'Titel der Tabelle (optional)' : 'Titel des Bildes (optional)', st.titel || '')}${bildwahl}${gitter}
+      ${st.neu ? `<p class="hinweis">Das Element erscheint am Ende der Seite. ${tab ? '' : 'Mit ↑ und ↓ am Bild lässt es sich im Text verschieben. '}Mit der Marke <code>[[${tab ? 'Tabelle' : 'Skizze'} ${h(st.nr)}]]</code> im Text der Seite lässt es sich an eine feste Stelle setzen.</p>` : ''}`, (d, form) => {
       const felder = { typ: st.typ, box: st.box, titel: d.titel.trim(), weg: false };
+      if (!tab) {
+        if (d.datei && d.datei.size && !st.bildNeu) return 'Das Bild wird noch gelesen. Bitte noch einmal «Übernehmen» wählen.';
+        if (d.breite && !(+d.breite >= 10 && +d.breite <= 100)) return 'Die Breite liegt zwischen 10 und 100 Prozent.';
+        felder.breite = d.breite ? Math.round(+d.breite) : 0; felder.ausr = d.ausr === 'links' ? '' : d.ausr;
+        if (st.bildNeu) { const b = st.bildNeu; A.neuBild.set(b.pfad, b.bytes); (P.bilder = P.bilder || new Map()).set(b.pfad, b.url); felder.bild = { pfad: b.pfad, b: b.b, h: b.h, datei: b.datei }; }
+        else if (d.original) felder.bild = null;
+        if (!hatBox(st) && !st.bildNeu && !st.bild) return 'Bitte ein Bild wählen.';
+        if (st.eigen || st.bildNeu || d.original) { ueSetzen(w, st, felder, st.eigen ? 'Eigenes Bild eingefügt' : st.bildNeu ? 'Skizze durch eigenes Bild ersetzt' : 'Skizze wieder aus dem Original'); return; }
+      }
       if (tab) { let Z = ueLesen(form); Z = Z.filter(z => z.some(c => c)); if (!Z.length) return 'Die Tabelle ist leer.'; felder.zeilen = Z; felder.ohneKopf = !d.kopf; }
       ueSetzen(w, st, felder, st.neu ? (tab ? 'Tabelle übernommen' : 'Skizze übernommen') : (tab ? 'Tabelle geändert' : 'Skizze geändert'));
     }, 'Übernehmen', true);
+    ueVorschau();
   }
   function uebernahmeNeu(vg) {
     const w = werk(vg.werkId), box = [vg.rect.x, vg.rect.y, vg.rect.w, vg.rect.h], st = { dokId: vg.dokId, s: vg.seite, nr: ueNrNeu(vg.dokId, vg.seite), typ: vg.art, box, titel: '', neu: true };
@@ -1389,7 +1449,7 @@ if (typeof document !== 'undefined') (function () {
       <div class="edgrid">
         <section class="edspalte" aria-label="Original"><header class="edkopf"><h3>Original</h3><span class="edtools"><button data-act="seite-ok" aria-pressed="${(dok.geprueftSeiten || []).includes(n)}" class="klein ${(dok.geprueftSeiten || []).includes(n) ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${(dok.geprueftSeiten || []).includes(n) ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}" class="klein" title="${seitenStand(w).ok} von ${seitenStand(w).alle} Seiten verglichen">Norm freigeben</button>` : ''}<span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span></span></header>
           <p class="edzeile">${['aenderung', 'kommentar'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? (markText() ? 'Jetzt den Text im Scan überstreichen' : 'Jetzt die Stelle im Scan einrahmen') : k === 'aenderung' ? 'Änderung im Scan vorschlagen' : 'Stelle kommentieren'}</button>`; }).join('')}${weiseWahl()}<button data-act="anm-seite" data-werk="${h(w.id)}" data-dok="${h(dok.id)}" data-seite="${n}">Ganze Seite kommentieren</button></p>
-          <p class="edzeile">${['tabelle', 'skizze'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? 'Jetzt den Bereich im Scan einrahmen' : k === 'tabelle' ? 'Tabelle übernehmen' : 'Skizze übernehmen'}</button>`; }).join('')}</p>
+          <p class="edzeile">${['tabelle', 'skizze'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? 'Jetzt den Bereich im Scan einrahmen' : k === 'tabelle' ? 'Tabelle übernehmen' : 'Skizze übernehmen'}</button>`; }).join('')}${hat ? '<button data-act="bild-neu">Eigenes Bild einfügen</button>' : ''}</p>
           <p class="edzeile ebenen"><span class="umschalt"><button data-act="ed-links" data-v="scan" aria-pressed="${E.links === 'scan'}">Scan</button><button data-act="ed-links" data-v="hybrid" aria-pressed="${E.links === 'hybrid'}">Hybrid</button></span>
             ${E.links === 'hybrid' ? `<label class="regler">Text deckend<input type="range" id="ed-transp" min="0" max="100" step="5" value="${E.transp}"><output>${E.transp} %</output></label><label class="haken"><input type="checkbox" id="ed-z-scan" ${E.zScan ? 'checked' : ''}> Scan</label><label class="haken"><input type="checkbox" id="ed-z-text" ${E.zText ? 'checked' : ''}> Text</label>` : ''}<label class="haken"><input type="checkbox" id="ed-z-marken" ${E.zMarken ? 'checked' : ''}> Markierungen</label></p>
           ${links}</section>
@@ -1507,7 +1567,7 @@ if (typeof document !== 'undefined') (function () {
       const dv = new DataView(bytes.buffer), pw = dv.getUint32(16), ph = dv.getUint32(20), VOLL = 5760000, HOCH = 7700000; // 16 cm breit, höchstens 21,4 cm hoch
       let cx = Math.round(VOLL * Math.min(1, Math.max(0.25, (+img.dataset.w || 88) / 88))), cy = Math.round(cx * ph / pw); if (cy > HOCH) { cx = Math.round(cx * HOCH / cy); cy = HOCH; }
       medien.push({ name: `word/media/bild${medien.length + 1}.png`, bytes }); const n = medien.length;
-      return `<w:p><w:pPr><w:keepNext/><w:spacing w:before="80" w:after="40"/></w:pPr><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${n}" name="Bild ${n}" descr="${x((img.alt || '').slice(0, 250))}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
+      return `<w:p><w:pPr><w:keepNext/><w:spacing w:before="80" w:after="40"/>${img.dataset.ausr === 'mitte' ? '<w:jc w:val="center"/>' : img.dataset.ausr === 'rechts' ? '<w:jc w:val="right"/>' : ''}</w:pPr><w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${n}" name="Bild ${n}" descr="${x((img.alt || '').slice(0, 250))}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${n}" name="bild${n}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rId${n}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p>`;
     }
     function block(el, f) { // Kinder eines Elements: Zeilen und Blöcke werden Absätze
       let out = '', buf = ''; const ab = () => { if (buf) out += `<w:p>${f.pPr || (f.zelle ? '<w:pPr><w:spacing w:after="0"/></w:pPr>' : '')}${buf}</w:p>`; buf = ''; };
@@ -1741,15 +1801,19 @@ if (typeof document !== 'undefined') (function () {
       if (!M.hat && !(await sperreHolen(false))) return;
       for (const [id, bytes] of A.neuPdf) { const d = dokId(id); if (!d) continue; const r = await fetch('api/pdf?pfad=' + encodeURIComponent(d.pfad), { method: 'PUT', body: bytes, credentials: 'same-origin' }); if (!r.ok && r.status !== 409) { let j = {}; try { j = await r.json(); } catch (e) { /* leer */ } return meldung('Das PDF liess sich nicht ablegen: ' + (j.fehler || r.status)); } }
       A.neuPdf.clear();
+      for (const [pfad, bytes] of A.neuBild) { if (!L().uebernahmen.some(u => u.bild && u.bild.pfad === pfad)) continue; const r = await fetch('api/bild?pfad=' + encodeURIComponent(pfad), { method: 'PUT', body: bytes, credentials: 'same-origin' }); if (!r.ok && r.status !== 409) { let j = {}; try { j = await r.json(); } catch (e) { /* leer */ } return meldung('Das Bild liess sich nicht ablegen: ' + (j.fehler || r.status)); } }
+      A.neuBild.clear();
       const t = teileDaten(), dateien = {}; Object.keys(t).forEach(p => { if (t[p] !== M.geladen[p]) dateien[p] = t[p]; });
       const r = await ruf('api/daten', 'PUT', { revision: M.revision, dateien });
       if (!r.ok) { if (r.status === 423) { M.hat = false; mStatus(); } return meldung('Nicht gespeichert: ' + (r.j.fehler || 'Fehler ' + r.status) + (r.status === 409 || r.status === 423 ? ' Unter „Daten“ lässt sich der eigene Stand als Datensicherung herunterladen.' : '')); }
       M.revision = r.j.revision; Object.assign(M.geladen, dateien); S.dirty = false; render(); return meldung(`Gespeichert auf dem Server (Stand ${M.revision}).`);
     }
-    if (!A.dir) { herunterladen('bibliothek.json', teileDaten()['daten/bibliothek.json'], 'application/json'); return meldung('Ohne verbundenen Ordner lässt sich nicht direkt speichern. Die Datei bibliothek.json wurde heruntergeladen; sie gehört in den Ordner „daten“.' + (A.neuPdf.size ? ' Neu hinzugefügte PDF und neu gelesene Texte sind darin nicht enthalten.' : '')); }
+    if (!A.dir) { herunterladen('bibliothek.json', teileDaten()['daten/bibliothek.json'], 'application/json'); return meldung('Ohne verbundenen Ordner lässt sich nicht direkt speichern. Die Datei bibliothek.json wurde heruntergeladen; sie gehört in den Ordner „daten“.' + (A.neuPdf.size ? ' Neu hinzugefügte PDF und neu gelesene Texte sind darin nicht enthalten.' : '') + (A.neuBild.size ? ' Neu eingefügte Bilder sind darin nicht enthalten.' : '')); }
     try {
       for (const [id, bytes] of A.neuPdf) { const d = dokId(id); if (d) await schreibe(d.pfad, bytes); }
       A.neuPdf.clear();
+      for (const [pfad, bytes] of A.neuBild) if (L().uebernahmen.some(u => u.bild && u.bild.pfad === pfad)) await schreibe(pfad, bytes);
+      A.neuBild.clear();
       const t = teileDaten(); for (const p of Object.keys(t)) await schreibe(p, t[p]);
       S.dirty = false; render(); meldung('Gespeichert im Ordner „' + A.dir.name + '“.');
     } catch (e) { meldung('Speichern fehlgeschlagen: ' + (e.message || e)); }
@@ -1981,6 +2045,12 @@ if (typeof document !== 'undefined') (function () {
     'ed-gehe': el => { if (edGesperrt()) return false; S.ed.seite = +el.dataset.s; S.ed.inhaltAuf = false; },
     'ue-zeige': el => { const u = L().uebernahmen.find(x => x.id === el.dataset.id); S.view = { typ: 'werk', id: u.werkId }; S.tab = 'edit'; S.ed.dok = u.dokId; S.ed.seite = u.seite; S.ed.edit = false; },
     'ue-bearbeiten': el => mitName(() => { const e = elementeVon(L(), S.ed.dok, S.ed.seite).find(x => x.nr === el.dataset.nr); if (e) ueForm(werk(S.view.id), Object.assign({}, e, { zeilen: e.zeilen ? e.zeilen.map(z => z.slice()) : null })); }),
+    'bild-neu': () => mitName(() => { const w = werk(S.view.id); ueForm(w, { dokId: S.ed.dok, s: S.ed.seite, nr: ueNrNeu(S.ed.dok, S.ed.seite), typ: 'skizze', box: [0, 1, 0, 0], titel: '', neu: true, eigen: true }); }),
+    'ue-pos': el => mitName(() => {
+      const w = werk(S.view.id), e = elementeVon(L(), S.ed.dok, S.ed.seite).find(x => x.nr === el.dataset.nr); if (!e) return;
+      const N = (P.zeilen && P.zeilen.get(S.ed.dok + ':' + S.ed.seite)) || 0, nach = rund((e.nach == null ? N : Math.min(e.nach, N)) + +el.dataset.d, 0, N);
+      ueSetzen(w, e, { nach }, 'Bild im Text verschoben'); render(); const f = document.getElementById('ue-' + e.nr.replace('.', '-')); if (f) { f.focus({ preventScroll: true }); f.scrollIntoView({ block: 'nearest' }); }
+    }),
     'ue-typ': el => mitName(() => {
       const w = werk(S.view.id), e = elementeVon(L(), S.ed.dok, S.ed.seite).find(x => x.nr === el.dataset.nr); if (!e) return;
       if (e.typ === 'tabelle') { ueSetzen(w, e, { typ: 'skizze' }, 'Tabelle als Bild gezeigt'); render(); }

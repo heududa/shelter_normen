@@ -54,6 +54,15 @@ const R = path.resolve(__dirname, '..'), T = path.join(__dirname, 'tmp_m');
   assert.equal((await ruf('anna', 'api/sperre', 'POST', { aktion: 'aufheben' })).s, 403); assert.equal((await ruf('admin', 'api/sperre', 'POST', { aktion: 'aufheben' })).s, 200);
   assert.equal((await ruf('paul', 'api/daten', 'PUT', { revision: rev, dateien: {} })).s, 423, 'nach dem Aufheben kein Speichern');
   assert.equal((await ruf('anna', 'api/pdf?pfad=' + encodeURIComponent('pdf/../app.js'), 'PUT', {})).s, 400, 'PDF nur nach pdf/eigene');
+  // Eigene Bilder: nur PNG, nur nach bilder/eigene, nicht für Gäste, kein Überschreiben
+  const bild = async (wer, pfad, bytes) => (await fetch(U + 'api/bild?pfad=' + encodeURIComponent(pfad), { method: 'PUT', headers: { Cookie: jar[wer] }, body: bytes })).status;
+  const PNG = Buffer.from('89504e470d0a1a0a0000000d49484452', 'hex');
+  assert.equal(await bild('anna', 'bilder/../app.js', PNG), 400, 'Bild nur nach bilder/eigene');
+  assert.equal(await bild('anna', 'bilder/eigene/x.svg', PNG), 400, 'nur PNG-Endung');
+  assert.equal(await bild('anna', 'bilder/eigene/abc_test.png', Buffer.from('<svg/>')), 400, 'Inhalt muss PNG sein');
+  assert.equal(await bild('gabi', 'bilder/eigene/abc_gast.png', PNG), 403, 'Gäste legen keine Bilder ab');
+  assert.equal(await bild('anna', 'bilder/eigene/abc_test.png', PNG), 200, 'Bild abgelegt');
+  assert.equal(await bild('anna', 'bilder/eigene/abc_test.png', PNG), 409, 'Bild wird nicht überschrieben');
   assert.equal(pruefeStand({ versionen: [], verlauf: [], werke: [] }, { werke: [] }, 'admin') !== '', true);
   // gesperrter Benutzer
   assert.equal((await ruf('admin', 'api/benutzer', 'POST', { name: 'gabi', anzeige: 'Gabi Gast', rolle: 'gast', aktiv: false })).s, 200); assert.equal((await ruf('gabi', 'api/stand')).s, 401);

@@ -5,3 +5,5 @@ __pycache__/
 test/tmp_m/
 server/
 test/tmp_a/
+!bilder/eigene/*.png
+test/tmp_b/
