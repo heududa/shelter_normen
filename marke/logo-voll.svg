@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="130 90 1220 1230" role="img" aria-label="Andair, Shelter technique: Safe, Simple, Rugged">
+<polygon points="738,125 1320,1125 160,1125" fill="none" stroke="#1F2329" stroke-width="5"/>
+<g fill="#FE0000">
+<polygon points="355,1020 478,1020 722,592 660,490"/>
+<polygon points="738,350 1050,885 935,885 683,450"/>
+<polygon points="572,915 1070,915 1130,1020 512,1020"/>
+<polygon points="738,625 888,885 590,885"/>
+</g>
+<g fill="#1F2329" font-family="Helvetica Neue,Helvetica,Arial,Liberation Sans,sans-serif" font-weight="700" text-anchor="middle">
+<text font-size="62" transform="translate(503,672) rotate(-60)">Safe</text>
+<text font-size="62" transform="translate(972,672) rotate(60)">Simple</text>
+<text x="738" y="1096" font-size="62">Rugged</text>
+<text x="738" y="1262" font-size="112">Shelter technique</text>
+</g>
+</svg>

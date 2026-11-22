@@ -1,21 +1,49 @@
-/* Farben und Logo des Hauses.
+/* Farben und Logo des Hauses: ANDAIR.
    Diese Datei überschreibt die Vorgaben aus style.css. Werte anpassen, speichern, Seite neu laden.
 
-   Logo: Die Datei (SVG oder PNG, für dunklen Hintergrund) in diesen Ordner legen und die zwei Zeilen
-   --logo und --logo-hoehe unten aktivieren. Dann erscheint das Logo oben in der Seitenleiste
-   und der dreifarbige Balken entfällt. */
+   Grundsatz: Das Andair-Rot gehört der Marke (Logo, aktiver Eintrag, Fokus). Es ist nie ein Status.
+   Anthrazit trägt die Oberfläche. Die Funktionsfarben Blau, Grün, Orange und Dunkelrot behalten ihre Bedeutung.
+
+   Logo-Dateien in diesem Ordner:
+   zeichen.svg    Dreieck allein (Browser-Tab, Startseite, Deckblatt des PDF-Exports)
+   logo.svg       Dreieck mit «Andair AG», weisse Schrift für die dunkle Seitenleiste
+   logo-hell.svg  dasselbe mit dunkler Schrift für hellen Grund
+   logo-voll.svg  volle Fassung mit «Safe, Simple, Rugged» und «Shelter technique», ab etwa 4 cm Breite */
 :root {
-  /* --logo: url("logo.svg"); */
-  /* --logo-hoehe: 2.6rem; */
+  --logo-hoehe: 2.1rem;   /* Höhe des Logos in der Seitenleiste; die Datei steht unten bei «.leiste .logo» */
+
+  /* Marke */
+  --marke: #FE0000;        /* Andair-Rot: aktiver Eintrag, gewählter Reiter, Fokusrahmen */
+  --haupt: #1F2329;        /* Anthrazit: Hauptknöpfe */
 
   /* Seitenleiste */
-  --nacht: #15273B;        /* Hintergrund */
-  --nacht-linie: #2C4159;  /* Linien und Zähler */
+  --nacht: #1F2329;        /* Hintergrund */
+  --nacht-linie: #3A4049;  /* Linien und Zähler */
+  --nacht-text: #E3E6EA;
+  --nacht-leise: #A3ABB6;
 
-  /* Hauptfarbe: Knöpfe, Links, Kennungen */
-  --blau: #1D3F7A;
-  --blau-hell: #E4ECF8;
+  /* Flächen und Text */
+  --papier: #F2F3F5;
+  --tinte: #1F2329;
+  --leise: #5B6470;
+  --linie: #D5D8DD;
 
-  /* Akzent: aktive Einträge, Markierungen */
+  /* Status Rot (Frage, gestrichen, Fehler): dunkler als das Markenrot, damit beide nicht verwechselt werden */
+  --rot: #8E1B14;
+
+  /* Status Orange (Vorschlag, zu bestätigen) */
   --signal: #F08A00;
 }
+@media (prefers-color-scheme: dark) {
+  :root {
+    --haupt: #E8EAED;
+    --nacht: #0D0E11; --nacht-linie: #2A2E35;
+    --papier: #131519; --blatt: #1C1F24; --tinte: #E8EAED; --leise: #A0A7B1; --linie: #31363E;
+    --rot: #FF9C92;
+  }
+}
+/* Logo der Seitenleiste */
+.leiste .logo { background-image: url("logo.svg"); }
+/* Das Dreieck ersetzt den dreifarbigen Balken */
+.leiste .zeichen { display: none; }
+.startschirm .zeichen { width: 4.6rem; height: 4rem; border-radius: 0; background: url("zeichen.svg") left center / contain no-repeat; }

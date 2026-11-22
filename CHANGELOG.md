@@ -1,5 +1,32 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.15.0 – 22.11.2026
+
+Logo und Farbkonzept ANDAIR.
+
+### Neu
+- **Logo:** Das Dreieck-Zeichen von ANDAIR ist als Vektor neu gezeichnet (Kanten auf 60°, gleiche Abstände) und liegt in `marke/`: `zeichen.svg` (Dreieck allein), `logo.svg` und `logo-hell.svg` (Dreieck mit «Andair AG» für dunklen und hellen Grund), `logo-voll.svg` (mit «Safe, Simple, Rugged» und «Shelter technique»).
+- Das Logo steht in der Seitenleiste, das Zeichen im Browser-Tab, auf der Startseite und oben rechts auf dem Deckblatt des PDF-Exports.
+- **Farbkonzept** in `marke/farben.css`:
+  - Andair-Rot `#FE0000` gehört der Marke: Logo, aktiver Eintrag der Seitenleiste, gewählter Reiter, Fokusrahmen. Es ist nie ein Status.
+  - Anthrazit `#1F2329` trägt die Oberfläche: Seitenleiste, Hauptknöpfe, Text.
+  - Die Funktionsfarben behalten ihre Bedeutung: Blau (OCR-Korrektur, Kommentar), Grün (fachlich, freigegeben), Orange (Vorschlag, zu bestätigen). Das Status-Rot (Frage, gestrichen, Fehler) ist dunkler (`#8E1B14`), damit es nicht mit dem Markenrot verwechselt wird.
+  - Eigene Werte für die dunkle Darstellung.
+- `style.css` trennt neu Markenfarbe (`--marke`) und Hauptfarbe (`--haupt`) von den Funktionsfarben. Ohne `marke/farben.css` bleibt alles wie bisher.
+
+### Behoben
+- `marke/farben.css` setzte das Blau auch in der dunklen Darstellung auf den hellen Wert; Links und Kennungen waren dort schlecht lesbar.
+
+### Entscheide
+- Hausfarbe ist `#FE0000` (D. Heusser, 22.11.2026), auch für das Dreieck, das in der Vorlage ein gedeckteres Rot hatte.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| R1 | Das Logo ist eine Nachzeichnung nach zwei kleinen Bilddateien. Der Schriftzug ist mit Helvetica/Arial gesetzt; die Originalschrift von ANDAIR kann abweichen. Eine Originaldatei (SVG, EPS, PDF) ersetzt die Nachzeichnung, sobald sie vorliegt. |
+| R2 | In der Bibliothek steht das Dreieck mit «Andair AG». Die volle Fassung mit «Safe, Simple, Rugged» liegt bereit, wird aber noch nirgends gezeigt. |
+| R3 | Druck und Word-Datei tragen kein Logo; nur das Deckblatt des PDF-Exports. |
+
 ## 0.14.2 – 22.11.2026
 
 PDF-Export mit eigenen Bildern.

@@ -1820,7 +1820,12 @@ if (typeof document !== 'undefined') (function () {
       zeile(`${u.autor || ''}${u.datum ? ', ' + datumCH(u.datum) : ''}`, { ein: 14, g: 8, farbe: FARBE.leise }); y -= 6;
     };
     if (opt.deckblatt) {
-      neu(''); zeile('Normenbibliothek, Export mit Änderungen', { g: 9, farbe: FARBE.leise }); y -= 14; zeile(w.kurz, { fett: true, g: 26 }); y -= 4; zeile(w.titel, { g: 13 }); y -= 16;
+      neu('');
+      try { // Zeichen des Hauses oben rechts: Flächen aus marke/zeichen.svg
+        const svg = await liesText('marke/zeichen.svg'), vb = (/viewBox="([^"]+)"/.exec(svg) || [])[1], fa = /fill="#([0-9a-fA-F]{6})"/.exec(svg), pol = [...svg.matchAll(/<polygon points="([^"]+)"/g)].map(m => m[1].trim().split(/\s+/).map(q => q.split(',').map(Number)));
+        if (vb && pol.length) { const [vx, vy, vw] = vb.split(/[\s,]+/).map(Number), k = 46 / vw, c = fa ? rgb(parseInt(fa[1].slice(0, 2), 16) / 255, parseInt(fa[1].slice(2, 4), 16) / 255, parseInt(fa[1].slice(4, 6), 16) / 255) : FARBE.tinte; pol.forEach(pt => page.drawSvgPath('M' + pt.map(q => `${q[0] - vx},${q[1] - vy}`).join(' L') + ' Z', { x: B - L0 - 46, y: H - 30, scale: k, color: c })); }
+      } catch (e) { /* ohne Zeichen */ }
+      zeile('Normenbibliothek, Export mit Änderungen', { g: 9, farbe: FARBE.leise }); y -= 14; zeile(w.kurz, { fett: true, g: 26 }); y -= 4; zeile(w.titel, { g: 13 }); y -= 16;
       [['Herausgeber', g.name], ['Ausgabe', w.ausgabe], ['Stand der Bibliothek', v ? `Version ${v.nr} vom ${datumCH(v.datum)}` + (R.offen.length ? ', mit nicht freigegebenen Änderungen' : '') : 'keine Version'], ['Exportiert', datumCH(heute()) + (L().meta.bearbeiter ? ' von ' + L().meta.bearbeiter : '')], ['Umfang', `${wahl ? wahl.length : ds.reduce((x, d) => x + d.seiten, 0)} Originalseiten, ${aesAlle.length} ${aesAlle.length === 1 ? 'Textänderung' : 'Textänderungen'}, ${anmAlle.length} ${anmAlle.length === 1 ? 'Anmerkung' : 'Anmerkungen'}${bildAlle.length ? `, ${bildAlle.length} ${bildAlle.length === 1 ? 'eigenes Bild' : 'eigene Bilder'}` : ''}`]].filter(x => x[1]).forEach(x => zeile(x[0] + ': ' + x[1]));
       if (istEntwurf(w, null) || aesAlle.some(a => standVon(L(), 'aenderungen', a) !== 'frei')) { y -= 8; zeile('ENTWURF. Enthält nicht freigegebene Änderungen.', { fett: true, g: 13, farbe: FARBE.rot }); }
       zeile(dstat(w) === 'freigegeben' ? `Digitale Fassung geprüft von ${w.digital.pruefer} am ${datumCH(w.digital.datum)}.` : 'Digitale Fassung ungeprüft: Text und Änderungen sind noch nicht mit dem Original verglichen.');

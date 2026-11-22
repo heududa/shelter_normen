@@ -38,7 +38,7 @@ Firefox und Safari können keine Ordner öffnen. Dort geht nur Ansehen über ein
 
 ## Farben und Logo
 
-`marke/farben.css` enthält die Farben. Für ein Logo die Datei (SVG oder PNG, für dunklen Hintergrund) nach `marke/` legen und in `farben.css` die Zeilen `--logo` und `--logo-hoehe` aktivieren.
+`marke/farben.css` enthält das Farbkonzept von ANDAIR: Andair-Rot `#FE0000` für die Marke (Logo, aktiver Eintrag, Fokus), Anthrazit für die Oberfläche, dazu die Funktionsfarben. Die Logo-Dateien liegen daneben (`zeichen.svg`, `logo.svg`, `logo-hell.svg`, `logo-voll.svg`). Wer ein anderes Logo will, ersetzt die Dateien unter gleichem Namen.
 
 ## Mehrere Nutzer
 

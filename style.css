@@ -546,3 +546,11 @@ kbd{font-family:var(--ui);font-size:.85em;border:1px solid var(--linie);border-b
 .plform input{font-size:1.4rem;padding:.4rem .6rem;width:100%}
 .plende{max-width:40rem;margin:2rem auto;text-align:center}
 .plzweit{font-size:.8rem;background:#DFF3E4;color:#17603A;border-radius:999px;padding:.1rem .6rem;align-self:center}
+/* Markenfarbe und Hauptfarbe getrennt von den Funktionsfarben (Werte in marke/farben.css) */
+:root{--marke:var(--signal);--haupt:var(--blau)}
+:focus-visible{outline-color:var(--marke)}
+.leiste a.aktiv{border-left-color:var(--marke)}
+.tabs button[aria-selected=true]{border-bottom-color:var(--marke)}
+button.haupt{background:var(--haupt);border-color:var(--haupt)}
+button:hover:not(:disabled){border-color:var(--haupt)}
+.leiste .ansichten a.aktiv i{background:var(--marke);color:#fff}
