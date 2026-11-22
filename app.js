@@ -804,9 +804,10 @@ if (typeof document !== 'undefined') (function () {
     if (el.dataset.laeuft === key) return; el.dataset.laeuft = key;
     const gen = P.gen; let doc; try { doc = await pdfDoc(dk); } catch (e) { el.innerHTML = `<p class="fehler-fest">Das PDF lässt sich nicht anzeigen: ${h(e.message || e)}</p>`; return; }
     if (!doc || gen !== P.gen) return;
-    const page = await doc.getPage(n), v1 = page.getViewport({ scale: 1 }), vp = page.getViewport({ scale: breite / v1.width });
+    let page; try { page = await doc.getPage(n); } catch (e) { delete el.dataset.laeuft; return; }
+    const v1 = page.getViewport({ scale: 1 }), vp = page.getViewport({ scale: breite / v1.width });
     c = document.createElement('canvas'); c.width = Math.round(vp.width); c.height = Math.round(vp.height);
-    await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise;
+    try { await page.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise; } catch (e) { delete el.dataset.laeuft; return; } // abgebrochen, weil inzwischen eine andere Norm offen ist
     if (gen !== P.gen) return;
     P.canvases.set(key, c);
     if (P.canvases.size > 14) { const k = P.canvases.keys().next().value, alt = P.canvases.get(k); P.canvases.delete(k); alt.remove(); alt.width = alt.height = 0; }
