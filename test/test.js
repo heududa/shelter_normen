@@ -224,7 +224,7 @@ const path0 = path.join(__dirname, 'daten');
   await p.screenshot({ path: D + 'l_vergleich.png' });
   await p.click('[data-act=vgl-zoom][data-d="1"]'); await p.click('[data-act=vgl-zoom][data-d="1"]'); let v2 = await vm(); assert.equal(v2.lw, v2.rw); assert.ok(Math.abs(v2.lw / v1.lw - 1.5) < 0.02 && Math.abs(v2.fs / v1.fs - 1.5) < 0.02, 'Zoom gilt für beide Seiten');
   await p.evaluate(() => { const r = document.querySelector('#vgl-r'); r.scrollTop = (r.scrollHeight - r.clientHeight) / 2; }); await p.waitForTimeout(250);
-  const sc = await p.evaluate(() => { const l = document.querySelector('#vgl-l'); return l.scrollTop / (l.scrollHeight - l.clientHeight); }); assert.ok(Math.abs(sc - 0.5) < 0.03, 'gleich scrollen');
+  const sc = await p.evaluate(() => { const l = document.querySelector('#vgl-l'); return l.scrollTop / (l.scrollHeight - l.clientHeight); }); assert.ok(sc > 0.4 && sc < 0.75, 'gleich scrollen: ' + sc); // zeilengenau, nicht anteilig: der Text füllt das Blatt A4 nicht ganz, dieselbe Zeile steht im Scan weiter unten
   await p.click('[data-act=ed-seite][data-d="1"]'); await p.waitForSelector('#vgl .seite[data-seite="10"][data-fertig]'); await p.keyboard.press('Escape'); await p.waitForSelector('.edgrid'); assert.equal(await p.locator('#vgl').count(), 0);
   // Vergleich: zeilengetreu, zeilengenaues Scrollen, Zeilenlineal, Blinkvergleich, Tasten
   await p.evaluate(() => { const S = window.__nb.S; S.ed.ansicht = 'neu'; S.ed.dok = 'd-tws82-1'; S.ed.seite = 52; S.ed.vz = 'seite'; window.__nb.oeffne('tws82', 'edit'); }); await p.waitForSelector('.seite[data-fertig]');

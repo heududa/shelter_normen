@@ -625,4 +625,4 @@ details.menue.klein>summary{font-size:.8rem;padding:.12rem .45rem}
 .vgltext .edhinweis,.vgltext .seitenhinweis,.vgltext .vwzurueck{display:none}
 .vgltext .legende{position:absolute;left:0;top:100%;margin:6px 0 0;padding:0;border:0;font-size:11px;white-space:nowrap}
 .vgltext[data-lang]::after{content:"Der Text ist länger als eine Seite; das Blatt ist nach unten verlängert.";position:absolute;right:0;top:100%;margin-top:22px;font:11px var(--ui);color:var(--orange)}
-#vgl-r{padding-bottom:52px}
+#vgl-l,#vgl-r{padding-bottom:52px}
