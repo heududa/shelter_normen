@@ -35,6 +35,7 @@ const TYPEN = {
   verweist: ['verweist auf', 'wird zitiert von'],
   abgeleitet: ['ist abgeleitet von', 'ist Basis von'],
   ergaenzt: ['ergänzt', 'wird ergänzt durch'],
+  vorrang: ['hat bei Abweichungen Vorrang vor', 'tritt bei Abweichungen zurück hinter'],
 };
 const ARTEN = { regel: 'Regel', aendern: 'ändern', ergaenzen: 'ergänzen', aufheben: 'aufheben', kommentar: 'Kommentar' };
 
@@ -334,7 +335,7 @@ if (typeof document !== 'undefined') (function () {
   const dokVon = id => dokus(id)[0];
   const istGanz = w => dokus(w.id).length > 1 && (!S.dokWahl[w.id] || S.dokWahl[w.id] === '*');
   function migriere() { // fehlende Felder älterer Stände ergänzen
-    const l = S.lib; ['anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar', 'abschnitte', 'versionen', 'verlauf'].forEach(k => { l[k] = l[k] || []; }); ['titelbilder', 'seitentext', 'struktur', 'elemente', 'unsicher', 'ocr', 'vorschlaege', 'zweitlesung'].forEach(k => { l[k] = l[k] || {}; }); l.uebernahmen = l.uebernahmen || [];
+    const l = S.lib; ['anmerkungen', 'dokumente', 'aenderungen', 'formate', 'glossar', 'abschnitte', 'versionen', 'verlauf'].forEach(k => { l[k] = l[k] || []; }); ['titelbilder', 'seitentext', 'struktur', 'elemente', 'unsicher', 'ocr', 'vorschlaege', 'zweitlesung'].forEach(k => { l[k] = l[k] || {}; }); l.uebernahmen = l.uebernahmen || []; l.bezuege = l.bezuege || [];
     l.dokumente.forEach(d => { if (d.teil == null) d.teil = ''; });
     l.anmerkungen.forEach(a => { if (!a.dokId) { const d = l.dokumente.find(x => x.werkId === a.werkId); if (d) a.dokId = d.id; } });
   }
@@ -1261,12 +1262,14 @@ if (typeof document !== 'undefined') (function () {
     else if (S.tab === 'info') {
       const links = L().verknuepfungen.filter(v => v.von === w.id || v.nach === w.id).map(v => {
         const aus = v.von === w.id, anderes = werk(aus ? v.nach : v.von) || { kurz: '?', id: '' };
-        return `<li>${h(TYPEN[v.typ][aus ? 0 : 1])} <a href="#" data-act="werk" data-id="${h(anderes.id)}">${h(anderes.kurz)}</a>${v.bereich ? `<span class="bereich">${h(v.bereich)}</span>` : ''}${v.notiz ? `<span class="notiz">${h(v.notiz)}</span>` : ''}${standMarke('verknuepfungen', v)}<button class="klein" data-act="link-weg" data-id="${h(v.id)}">entfernen</button></li>`;
+        return `<li>${h(TYPEN[v.typ][aus ? 0 : 1])} <a href="#" data-act="werk" data-id="${h(anderes.id)}">${h(anderes.kurz)}</a>${v.bereich ? `<span class="bereich">${h(v.bereich)}</span>` : ''}${v.notiz ? `<span class="notiz">${h(v.notiz)}</span>` : ''}${(b => b ? `<span class="notiz warn">Die Durchsicht belegt etwas anderes: ${h(TYPEN[b.typ][0])} – ${h(b.bereich)}.${belegLink(b)} Diesen Eintrag entfernen.</span>` : '')((L().bezuege || []).find(b => b.widerspricht && b.widerspricht.id === v.id && b.widerspricht.typ === v.typ))}${standMarke('verknuepfungen', v)}<button class="klein" data-act="link-weg" data-id="${h(v.id)}">entfernen</button></li>`;
       }).join('');
       const meta = [['Herausgeber', g.name], ['Gruppe', w.gruppe], ['Ausgabe', w.ausgabe], ['In Kraft', w.inKraft], ['Status', w.status], ['Geltungsbereich', w.geltung], layer && ['Basisnorm', (werk(w.basisId) || {}).kurz], layer && ['Gebiet', w.gebiet], ['Bemerkung', w.notiz]].filter(x => x && x[1]).map(x => `<div><dt>${x[0]}</dt><dd>${h(x[1])}</dd></div>`).join('');
       const fvTab = ds.map(d => { const st = L().struktur[d.id]; if (!st) return `<p class="hinweis">${h(d.teil || d.datei)}: Struktur noch nicht erkannt.</p>`; const hand = L().formate.filter(f => f.dokId === d.id).length;
         return `<div class="rollen"><table class="tabelle"><caption>${h(d.teil || d.datei)}: Fliesstext ${st.koerper} pt${hand ? `, ${hand} Zeilen von Hand zugewiesen` : ''}</caption><thead><tr><th>Formatvorlage</th><th>Schriftgrösse im Original</th><th>Erkannte Zeilen</th></tr></thead><tbody>${Object.keys(FV).filter(k => st.vorlagen[k]).map(k => `<tr><td>${FV[k]}</td><td>${st.vorlagen[k].g} pt</td><td>${st.vorlagen[k].n}</td></tr>`).join('') || '<tr><td colspan="3">keine erkannt</td></tr>'}</tbody></table></div>`; }).join('');
-      inhaltHtml = `<dl class="meta">${meta}</dl><div class="links"><h3>Verknüpfungen</h3><ul>${links || '<li class="leer">Keine Verknüpfung erfasst.</li>'}</ul></div>
+      const vor = bezugOffen(w), vorHtml = vor.map(e => { const aus = e.von === w.id, anderes = werk(aus ? e.nach : e.von), qw = e.von;
+        return `<li>${aus ? 'verweist auf' : 'wird zitiert von'} <a href="#" data-act="werk" data-id="${h(anderes.id)}">${h(anderes.kurz)}</a><span class="bereich">${e.n} ${e.n === 1 ? 'Stelle' : 'Stellen'}${aus ? '' : ' in ' + h(anderes.kurz)}, Seite ${e.stellen.slice(0, 8).map(q => `<a href="#" data-act="verweis" data-w="${h(qw)}" data-d="${h(q.d)}" data-s="${q.s}">${q.s}</a>`).join(', ')}${e.stellen.length > 8 ? ' …' : ''}</span>${e.ersatz ? '<span class="notiz">Der Text nennt eine Ausgabe, die nicht in der Bibliothek ist.</span>' : ''}${e.auf ? '<span class="notiz">In der Nähe steht «aufgehoben» oder «ersetzt».</span>' : ''}<button class="klein" data-act="bezug-ja" data-von="${h(e.von)}" data-nach="${h(e.nach)}" data-typ="verweist">als Verweis übernehmen</button>${e.auf ? `<button class="klein" data-act="bezug-ja" data-von="${h(e.von)}" data-nach="${h(e.nach)}" data-typ="ersetzt">als «ersetzt» übernehmen</button>` : ''}</li>`; }).join('');
+      inhaltHtml = `<dl class="meta">${meta}</dl><div class="links"><h3>Verknüpfungen</h3><ul>${links || '<li class="leer">Keine Verknüpfung erfasst.</li>'}</ul>${durchsichtHtml(w)}${vor.length ? `<h3 class="vwvor">Weitere Nennungen im Text, zu bestätigen (${vor.length})</h3><p class="hinweis">Diese Normen nennen einander im Text, ohne dass eine Beziehung belegt ist. Übernommene Einträge werden zu Verknüpfungen und laufen über die Freigabe.</p><ul>${vorHtml}</ul><p class="aktionen"><button data-act="bezug-alle" data-id="${h(w.id)}">Alle als Verweis übernehmen</button></p>` : ''}</div>
         ${ds.length ? `<div class="links"><h3>Formatvorlagen aus dem Original</h3><p class="hinweis">Aus Schriftgrösse, Nummerierung und Lage der Zeilen im PDF erkannt. Zuweisungen von Hand bleiben beim erneuten Erkennen erhalten.</p>${fvTab}<p class="aktionen"><button data-act="struktur-neu" data-id="${h(w.id)}">Struktur neu erkennen</button></p></div>` : ''}`;
     } else if (S.tab === 'log') {
       const ids = new Set([w.id].concat(rs.map(r => r.id), L().anmerkungen.filter(a => a.werkId === w.id).map(a => a.id), L().aenderungen.filter(a => a.werkId === w.id).map(a => a.id)));
@@ -1288,6 +1291,7 @@ if (typeof document !== 'undefined') (function () {
         <div class="werktitel"><h2>${h(w.kurz)}</h2><p class="lang">${h(w.titel)}</p><span class="pruefstand">${marke(st.pill, st.art)}${dok ? `<button class="klein" data-act="digital" data-id="${h(w.id)}">Prüfstatus ändern</button>` : ''}</span></div>
         ${dok ? (st.k === 'freigegeben' ? `<p class="geprueft">Digitale Fassung mit dem Original verglichen und freigegeben von ${h((w.digital || {}).pruefer)} am ${datumCH((w.digital || {}).datum)}.</p>` : `<p class="ungeprueft"><b>${st.k === 'ungeprueft' ? 'Ungeprüfte digitale Fassung.' : DSTAT[st.k][0] + '.'}</b> Text und Struktur sind noch nicht anhand des Originals freigegeben. Massgebend ist das Original-PDF.${(w.digital || {}).notiz ? ' Bemerkung: ' + h(w.digital.notiz) : ''}</p>`) : ''}
         ${layer && ebeneVon(w) === 'hersteller' ? '<p class="vermerk">Herstellernorm – keine behördliche Norm</p>' : ''}
+        ${neuereHtml(w)}
         <p class="aktionen"><button data-act="werk-edit" data-id="${h(w.id)}">Angaben bearbeiten</button><button data-act="link-neu" data-id="${h(w.id)}">Verknüpfung hinzufügen</button><button data-act="regel-neu" data-werk="${h(w.id)}">${layer ? 'Regel ergänzen' : 'Regel erfassen'}</button>${dok ? '' : `<button data-act="pdf-neu" data-id="${h(w.id)}">PDF hinzufügen</button>`}${layer ? '' : `<button data-act="import" data-id="${h(w.id)}">Originaltext einlesen</button>`}</p>
       </header>
       <div class="tabs" role="tablist">${dok ? tab('edit', 'Bearbeitung') : ''}${tab('pdf', dok ? `Ganze Norm (${(ds.length > 1 ? ds.length + ' Teile, ' : '') + seitenZ} Seiten, ${nAnm} Anmerkungen)` : 'Original-PDF (keines)')}${tab('regeln', `${layer ? 'Einträge' : 'Regeln'} (${rs.length})`)}${layer ? '' : tab('text', `Originaltext (${abs.length} Abschnitte)`)}${tab('log', 'Änderungsprotokoll')}${tab('info', 'Angaben')}</div>
@@ -1422,10 +1426,97 @@ if (typeof document !== 'undefined') (function () {
     });
     return html + geist;
   }
+  // ----- Verweise zwischen Normen und auf Abschnitte: aus dem Text erkannt, nichts davon ist gespeichert
+  const VW = { von: null, nw: 0, k: null, seiten: new Map(), bez: null };
+  const vwFrisch = () => { if (VW.von !== L() || VW.nw !== L().werke.length + L().dokumente.length) { VW.von = L(); VW.nw = L().werke.length + L().dokumente.length; VW.k = null; VW.seiten = new Map(); VW.bez = null; } };
+  const VW_N = (k, j) => `(?<${k}>TW[POSEKW]|TPH[- ]?\\d\\d|TW[- ]Schock|TW[- ]EMP)(?:[ ]?['’]?(?<${j}>(?:19|20)\\d\\d|\\d\\d)(?![\\d.]))?`;
+  const VW_W = 'Abschnitt(?:en|e|s)?|Kapitel|Ziffer|Ziff\\.', VW_NR0 = '\\d{1,2}(?:\\.\\d{1,2}){0,3}', VW_NR1 = '\\d{1,2}(?:\\.\\d{1,2}){1,3}';
+  const VW_RE = new RegExp(`(?<![\\wäöüÄÖÜ-])(?:(?<a1>(?:${VW_W})[ ](?<n1>${VW_NR0})[ ](?:der|den|in der|gemäss|von)[ ]${VW_N('k1', 'j1')})|(?<a2>${VW_N('k2', 'j2')}(?:,?[ ](?:(?:${VW_W}|Kap\\.)[ ])?(?<n2>${VW_NR1}))?)|(?<a3>(?<p3>${VW_W})[ ](?<n3>${VW_NR0}))|(?<a4>(?<p4>Figur|Fig\\.|Tabelle|Tab\\.)[ ](?<n4>A?[ ]?\\d{1,2}(?:\\.\\d{1,2})*[-–]\\d{1,2}[a-z]?)))(?![\\w-])`, 'g');
+  function vwKuerzel() { // Kürzel im Text → Werke der Bibliothek
+    vwFrisch(); if (VW.k) return VW.k; const k = new Map();
+    L().werke.forEach(w => { const m = /^(TW[A-Z]|TPH-\d\d|TW Schock|TW EMP)(?: (\d{4}))?$/.exec(w.kurz); if (!m) return; const key = m[1].replace(/[- ]/g, '').toUpperCase(); if (!k.has(key)) k.set(key, []); k.get(key).push({ w, jahr: m[2] || '' }); });
+    return VW.k = k;
+  }
+  function vwWerk(kurz, jahr, selbst) { // welche Norm ist gemeint? Ohne Jahr die eigene, sonst die einzige nicht aufgehobene
+    const c = vwKuerzel().get(kurz.replace(/[- ]/g, '').toUpperCase()); if (!c) return null;
+    if (jahr) { const x = c.find(e => e.jahr && e.jahr.slice(-2) === jahr.slice(-2)); if (x) return { w: x.w }; return { w: c.slice().sort((a, b) => b.jahr.localeCompare(a.jahr))[0].w, ersatz: true }; }
+    const s = c.find(e => e.w.id === selbst); if (s) return { w: s.w };
+    const g = c.filter(e => e.w.status !== 'aufgehoben'); return g.length === 1 ? { w: g[0].w } : c.length === 1 ? { w: c[0].w } : null;
+  }
+  function vwZiele(dId) { // Abschnittsnummer, Figur und Tabelle → Seite; Zeilen eines Inhaltsverzeichnisses zählen nicht
+    vwFrisch(); let z = VW.seiten.get(dId); if (z) return z; z = { nr: new Map(), bild: new Map() };
+    const ivZeile = x => /^\d{1,2}(?:\.\d{1,2}){0,3}\.?\s+\S.*\s\d{1,3}$/.test(x);
+    const iv = new Set(); (L().seitentext[dId] || []).forEach((t, i) => { if (String(t || '').split('\n').filter(x => ivZeile(x.trim())).length >= 4) iv.add(i + 1); });
+    bloeckeVon(dId).forEach(b => { if (/^u\d$/.test(b.typ) && b.nr && !iv.has(b.s) && !ivZeile(b.t.trim()) && !z.nr.has(b.nr)) z.nr.set(b.nr, b.s); });
+    (L().seitentext[dId] || []).forEach((t, i) => { if (iv.has(i + 1)) return; String(t || '').split('\n').forEach(x => { x = x.trim(); let m;
+      if ((m = /^(\d{1,2}(?:\.\d{1,2}){1,3})\.?\s+[A-ZÄÖÜ]/.exec(x)) && x.length <= 110 && !ivZeile(x) && !z.nr.has(m[1])) z.nr.set(m[1], i + 1);
+      if ((m = /^(Figur|Fig\.|Tabelle|Tab\.)\s+(A?\s?\d{1,2}(?:\.\d{1,2})*[-–]\d{1,2}[a-z]?)(?=\s|$)/.exec(x))) { const k = m[1][0] + m[2].replace(/\s/g, '').replace('–', '-'); if (!z.bild.has(k)) z.bild.set(k, i + 1); } }); });
+    VW.seiten.set(dId, z); return z;
+  }
+  const vwSeite = (w, nr) => { for (const d of dokus(w.id)) { const s = vwZiele(d.id).nr.get(nr); if (s) return { d: d.id, s }; } return null; };
+  const alleLinks = () => { const u = L().verknuepfungen; return u.concat((L().bezuege || []).filter(b => werk(b.von) && werk(b.nach) && !u.some(v => v.von === b.von && v.nach === b.nach && v.typ === b.typ))); }; // eigene Verknüpfungen und belegte aus der Durchsicht
+  function abloesungen(w) { // Normen, die diese Norm ganz oder in Teilen ersetzen oder ergänzen
+    return alleLinks().filter(v => v.nach === w.id && (v.typ === 'ersetzt' || v.typ === 'ergaenzt') && werk(v.von)).map(v => { const nrn = []; String(v.bereich || '').replace(/(?:Kapitel|Kap\.|Abschnitt|Ziffer)\s+(\d{1,2}(?:\.\d{1,2}){0,3})/g, (_, x) => nrn.push(x)); return { v, durch: werk(v.von), nrn }; });
+  }
+  function seitenNrn(dok, n) { // Abschnitte, die auf dieser Seite stehen oder in sie hineinlaufen
+    let vor = null, vs = 0; const hier = []; vwZiele(dok.id).nr.forEach((s, nr) => { if (s === n) hier.push(nr); else if (s < n && s >= vs) { vs = s; vor = nr; } }); return vor && (!hier.length || vor.split('.')[0] === hier[0].split('.')[0]) ? hier.concat(vor) : hier; // der vorangehende Abschnitt läuft nur im selben Kapitel in die Seite hinein
+  }
+  const belegLink = v => v.beleg && dokVon(v.beleg.w) ? ` <a href="#" class="beleg" data-act="verweis" data-w="${h(v.beleg.w)}" data-d="${h(dokVon(v.beleg.w).id)}" data-s="${v.beleg.s}" title="${h('Beleg: ' + werk(v.beleg.w).kurz + ', Seite ' + v.beleg.s + (v.zitat ? ': «' + v.zitat + '»' : ''))}">Beleg S. ${v.beleg.s}</a>` : '';
+  const abloesungSatz = a => { const ganz = !a.v.bereich || /^ganze/i.test(a.v.bereich); return `<b>${ganz ? 'Diese Norm' : h(a.v.bereich)}</b>${ganz ? ' ist' : ':'} ${a.v.typ === 'ersetzt' ? 'ersetzt durch' : 'ergänzt durch'} <a href="#" data-act="verweis" data-w="${h(a.durch.id)}">${h(a.durch.kurz)}</a>.${a.v.notiz ? ' ' + h(a.v.notiz) : ''}${belegLink(a.v)}`; };
+  function durchsichtHtml(w) { // belegte Beziehungen aus der Durchsicht, nach Art zusammengefasst
+    const u = L().verknuepfungen, bs = (L().bezuege || []).filter(b => (b.von === w.id || b.nach === w.id) && werk(b.von) && werk(b.nach) && !u.some(v => v.von === b.von && v.nach === b.nach && v.typ === b.typ)); if (!bs.length) return '';
+    const gr = new Map(); bs.forEach(b => { const aus = b.von === w.id, k = (aus ? 'a' : 'e') + b.typ + '|' + b.bereich; if (!gr.has(k)) gr.set(k, { aus, typ: b.typ, bereich: b.bereich, liste: [] }); gr.get(k).liste.push(b); });
+    return `<h3 class="vwvor">Aus der Durchsicht der Normen, belegt (${bs.length})</h3><p class="hinweis">${h((L().bezuegeStand || {}).hinweis || '')}</p><ul>${[...gr.values()].map(g => `<li>${h(TYPEN[g.typ][g.aus ? 0 : 1])} ${g.liste.map(b => { const o = werk(g.aus ? b.nach : b.von); return `<a href="#" data-act="werk" data-id="${h(o.id)}">${h(o.kurz)}</a>${g.aus ? '' : belegLink(b)}`; }).join(', ')}${g.aus ? belegLink(g.liste[0]) : ''}<span class="bereich">${h(g.bereich)}</span>${g.liste[0].notiz ? `<span class="notiz">${h(g.liste[0].notiz)}</span>` : ''}</li>`).join('')}</ul>`;
+  }
+  function neuereHtml(w) { // eine Zeile im Kopf der Norm: was sie ersetzt, ergänzt oder ihr vorgeht; aufgeklappt mit Beleg
+    const ab = abloesungen(w), vr = alleLinks().filter(v => v.nach === w.id && v.typ === 'vorrang' && werk(v.von)).sort((x, y) => werk(x.von).kurz.localeCompare(werk(y.von).kurz)), weg = /aufgehoben/.test(w.status || '');
+    if (!ab.length && !vr.length) return weg ? `<p class="abgeloest"><b>Status: ${h(w.status)}.</b> Eine ablösende Norm ist nicht verknüpft.</p>` : '';
+    const kurz = typ => [...new Set(ab.filter(a => a.v.typ === typ).map(a => a.durch.kurz))].join(', '), er = kurz('ersetzt'), eg = kurz('ergaenzt');
+    return `<details class="abgeloest${er || weg ? '' : ' mild'}"><summary><b>Neuere Normen dazu:</b> ${[er && 'ersetzt durch ' + h(er), eg && 'ergänzt durch ' + h(eg), vr.length && `${vr.length} Pflichtenhefte gehen vor`].filter(Boolean).join(' · ')}</summary>
+      ${ab.map(a => `<p>${abloesungSatz(a)}</p>`).join('')}${vr.length ? `<p><b>Bei Abweichungen gehen vor:</b> ${vr.map(v => `<a href="#" data-act="verweis" data-w="${h(v.von)}">${h(werk(v.von).kurz)}</a>`).join(', ')}.</p>` : ''}</details>`;
+  }
+  function seitenHinweis(w, dok, n) { // Vermerk im Text der alten Norm, wenn die Seite in einem ersetzten Teil liegt
+    const hier = seitenNrn(dok, n);
+    return abloesungen(w).filter(a => a.nrn.length && a.nrn.some(k => hier.some(x => x === k || x.startsWith(k + '.')))).map(a => `<p class="abgeloest seitenhinweis${a.v.typ === 'ersetzt' ? '' : ' mild'}">${abloesungSatz(a)}</p>`).join('');
+  }
+  function vwTreffer(text, w, dok) { // alle Verweise in einem Text mit ihrem Ziel
+    const out = []; let m; VW_RE.lastIndex = 0;
+    while ((m = VW_RE.exec(text))) {
+      const g = m.groups, t = { i: m.index, l: m[0].length };
+      if (g.a4) { const s = dok && vwZiele(dok.id).bild.get(g.p4[0] + g.n4.replace(/\s/g, '').replace('–', '-')); if (!s) continue; Object.assign(t, { w, d: dok.id, s, intern: true, titel: `${g.p4[0] === 'T' ? 'Tabelle' : 'Figur'} ${g.n4} auf Seite ${s} zeigen` }); }
+      else {
+        const kurz = g.k1 || g.k2, nr = g.n1 || g.n2 || g.n3 || ''; if (g.a3 && !nr.includes('.') && g.p3 !== 'Kapitel') continue;
+        let ziel = { w }; if (kurz) { ziel = vwWerk(kurz, g.j1 || g.j2 || '', w.id); if (!ziel) continue; }
+        const fremd = ziel.w.id !== w.id; if (!fremd && !nr) continue;
+        const ort = nr && !ziel.ersatz ? (!fremd && dok && vwZiele(dok.id).nr.has(nr) ? { d: dok.id, s: vwZiele(dok.id).nr.get(nr) } : vwSeite(ziel.w, nr)) : null; if (!fremd && !ort) continue;
+        const ganz = fremd ? abloesungen(ziel.w).filter(a => !a.nrn.length && a.v.typ === 'ersetzt').map(a => a.durch.kurz) : [];
+        Object.assign(t, { w: ziel.w, d: ort ? ort.d : '', s: ort ? ort.s : 0, nr, intern: !fremd, ersatz: !!ziel.ersatz,
+          titel: fremd ? `${ziel.w.kurz}${nr ? (ort ? `, Abschnitt ${nr}, Seite ${ort.s}` : `, Abschnitt ${nr} (Seite nicht gefunden)`) : ''} öffnen.${ziel.ersatz ? ' Die genannte Ausgabe ist nicht in der Bibliothek; verlinkt ist ' + ziel.w.kurz + '.' : ''}${ziel.w.status === 'aufgehoben' ? ' Diese Norm ist aufgehoben.' : ''}${ganz.length ? ' Ersetzt durch ' + ganz.join(', ') + '.' : ''}` : `Abschnitt ${nr} auf Seite ${ort.s} zeigen` });
+      }
+      out.push(t);
+    }
+    return out;
+  }
+  function verweisMark(html, w, dok, n) { // Verweise im Text anklickbar machen; Markup bleibt unberührt
+    if (!/TW|TPH|Abschnitt|Kapitel|Ziff|Fig|Tab/.test(html)) return html;
+    return html.split(/(<[^>]+>)/).map((seg, i) => { if (i % 2 || !seg) return seg; let out = '', p = 0;
+      vwTreffer(seg, w, dok).forEach(t => { if (t.intern && t.d === dok.id && t.s === n) return; out += seg.slice(p, t.i) + `<a href="#" class="verweis${t.intern ? '' : ' fremd'}" data-act="verweis" data-w="${h(t.w.id)}" data-d="${h(t.d)}" data-s="${t.s}" title="${h(t.titel)}">${seg.slice(t.i, t.i + t.l)}</a>`; p = t.i + t.l; });
+      return out + seg.slice(p); }).join('');
+  }
+  function vwBezuege() { // welche Norm nennt welche andere, über alle Seiten gezählt
+    vwFrisch(); if (VW.bez) return VW.bez; const m = new Map();
+    L().dokumente.forEach(d => { const w = werk(d.werkId); if (!w) return; (L().seitentext[d.id] || []).forEach((t, i) => { if (!t || !/TW|TPH/.test(t)) return;
+      vwTreffer(t, w, d).forEach(x => { if (x.w.id === w.id) return; const k = w.id + '>' + x.w.id; if (!m.has(k)) m.set(k, { von: w.id, nach: x.w.id, n: 0, stellen: [], auf: false, ersatz: false }); const e = m.get(k);
+        e.n++; if (!e.stellen.some(q => q.d === d.id && q.s === i + 1)) e.stellen.push({ d: d.id, s: i + 1 }); if (x.ersatz) e.ersatz = true; if (/aufgehoben|ersetz/i.test(t.slice(Math.max(0, x.i - 300), x.i + x.l + 60))) e.auf = true; }); }); });
+    return VW.bez = [...m.values()];
+  }
+  const bezugOffen = w => vwBezuege().filter(e => (e.von === w.id || e.nach === w.id) && !alleLinks().some(v => (v.von === e.von && v.nach === e.nach) || (v.von === e.nach && v.nach === e.von))).sort((a, b) => (a.von === w.id ? 0 : 1) - (b.von === w.id ? 0 : 1) || b.n - a.n);
+  function bezugJa(e, typ) { L().verknuepfungen.push({ id: uid('v'), von: e.von, typ, nach: e.nach, bereich: `${e.n} ${e.n === 1 ? 'Stelle' : 'Stellen'} im Text, z. B. Seite ${e.stellen[0].s}`, notiz: 'Aus dem Text erkannt, zu bestätigen.' + (e.ersatz ? ' Der Text nennt eine Ausgabe, die nicht in der Bibliothek ist.' : '') }); log('Verknüpfung erfasst', e.von, TYPEN[typ][0] + ' ' + werk(e.nach).kurz + ' (aus dem Text erkannt)'); }
   function seitenHtml(dok, n, ansicht, ebene, druck) {
     const basis = seitenBasis(L(), dok.id, n), ocr = textOcr(L(), dok.id, n), eff = textSchicht(L(), dok.id, n, ebene);
     let html = ansicht === 'original' ? h(basis) : ansicht === 'neu' ? h(eff) : hybridHtml(basis, ocr, eff);
     if (!druck && ansicht !== 'hybrid') html = unsicherMark(html, dok, n);
+    if (!druck) html = verweisMark(html, werk(dok.werkId), dok, n);
     return mitElementen(formatiert(html, dok.id, n), dok, n, druck);
   }
   const unsicherVon = (dok, n) => { if ((dok.geprueftSeiten || []).includes(n)) return []; const ok = (dok.stelleOk || {})[n] || []; return ((L().unsicher[dok.id] || {})[n] || []).filter(t => !ok.includes(t)); }; // in der Prüfliste bestätigte Wörter sind nicht mehr unsicher
@@ -1581,6 +1672,7 @@ if (typeof document !== 'undefined') (function () {
       <p class="marken">${standMarke('aenderungen', a)}${a.zurueckgezogen ? marke('zurückgezogen', 'weg') : ''}${basisVeraltet(a) ? marke('Grundtext geändert – prüfen', 'warn') : ''}${a.art === 'fachlich' && !a.zurueckgezogen ? (!r ? marke('ohne Regel: wirkt nicht auf die Auslegung', 'warn') : hatAbw ? marke('Regelwert in der Schicht angepasst', 'ok') : marke('Regelwert in der Schicht noch nicht angepasst', 'warn')) : ''}</p>
       <p class="aktionen">${r && sch && !hatAbw && !a.zurueckgezogen ? `<button data-act="aend-abw" data-id="${h(a.id)}">Regelwert anpassen</button>` : ''}${basisVeraltet(a) ? `<button data-act="aend-basis" data-id="${h(a.id)}">Gegen neuen Grundtext geprüft</button>` : ''}${letzte ? `<button data-act="aend-weg" data-id="${h(a.id)}">${neu ? 'Löschen' : a.zurueckgezogen ? 'Wieder aufnehmen' : 'Zurückziehen'}</button>` : ''}</p></article>`;
   }
+  const zurueckKnopf = () => { const z = S.ed.zurueck, zw = z && werk(z.w); return zw ? `<p class="vwzurueck"><button class="klein" data-act="verweis-zurueck">← Zurück zu ${h(zw.kurz)}, Seite ${z.s}</button></p>` : ''; };
   function edAnsicht(w) {
     const ds = dokus(w.id), dok = ds.find(d => d.id === S.ed.dok) || ds[0], N = dok.seiten; S.ed.dok = dok.id;
     const n = S.ed.seite = rund(S.ed.seite | 0, 1, N), E = S.ed;
@@ -1602,7 +1694,7 @@ if (typeof document !== 'undefined') (function () {
         <label class="sr" for="ed-text">Text der Seite ${n}</label><textarea id="ed-text" spellcheck="false">${h(E.entwurf)}</textarea>
         ${/\[\[(Tabelle|Skizze) /.test(E.entwurf) ? '<p class="hinweis edhinweis">Zeilen wie <code>[[Tabelle 12.1]]</code> und <code>[[Skizze 12.2]]</code> sind Platzhalter: An dieser Stelle steht in der Leseansicht die Tabelle oder die Skizze. Die Zeile lässt sich verschieben.</p>' : ''}
         <p class="aktionen edaktionen"><button class="haupt" data-act="ed-speichern">Änderung übernehmen</button><button data-act="ed-abbruch">Abbrechen</button></p>`;
-    else { const html = seitenHtml(dok, n, E.ansicht, E.ebene); const un = E.ansicht === 'hybrid' ? [] : unsicherVon(dok, n), oc = L().ocr[dok.id]; mitte = (un.length ? `<p class="hinweis edhinweis"><mark class="unsicher">${un.length} ${un.length === 1 ? 'Stelle' : 'Stellen'}</mark> auf dieser Seite hat die Texterkennung unsicher gelesen. Die Markierung verschwindet, sobald die Seite als verglichen markiert ist.</p>` : '') + (html.trim() ? `<div class="lesetext">${html}</div>` : '<p class="leer edleer">Auf dieser Seite wurde kein Text erkannt. Über „Text bearbeiten“ lässt er sich von Hand erfassen.</p>') + (E.ansicht === 'hybrid' ? LEGENDE : ''); }
+    else { const html = seitenHtml(dok, n, E.ansicht, E.ebene); const un = E.ansicht === 'hybrid' ? [] : unsicherVon(dok, n), oc = L().ocr[dok.id]; mitte = zurueckKnopf() + seitenHinweis(w, dok, n) + (un.length ? `<p class="hinweis edhinweis"><mark class="unsicher">${un.length} ${un.length === 1 ? 'Stelle' : 'Stellen'}</mark> auf dieser Seite hat die Texterkennung unsicher gelesen. Die Markierung verschwindet, sobald die Seite als verglichen markiert ist.</p>` : '') + (html.trim() ? `<div class="lesetext">${html}</div>` : '<p class="leer edleer">Auf dieser Seite wurde kein Text erkannt. Über „Text bearbeiten“ lässt er sich von Hand erfassen.</p>') + (E.ansicht === 'hybrid' ? LEGENDE : ''); }
     const zeigA = E.filter !== 'kommentar', zeigK = E.filter === 'alle' || E.filter === 'kommentar';
     const aL = zeigA ? aes.filter(a => E.filter === 'alle' || a.art === E.filter) : [], kL = zeigK ? anms : [];
     const teil = (titel, f) => { const x = aL.filter(f).sort((a, b) => a.seite - b.seite || a.nr - b.nr).map(aendKarte).join('') + kL.filter(f).sort((a, b) => a.seite - b.seite || a.nr - b.nr).map(anmKarte).join(''); return x ? `<h4>${titel}</h4>${x}` : ''; };
@@ -1616,7 +1708,7 @@ if (typeof document !== 'undefined') (function () {
       const an = (k, v) => `aria-pressed="${v}" class="${v ? 'an' : ''}"`;
       return `<div class="vgl" id="vgl" data-m="${m[0]}/${m[1]}">
         <div class="vglleiste">
-          <b class="vglname">${h(w.kurz)}</b>
+          <b class="vglname">${h(w.kurz)}</b>${S.ed.zurueck && werk(S.ed.zurueck.w) ? `<button class="klein" data-act="verweis-zurueck">← ${h(werk(S.ed.zurueck.w).kurz)}, S. ${S.ed.zurueck.s}</button>` : ''}
           <span class="zoom"><button data-act="ed-seite" data-d="-1" aria-label="Vorherige Seite" ${n <= 1 ? 'disabled' : ''}>‹</button><label class="sprung">Seite<input type="number" id="ed-sprung" min="1" max="${N}" value="${n}"> von ${N}</label><button data-act="ed-seite" data-d="1" aria-label="Nächste Seite" ${n >= N ? 'disabled' : ''}>›</button></span>
           <span class="zoom"><button data-act="vgl-zoom" data-d="-1" aria-label="Kleiner">−</button><output id="vgl-z" aria-label="Zoom"></output><button data-act="vgl-zoom" data-d="1" aria-label="Grösser">+</button></span>
           <span class="umschalt"><button data-act="vgl-zoom" data-v="seite" id="vgl-seite">Ganze Seite</button><button data-act="vgl-zoom" data-v="breite" id="vgl-breite">Seitenbreite</button></span>
@@ -2000,8 +2092,8 @@ if (typeof document !== 'undefined') (function () {
 
   // ----- Datei
   function teileDaten() { // drei Dateien: Bearbeitungsstand, Texte aus den PDF, Titelbilder
-    const l = L(), kern = {}; Object.keys(l).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder', 'elemente', 'unsicher', 'ocr', 'vorschlaege', 'zweitlesung'].includes(k)) kern[k] = l[k]; });
-    return { 'daten/bibliothek.json': JSON.stringify(kern, null, 1), 'daten/texte.json': JSON.stringify({ seitentext: l.seitentext, abschnitte: l.abschnitte, struktur: l.struktur, elemente: l.elemente, unsicher: l.unsicher, ocr: l.ocr, vorschlaege: l.vorschlaege, zweitlesung: l.zweitlesung }), 'daten/titelbilder.json': JSON.stringify(l.titelbilder) };
+    const l = L(), kern = {}; Object.keys(l).forEach(k => { if (!['seitentext', 'abschnitte', 'struktur', 'titelbilder', 'elemente', 'unsicher', 'ocr', 'vorschlaege', 'zweitlesung', 'bezuege', 'bezuegeStand'].includes(k)) kern[k] = l[k]; });
+    return { 'daten/bibliothek.json': JSON.stringify(kern, null, 1), 'daten/texte.json': JSON.stringify({ seitentext: l.seitentext, abschnitte: l.abschnitte, struktur: l.struktur, elemente: l.elemente, unsicher: l.unsicher, ocr: l.ocr, vorschlaege: l.vorschlaege, zweitlesung: l.zweitlesung, bezuege: l.bezuege, bezuegeStand: l.bezuegeStand }), 'daten/titelbilder.json': JSON.stringify(l.titelbilder) };
   }
   function herunterladen(name, text, typ) {
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: typ })); a.download = name;
@@ -2036,7 +2128,7 @@ if (typeof document !== 'undefined') (function () {
     try { texte = JSON.parse(await lies('daten/texte.json')); } catch (e) { /* ohne Texte weiter */ }
     try { bilder = JSON.parse(await lies('daten/titelbilder.json')); } catch (e) { /* werden nachgeholt */ }
     if (M.an) { const danach = await ruf('api/stand'); if (st.ok && danach.ok && st.j.revision !== danach.j.revision) return ladeBibliothek(); st = danach.ok ? danach : st; M.revision = st.j.revision; M.sperre = st.j.sperre || null; M.hat = !!st.j.ich; M.geladen = roh; bib.meta = bib.meta || {}; bib.meta.bearbeiter = M.ich.anzeige; }
-    S.lib = Object.assign(bib, { seitentext: texte.seitentext || {}, abschnitte: texte.abschnitte || [], struktur: texte.struktur || {}, elemente: texte.elemente || {}, unsicher: texte.unsicher || {}, ocr: texte.ocr || {}, vorschlaege: texte.vorschlaege || {}, zweitlesung: texte.zweitlesung || {}, titelbilder: bilder || {} });
+    S.lib = Object.assign(bib, { seitentext: texte.seitentext || {}, abschnitte: texte.abschnitte || [], struktur: texte.struktur || {}, elemente: texte.elemente || {}, unsicher: texte.unsicher || {}, ocr: texte.ocr || {}, vorschlaege: texte.vorschlaege || {}, zweitlesung: texte.zweitlesung || {}, bezuege: texte.bezuege || [], bezuegeStand: texte.bezuegeStand || null, titelbilder: bilder || {} });
     nachLaden();
   }
   function nachLaden() {
@@ -2233,6 +2325,13 @@ if (typeof document !== 'undefined') (function () {
     'hg-neu': () => mitName(() => hgForm(null)),
     'hg-edit': el => mitName(() => hgForm(hg(el.dataset.id))),
     'link-neu': el => mitName(() => linkForm(werk(el.dataset.id))),
+    verweis: el => { if (edGesperrt()) return false; const z = el.dataset; if (!werk(z.w)) return false;
+      const hier = S.view.typ === 'werk' && S.tab === 'edit' && S.ed.dok ? { w: S.view.id, d: S.ed.dok, s: S.ed.seite } : null;
+      S.view = { typ: 'werk', id: z.w }; const d = (z.d && dokId(z.d)) || dokVon(z.w);
+      if (d) { S.tab = 'edit'; S.ed.dok = d.id; S.ed.seite = +z.s || 1; S.ed.edit = false; S.ed.zurueck = hier; } else S.tab = 'info'; },
+    'verweis-zurueck': () => { const z = S.ed.zurueck; S.ed.zurueck = null; if (!z || !werk(z.w) || !dokId(z.d)) return; S.view = { typ: 'werk', id: z.w }; S.tab = 'edit'; S.ed.dok = z.d; S.ed.seite = z.s; S.ed.edit = false; },
+    'bezug-ja': el => mitName(() => { const e = vwBezuege().find(x => x.von === el.dataset.von && x.nach === el.dataset.nach); if (e) bezugJa(e, el.dataset.typ); render(); }),
+    'bezug-alle': el => mitName(() => { bezugOffen(werk(el.dataset.id)).forEach(e => bezugJa(e, 'verweist')); render(); }),
     'link-weg': el => mitName(() => { L().verknuepfungen = L().verknuepfungen.filter(v => v.id !== el.dataset.id); log('Verknüpfung entfernt', el.dataset.id); render(); }),
     import: el => mitName(() => importForm(werk(el.dataset.id))),
     freigeben: () => M.an && !darfFreigeben() ? meldung('Versionen freigeben dürfen nur Prüfer.') : mitName(() => dialog('Änderungen freigeben', `<p>${offeneAenderungen(L())} Änderungen werden zur Version ${L().versionen.length + 1}. Freigegebene Versionen lassen sich nicht mehr ändern.</p>${bereich('notiz', 'Was wurde geändert?', '', 'required')}${M.an ? '' : '<p class="hinweis">Solange nur eine Person arbeitet, gibt dieselbe Person frei.</p>'}`, d => { const v = neueVersion(L(), L().meta.bearbeiter, d.notiz.trim(), heute()); S.wahlAus.clear(); log('Version freigegeben', 'Version ' + v.nr, d.notiz.trim()); meldung('Version ' + v.nr + ' freigegeben. Jetzt speichern.'); }, 'Freigeben')),
@@ -2367,6 +2466,6 @@ if (typeof document !== 'undefined') (function () {
     else if (t.id === 'daten-datei' && t.files[0]) datenImport(t.files[0]);
   });
   window.addEventListener('beforeunload', ev => { if (S.dirty || (S.ed.edit && S.tab === 'edit')) { ev.preventDefault(); ev.returnValue = ''; } });
-  window.__nb = { S, A, M, takt, teileDaten, oeffne: (id, tab) => { S.view = { typ: 'werk', id }; S.tab = tab || 'regeln'; S.ed.edit = false; render(); } };
+  window.__nb = { S, A, M, takt, teileDaten, vw: { bezuege: vwBezuege, ziele: vwZiele, treffer: vwTreffer }, oeffne: (id, tab) => { S.view = { typ: 'werk', id }; S.tab = tab || 'regeln'; S.ed.edit = false; render(); } };
   hochfahren();
 })();

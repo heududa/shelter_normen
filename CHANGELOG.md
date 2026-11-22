@@ -1,5 +1,45 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.16.0 – 22.11.2026
+
+Beziehungen zwischen den Normen: Vermerk in der alten Norm, Durchsicht aller Aufhebungen und Ergänzungen, anklickbare Verweise.
+
+### Neu
+- **Vermerk in der alten Norm:** Im Kopf jeder Norm steht, was sie ganz oder in Teilen ersetzt oder ergänzt, mit Link zur neueren Norm und zum Beleg. Liegt eine Seite in einem betroffenen Kapitel oder Abschnitt, steht der Vermerk zusätzlich über dem Text der Seite (z. B. TWP 1984 Kapitel 4 → TWK 2017, Abschnitt 3.4 → Merkblatt Fernwärme).
+- **Vorrang:** Neue Beziehungsart «hat bei Abweichungen Vorrang vor». Im Kopf der Weisung steht die Zeile «Bei Abweichungen gehen vor: TPH-04, …».
+- **Durchsicht aller Normen:** In allen 90 PDF die Stellen gesucht und gelesen, an denen eine Norm eine andere aufhebt, ersetzt, ergänzt oder ihr vorgeht. 90 Beziehungen sind mit Seite und Wortlaut belegt (`werkzeuge/bezuege.json`, im Programm unter «Angaben → Aus der Durchsicht der Normen, belegt»).
+- **Verweise im Text anklickbar:** «TWP 3.15», «TWO 1977 Kap. 3.24.5», «Abschnitt 4.32.4», «Figur 3.2-12», «Tabelle 4.3-17» führen zur Seite. «Zurück zu …» führt an die Ausgangsstelle. In der Bibliothek sind es 1866 Verweise, davon 1159 innerhalb derselben Norm.
+- **Weitere Nennungen:** Unter «Angaben» steht, welche Normen einander im Text nennen, mit Seiten. Ein Klick übernimmt die Nennung als Verknüpfung; sie läuft dann über die Freigabe.
+
+### Ergebnis der Durchsicht
+| Beziehung | Anzahl | Beleg |
+|---|---|---|
+| TPH hat Vorrang vor TWO, TWP, TWS, TWE, TWK, TW Schock | 71 | Schlussbestimmungen von TPH-04, 05, 06, 07, 08, 09, 11, 14, 15, 16, 17, 18, 19, 20, 22 |
+| TW Typenschilder 2003 ersetzt die Vorgaben zu Typenschildern und Anleitungen in den TPH | 7 | Art. 3, Seite 3 |
+| TWW 2012 ergänzt TWP 1984 | 1 | Seite 5 |
+| Merkblatt 2024-01 Fernwärme ergänzt TWP 1984 Abschnitt 3.4 | 1 | Seite 1 |
+| TW EMP 2007 ergänzt TWO 1977, TWS 1982, TWE 1997 | 3 | Seite 7 |
+| TWK 2017 ersetzt Konstruktion und Bemessung in TWO 1977 und TWS 1982 | 2 | Seite 9, Umfang zu bestätigen |
+| TWK 2017 ersetzt TWP 1984 Kapitel 4 | 1 | TWP Seiten 8 und 72 |
+| TWE 1997 gilt für Bauten vor TWO 1977 und TWS 1982 | 2 | Art. 1, Seite 3 |
+| TMB Schleusenspülzeiten verweist auf TWO 3.24.5; TWE 1994 nennt TWP 1966 | 2 | Seite 1; Seite 9 |
+
+### Berichtigt
+- Die zwei Einträge «TWE 1997 erneuert TWO 1977» und «TWE 1997 erneuert TWS 1982» der Ersterfassung waren falsch. Nach Art. 1 gilt die TWE 1997 für Bauten, die **vor** Inkraftsetzung von TWO und TWS erstellt wurden. In einer bestehenden Bibliothek markiert das Programm die beiden Einträge; sie sind von Hand zu entfernen.
+
+### Vorgänger, die nicht in der Bibliothek sind
+Diese Aufhebungen stehen in den Normen, lassen sich aber nicht verknüpfen, weil die ältere Unterlage fehlt: TW Schock 1995; TWK 1994, 1997 und 2021; TW-Z&Q vom 15.05.2014; Weisungen vom 16.12.1987 für die Erneuerung (Teil 1 und 2); frühere Ausgaben von TPH-04, 06, 07, 08, 10, 11, 12, 14, 19, 21; Weisungen BZS von 1981, 1985 und 1993 zu Liegestellen; AW 2004; Merkblatt 2022-01; Weisungen und Wegleitung PSK 2013, PAK-Wegleitung 1999; ZUPLA 2012; Pauschalbeiträge 2024; Kreisschreiben 2/99; TWU 2000 (nur Anhang C vorhanden); TW EMP 1995.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| S1 | Nennt ein Text eine Weisung ohne Jahr (TWP, TWO, TWS, TWK, TW-Schock), ist die Ausgabe in der Bibliothek gemeint; bei «TWE» beide TWE. |
+| S2 | Die Beziehungen der Durchsicht liegen in `daten/texte.json`, nicht im Bearbeitungsstand. So erreichen sie auch eine Bibliothek mit eigenen Änderungen. Eine eigene Verknüpfung gleicher Art ersetzt den Eintrag der Durchsicht. |
+| S3 | «TWK 2017 ersetzt Konstruktion und Bemessung in TWO und TWS» ist aus dem Satz «Seit 1994 werden Schutzbauten einheitlich gemäss TWK konstruiert und bemessen» abgeleitet. Welche Abschnitte entfallen, steht dort nicht. |
+| S4 | TW Typenschilder 2003 ist mit den Pflichtenheften verknüpft, deren Ausgabe vor dem 1. Juli 2003 liegt (TPH-01, 02, 09, 15, 16, 17, 18). |
+| S5 | Verweise werden beim Anzeigen aus dem Text erkannt, nicht gespeichert. Die Zielseite ist die erste Seite ausserhalb eines Inhaltsverzeichnisses, auf der die Abschnittsnummer als Überschrift oder die Figur als Zeilenanfang steht. Einzelne Ziele können danebenliegen. |
+| S6 | Der Vermerk über dem Seitentext erscheint nur, wenn der Bereich der Verknüpfung ein Kapitel oder einen Abschnitt nennt. |
+
 ## 0.15.0 – 22.11.2026
 
 Logo und Farbkonzept ANDAIR.

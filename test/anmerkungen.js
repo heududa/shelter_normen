@@ -32,6 +32,7 @@ const path0 = path.join(__dirname, 'daten');
   const ws = await p.evaluate(async () => { const r = await fetch('daten/lagen/' + window.__nb.S.ed.dok + '.json'); return (await r.json()).seiten[64]; });
   assert.ok(ws.length > 100, 'Wortlagen Seite 64');
   const i0 = ws.findIndex((w, i) => i > 40 && w[0].length > 4), i1 = i0 + 23;
+  await p.evaluate(f => { const el = document.querySelector('.seite'); let sc = el.parentElement; while (sc && sc !== document.body && !(sc.scrollHeight > sc.clientHeight + 4 && /auto|scroll/.test(getComputedStyle(sc).overflowY))) sc = sc.parentElement; const r = el.getBoundingClientRect(), d = r.top + f * r.height - innerHeight / 2; if (sc && sc !== document.body) sc.scrollBy(0, d); else scrollBy(0, d); }, ws[i0][2]); // die Stelle in die Mitte holen: der Kopf der Norm ist je nach Vermerken verschieden hoch
   let bx = await p.locator('.seite').boundingBox(); const mitte = w => [bx.x + (w[1] + w[3] / 2) * bx.width, bx.y + (w[2] + w[4] / 2) * bx.height];
   await p.mouse.move(...mitte(ws[i0])); await p.mouse.down(); await p.mouse.move(...mitte(ws[i0 + 5]), { steps: 3 });
   await p.waitForFunction(() => document.querySelectorAll('.seite .auswahl').length === 6);

@@ -554,3 +554,18 @@ kbd{font-family:var(--ui);font-size:.85em;border:1px solid var(--linie);border-b
 button.haupt{background:var(--haupt);border-color:var(--haupt)}
 button:hover:not(:disabled){border-color:var(--haupt)}
 .leiste .ansichten a.aktiv i{background:var(--marke);color:#fff}
+
+/* Verweise zwischen Normen und Vermerk in abgelösten Teilen */
+.abgeloest{margin:.6rem 0 0;padding:.45rem .75rem;background:var(--rot-hell);border-left:4px solid var(--rot);font-size:.92rem;max-width:60rem}
+.abgeloest a{font-weight:600}
+.seitenhinweis{margin:0 0 .8rem}
+a.verweis{color:var(--blau);text-decoration:underline dotted;text-underline-offset:.15em;cursor:pointer}
+a.verweis.fremd{text-decoration-style:solid;font-weight:600}
+.vwzurueck{margin:0 0 .6rem}
+.links h3.vwvor{margin-top:1rem}
+.links li .klein{margin-left:.5rem}
+.abgeloest.mild{background:var(--blau-hell);border-left-color:var(--blau)}
+a.beleg{font-weight:400!important;font-size:.85em;white-space:nowrap}
+.links .notiz.warn{color:var(--rot);font-weight:600}
+details.abgeloest summary{cursor:pointer}
+details.abgeloest p{margin:.45rem 0 0}

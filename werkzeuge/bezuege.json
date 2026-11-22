@@ -1,0 +1,1184 @@
+{
+ "hinweis": "Durchsicht durch Claude am 22.11.2026: Stellen, an denen eine Norm eine andere aufhebt, ersetzt, ergänzt oder ihr vorgeht, in allen PDF gesucht und gelesen. Eingetragen ist nur, was im Text steht, mit Seite und Wortlaut. Keine Prüfung durch einen Prüfer.",
+ "datum": "2026-11-22",
+ "bezuege": [
+  {
+   "id": "b1",
+   "von": "tph04",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph04",
+    "s": 19
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b2",
+   "von": "tph04",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph04",
+    "s": 19
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b3",
+   "von": "tph04",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph04",
+    "s": 19
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b4",
+   "von": "tph04",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph04",
+    "s": 19
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b5",
+   "von": "tph04",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph04",
+    "s": 19
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b6",
+   "von": "tph04",
+   "typ": "vorrang",
+   "nach": "twk17",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph04",
+    "s": 19
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b7",
+   "von": "tph04",
+   "typ": "vorrang",
+   "nach": "schock21",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph04",
+    "s": 19
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b8",
+   "von": "tph06",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph06",
+    "s": 14
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b9",
+   "von": "tph06",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph06",
+    "s": 14
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b10",
+   "von": "tph06",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph06",
+    "s": 14
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b11",
+   "von": "tph06",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph06",
+    "s": 14
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b12",
+   "von": "tph06",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph06",
+    "s": 14
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b13",
+   "von": "tph06",
+   "typ": "vorrang",
+   "nach": "twk17",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph06",
+    "s": 14
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b14",
+   "von": "tph06",
+   "typ": "vorrang",
+   "nach": "schock21",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph06",
+    "s": 14
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b15",
+   "von": "tph11",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph11",
+    "s": 4
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b16",
+   "von": "tph11",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph11",
+    "s": 4
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b17",
+   "von": "tph11",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph11",
+    "s": 4
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b18",
+   "von": "tph11",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph11",
+    "s": 4
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b19",
+   "von": "tph11",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph11",
+    "s": 4
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b20",
+   "von": "tph11",
+   "typ": "vorrang",
+   "nach": "twk17",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph11",
+    "s": 4
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b21",
+   "von": "tph11",
+   "typ": "vorrang",
+   "nach": "schock21",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph11",
+    "s": 4
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b22",
+   "von": "tph19",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph19",
+    "s": 20
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b23",
+   "von": "tph19",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph19",
+    "s": 20
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b24",
+   "von": "tph19",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph19",
+    "s": 20
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b25",
+   "von": "tph19",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph19",
+    "s": 20
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b26",
+   "von": "tph19",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph19",
+    "s": 20
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b27",
+   "von": "tph19",
+   "typ": "vorrang",
+   "nach": "twk17",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph19",
+    "s": 20
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b28",
+   "von": "tph19",
+   "typ": "vorrang",
+   "nach": "schock21",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph19",
+    "s": 20
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b29",
+   "von": "tph20",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph20",
+    "s": 11
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber technischen Vorgaben in den Technischen Weisungen TWO, TWP, TWS, TWE, TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b30",
+   "von": "tph20",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph20",
+    "s": 11
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber technischen Vorgaben in den Technischen Weisungen TWO, TWP, TWS, TWE, TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b31",
+   "von": "tph20",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph20",
+    "s": 11
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber technischen Vorgaben in den Technischen Weisungen TWO, TWP, TWS, TWE, TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b32",
+   "von": "tph20",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph20",
+    "s": 11
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber technischen Vorgaben in den Technischen Weisungen TWO, TWP, TWS, TWE, TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b33",
+   "von": "tph20",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph20",
+    "s": 11
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber technischen Vorgaben in den Technischen Weisungen TWO, TWP, TWS, TWE, TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b34",
+   "von": "tph20",
+   "typ": "vorrang",
+   "nach": "twk17",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph20",
+    "s": 11
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber technischen Vorgaben in den Technischen Weisungen TWO, TWP, TWS, TWE, TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b35",
+   "von": "tph20",
+   "typ": "vorrang",
+   "nach": "schock21",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph20",
+    "s": 11
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber technischen Vorgaben in den Technischen Weisungen TWO, TWP, TWS, TWE, TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b36",
+   "von": "tph22",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph22",
+    "s": 10
+   },
+   "zitat": "dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b37",
+   "von": "tph22",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph22",
+    "s": 10
+   },
+   "zitat": "dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b38",
+   "von": "tph22",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph22",
+    "s": 10
+   },
+   "zitat": "dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b39",
+   "von": "tph22",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph22",
+    "s": 10
+   },
+   "zitat": "dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b40",
+   "von": "tph22",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph22",
+    "s": 10
+   },
+   "zitat": "dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b41",
+   "von": "tph22",
+   "typ": "vorrang",
+   "nach": "twk17",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph22",
+    "s": 10
+   },
+   "zitat": "dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b42",
+   "von": "tph22",
+   "typ": "vorrang",
+   "nach": "schock21",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph22",
+    "s": 10
+   },
+   "zitat": "dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS / TWE / TWK oder TW-Schock.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b43",
+   "von": "tph07",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph07",
+    "s": 9
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b44",
+   "von": "tph07",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph07",
+    "s": 9
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b45",
+   "von": "tph07",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph07",
+    "s": 9
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b46",
+   "von": "tph07",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph07",
+    "s": 9
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b47",
+   "von": "tph07",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph07",
+    "s": 9
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b48",
+   "von": "tph08",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph08",
+    "s": 8
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b49",
+   "von": "tph08",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph08",
+    "s": 8
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b50",
+   "von": "tph08",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph08",
+    "s": 8
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b51",
+   "von": "tph08",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph08",
+    "s": 8
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b52",
+   "von": "tph08",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph08",
+    "s": 8
+   },
+   "zitat": "Dieses Pflichtenheft hat Vorrang gegenüber den technischen Vorgaben in den Technischen Weisungen TWO / TWP / TWS oder TWE.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b53",
+   "von": "tph05",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph05",
+    "s": 18
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWO, TWS und TWE hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b54",
+   "von": "tph05",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph05",
+    "s": 18
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWO, TWS und TWE hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b55",
+   "von": "tph05",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph05",
+    "s": 18
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWO, TWS und TWE hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b56",
+   "von": "tph05",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph05",
+    "s": 18
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWO, TWS und TWE hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b57",
+   "von": "tph09",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph09",
+    "s": 9
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO und TWS hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b58",
+   "von": "tph09",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph09",
+    "s": 9
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO und TWS hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b59",
+   "von": "tph09",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph09",
+    "s": 9
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO und TWS hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b60",
+   "von": "tph14",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph14",
+    "s": 14
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO und TWS hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b61",
+   "von": "tph14",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph14",
+    "s": 14
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO und TWS hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b62",
+   "von": "tph14",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph14",
+    "s": 14
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO und TWS hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b63",
+   "von": "tph15",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph15",
+    "s": 10
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWO hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b64",
+   "von": "tph16",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph16",
+    "s": 12
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWS und TWP hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b65",
+   "von": "tph16",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph16",
+    "s": 12
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWS und TWP hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b66",
+   "von": "tph17",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph17",
+    "s": 9
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b67",
+   "von": "tph18",
+   "typ": "vorrang",
+   "nach": "twp84",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph18",
+    "s": 22
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO, TWS und TWE hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b68",
+   "von": "tph18",
+   "typ": "vorrang",
+   "nach": "two77",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph18",
+    "s": 22
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO, TWS und TWE hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b69",
+   "von": "tph18",
+   "typ": "vorrang",
+   "nach": "tws82",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph18",
+    "s": 22
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO, TWS und TWE hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b70",
+   "von": "tph18",
+   "typ": "vorrang",
+   "nach": "twe94",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph18",
+    "s": 22
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO, TWS und TWE hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b71",
+   "von": "tph18",
+   "typ": "vorrang",
+   "nach": "twe97",
+   "bereich": "technische Vorgaben bei Abweichungen",
+   "beleg": {
+    "w": "tph18",
+    "s": 22
+   },
+   "zitat": "Bei Abweichungen gegenüber den Weisungen gemäss TWP, TWO, TWS und TWE hat vorliegendes technisches Pflichtenheft Vorrang.",
+   "notiz": "Der Text nennt die Weisungen ohne Jahr; verknüpft ist die Ausgabe in der Bibliothek, bei «TWE» beide."
+  },
+  {
+   "id": "b72",
+   "von": "twts03",
+   "typ": "ersetzt",
+   "nach": "tph01",
+   "bereich": "Vorgaben zu Typenschildern, Montage-, Betriebs- und Wartungsanleitungen",
+   "beleg": {
+    "w": "twts03",
+    "s": 3
+   },
+   "zitat": "Mit ihrem Inkrafttreten sind alle ihnen widersprechende Vorschriften, Weisungen und Richtlinien, insbesondere die entsprechenden Weisungen der Technischen Pflichtenhefte für die Herstellung von BABS-prüfpflichtigen Einbauteilen, aufgehoben.",
+   "notiz": "Verknüpft sind die Pflichtenhefte mit Ausgabe vor dem 1. Juli 2003. Welche Ziffern im einzelnen Pflichtenheft entfallen, steht dort nicht."
+  },
+  {
+   "id": "b73",
+   "von": "twts03",
+   "typ": "ersetzt",
+   "nach": "tph02",
+   "bereich": "Vorgaben zu Typenschildern, Montage-, Betriebs- und Wartungsanleitungen",
+   "beleg": {
+    "w": "twts03",
+    "s": 3
+   },
+   "zitat": "Mit ihrem Inkrafttreten sind alle ihnen widersprechende Vorschriften, Weisungen und Richtlinien, insbesondere die entsprechenden Weisungen der Technischen Pflichtenhefte für die Herstellung von BABS-prüfpflichtigen Einbauteilen, aufgehoben.",
+   "notiz": "Verknüpft sind die Pflichtenhefte mit Ausgabe vor dem 1. Juli 2003. Welche Ziffern im einzelnen Pflichtenheft entfallen, steht dort nicht."
+  },
+  {
+   "id": "b74",
+   "von": "twts03",
+   "typ": "ersetzt",
+   "nach": "tph09",
+   "bereich": "Vorgaben zu Typenschildern, Montage-, Betriebs- und Wartungsanleitungen",
+   "beleg": {
+    "w": "twts03",
+    "s": 3
+   },
+   "zitat": "Mit ihrem Inkrafttreten sind alle ihnen widersprechende Vorschriften, Weisungen und Richtlinien, insbesondere die entsprechenden Weisungen der Technischen Pflichtenhefte für die Herstellung von BABS-prüfpflichtigen Einbauteilen, aufgehoben.",
+   "notiz": "Verknüpft sind die Pflichtenhefte mit Ausgabe vor dem 1. Juli 2003. Welche Ziffern im einzelnen Pflichtenheft entfallen, steht dort nicht."
+  },
+  {
+   "id": "b75",
+   "von": "twts03",
+   "typ": "ersetzt",
+   "nach": "tph15",
+   "bereich": "Vorgaben zu Typenschildern, Montage-, Betriebs- und Wartungsanleitungen",
+   "beleg": {
+    "w": "twts03",
+    "s": 3
+   },
+   "zitat": "Mit ihrem Inkrafttreten sind alle ihnen widersprechende Vorschriften, Weisungen und Richtlinien, insbesondere die entsprechenden Weisungen der Technischen Pflichtenhefte für die Herstellung von BABS-prüfpflichtigen Einbauteilen, aufgehoben.",
+   "notiz": "Verknüpft sind die Pflichtenhefte mit Ausgabe vor dem 1. Juli 2003. Welche Ziffern im einzelnen Pflichtenheft entfallen, steht dort nicht."
+  },
+  {
+   "id": "b76",
+   "von": "twts03",
+   "typ": "ersetzt",
+   "nach": "tph16",
+   "bereich": "Vorgaben zu Typenschildern, Montage-, Betriebs- und Wartungsanleitungen",
+   "beleg": {
+    "w": "twts03",
+    "s": 3
+   },
+   "zitat": "Mit ihrem Inkrafttreten sind alle ihnen widersprechende Vorschriften, Weisungen und Richtlinien, insbesondere die entsprechenden Weisungen der Technischen Pflichtenhefte für die Herstellung von BABS-prüfpflichtigen Einbauteilen, aufgehoben.",
+   "notiz": "Verknüpft sind die Pflichtenhefte mit Ausgabe vor dem 1. Juli 2003. Welche Ziffern im einzelnen Pflichtenheft entfallen, steht dort nicht."
+  },
+  {
+   "id": "b77",
+   "von": "twts03",
+   "typ": "ersetzt",
+   "nach": "tph17",
+   "bereich": "Vorgaben zu Typenschildern, Montage-, Betriebs- und Wartungsanleitungen",
+   "beleg": {
+    "w": "twts03",
+    "s": 3
+   },
+   "zitat": "Mit ihrem Inkrafttreten sind alle ihnen widersprechende Vorschriften, Weisungen und Richtlinien, insbesondere die entsprechenden Weisungen der Technischen Pflichtenhefte für die Herstellung von BABS-prüfpflichtigen Einbauteilen, aufgehoben.",
+   "notiz": "Verknüpft sind die Pflichtenhefte mit Ausgabe vor dem 1. Juli 2003. Welche Ziffern im einzelnen Pflichtenheft entfallen, steht dort nicht."
+  },
+  {
+   "id": "b78",
+   "von": "twts03",
+   "typ": "ersetzt",
+   "nach": "tph18",
+   "bereich": "Vorgaben zu Typenschildern, Montage-, Betriebs- und Wartungsanleitungen",
+   "beleg": {
+    "w": "twts03",
+    "s": 3
+   },
+   "zitat": "Mit ihrem Inkrafttreten sind alle ihnen widersprechende Vorschriften, Weisungen und Richtlinien, insbesondere die entsprechenden Weisungen der Technischen Pflichtenhefte für die Herstellung von BABS-prüfpflichtigen Einbauteilen, aufgehoben.",
+   "notiz": "Verknüpft sind die Pflichtenhefte mit Ausgabe vor dem 1. Juli 2003. Welche Ziffern im einzelnen Pflichtenheft entfallen, steht dort nicht."
+  },
+  {
+   "id": "b79",
+   "von": "tww12",
+   "typ": "ergaenzt",
+   "nach": "twp84",
+   "bereich": "Belüftung von Pflicht-Schutzräumen mit Wärmedämmung, bis 200 Schutzplätze",
+   "beleg": {
+    "w": "tww12",
+    "s": 5
+   },
+   "zitat": "Sie ergänzen die Technischen Weisungen für den Pflicht-Schutzraumbau (TWP 1984).",
+   "notiz": ""
+  },
+  {
+   "id": "b80",
+   "von": "mb2401",
+   "typ": "ergaenzt",
+   "nach": "twp84",
+   "bereich": "Abschnitt 3.4: Fernwärmeleitungen durch Schutzräume",
+   "beleg": {
+    "w": "mb2401",
+    "s": 1
+   },
+   "zitat": "Das vorliegende Dokument ist eine Ergänzung zu den «TWP 1984 – Technische Weisungen für den Pflicht-Schutzraumbau».",
+   "notiz": ""
+  },
+  {
+   "id": "b81",
+   "von": "twemp07",
+   "typ": "ergaenzt",
+   "nach": "two77",
+   "bereich": "EMP-Schutz der elektrischen Energieversorgung",
+   "beleg": {
+    "w": "twemp07",
+    "s": 7
+   },
+   "zitat": "Diese Weisungen […] bilden die Voraussetzung für Planung und Ausführung des EMP-Schutzes der elektrischen Energieversorgung von neuen Zivilschutzbauten gemäss TWO und TWS sowie der zu erneuernden Zivilschutzbauten nach TWE.",
+   "notiz": "Art der Beziehung aus dem Zweck abgeleitet. «TWE» ohne Jahr: verknüpft ist die TWE 1997 für Anlagen."
+  },
+  {
+   "id": "b82",
+   "von": "twemp07",
+   "typ": "ergaenzt",
+   "nach": "tws82",
+   "bereich": "EMP-Schutz der elektrischen Energieversorgung",
+   "beleg": {
+    "w": "twemp07",
+    "s": 7
+   },
+   "zitat": "Diese Weisungen […] bilden die Voraussetzung für Planung und Ausführung des EMP-Schutzes der elektrischen Energieversorgung von neuen Zivilschutzbauten gemäss TWO und TWS sowie der zu erneuernden Zivilschutzbauten nach TWE.",
+   "notiz": "Art der Beziehung aus dem Zweck abgeleitet. «TWE» ohne Jahr: verknüpft ist die TWE 1997 für Anlagen."
+  },
+  {
+   "id": "b83",
+   "von": "twemp07",
+   "typ": "ergaenzt",
+   "nach": "twe97",
+   "bereich": "EMP-Schutz der elektrischen Energieversorgung",
+   "beleg": {
+    "w": "twemp07",
+    "s": 7
+   },
+   "zitat": "Diese Weisungen […] bilden die Voraussetzung für Planung und Ausführung des EMP-Schutzes der elektrischen Energieversorgung von neuen Zivilschutzbauten gemäss TWO und TWS sowie der zu erneuernden Zivilschutzbauten nach TWE.",
+   "notiz": "Art der Beziehung aus dem Zweck abgeleitet. «TWE» ohne Jahr: verknüpft ist die TWE 1997 für Anlagen."
+  },
+  {
+   "id": "b84",
+   "von": "twk17",
+   "typ": "ersetzt",
+   "nach": "two77",
+   "bereich": "Konstruktion und Bemessung",
+   "beleg": {
+    "w": "twk17",
+    "s": 9
+   },
+   "zitat": "Seit 1994 werden Schutzbauten einheitlich gemäss den Technischen Weisungen für die Konstruktion und Bemessung von Schutzbauten (TWK 1994) konstruiert und bemessen.",
+   "notiz": "Welche Abschnitte der Weisung damit entfallen, steht in der TWK nicht. Umfang zu bestätigen."
+  },
+  {
+   "id": "b85",
+   "von": "twk17",
+   "typ": "ersetzt",
+   "nach": "tws82",
+   "bereich": "Konstruktion und Bemessung",
+   "beleg": {
+    "w": "twk17",
+    "s": 9
+   },
+   "zitat": "Seit 1994 werden Schutzbauten einheitlich gemäss den Technischen Weisungen für die Konstruktion und Bemessung von Schutzbauten (TWK 1994) konstruiert und bemessen.",
+   "notiz": "Welche Abschnitte der Weisung damit entfallen, steht in der TWK nicht. Umfang zu bestätigen."
+  },
+  {
+   "id": "b86",
+   "von": "twe97",
+   "typ": "verweist",
+   "nach": "two77",
+   "bereich": "gilt für Anlagen und spezielle Schutzräume, die vor Inkraftsetzung der TWO 1977 und der TWS 1982 erstellt wurden",
+   "beleg": {
+    "w": "twe97",
+    "s": 3
+   },
+   "zitat": "Die nachstehenden Technischen Weisungen vom 3. April 1997 regeln die Erneuerung von Anlagen und speziellen Schutzräumen, die vor Inkraftsetzung der TWO 1977 […] und TWS 1982 […] erstellt worden sind.",
+   "notiz": "",
+   "widerspricht": {
+    "id": "v8",
+    "typ": "erneuert"
+   }
+  },
+  {
+   "id": "b87",
+   "von": "twe97",
+   "typ": "verweist",
+   "nach": "tws82",
+   "bereich": "gilt für Anlagen und spezielle Schutzräume, die vor Inkraftsetzung der TWO 1977 und der TWS 1982 erstellt wurden",
+   "beleg": {
+    "w": "twe97",
+    "s": 3
+   },
+   "zitat": "Die nachstehenden Technischen Weisungen vom 3. April 1997 regeln die Erneuerung von Anlagen und speziellen Schutzräumen, die vor Inkraftsetzung der TWO 1977 […] und TWS 1982 […] erstellt worden sind.",
+   "notiz": "",
+   "widerspricht": {
+    "id": "v9",
+    "typ": "erneuert"
+   }
+  },
+  {
+   "id": "b88",
+   "von": "tmb002",
+   "typ": "verweist",
+   "nach": "two77",
+   "bereich": "Abschnitt 3.24.5: Schleusenspülzeit",
+   "beleg": {
+    "w": "tmb002",
+    "s": 1
+   },
+   "zitat": "gemäss den «Technischen Weisungen für die Schutzanlagen der Organisation und des Sanitätsdienstes» TWO 1977 Kap. 3.24.5 die Verweilzeit für vier Luftwechsel",
+   "notiz": ""
+  },
+  {
+   "id": "b89",
+   "von": "twe94",
+   "typ": "verweist",
+   "nach": "twp66",
+   "bereich": "vollwertige Schutzräume der Gruppe A",
+   "beleg": {
+    "w": "twe94",
+    "s": 9
+   },
+   "zitat": "Gruppe A umfasst die «vollwertigen» Schutzräume, die gemäss TWP 1966 und TWP 1984 erstellt oder nach den vorliegenden TWE erneuert wurden.",
+   "notiz": ""
+  },
+  {
+   "id": "b90",
+   "von": "twk17",
+   "typ": "ersetzt",
+   "nach": "twp84",
+   "bereich": "Kapitel 4 (Bemessung und Konstruktion)",
+   "beleg": {
+    "w": "twp84",
+    "s": 8
+   },
+   "zitat": "4. Bemessung und Konstruktion 73 Aufgehoben, siehe • TWK1994 Technische Weisungen für die Konstruktion und Bemessung von Schutzbauten",
+   "notiz": "Der Scan der TWP nennt TWK 1994 und TWK 1997 (Seiten 8 und 72). Die TWK 2017 nennt sich auf Seite 9 die Überarbeitung der TWK 1994."
+  }
+ ]
+}
