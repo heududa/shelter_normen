@@ -1,5 +1,11 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.18.2 – 22.11.2026
+
+### Neu
+- **Von der Regel zur Stelle in der Norm:** «Abschnitt 2.2» auf der Regelkarte ist ein Link. Er öffnet die Seite der Norm, auf der der Abschnitt beginnt; «Zurück zu …, Regeln» führt zurück. Bei 60 von 73 Regeln ist der Abschnitt gefunden. Bei den übrigen bleibt der Abschnitt Text (Abschnitt im PDF nicht als Überschrift erkannt, oder Regel einer Schicht ohne Abschnitt).
+- Die Seite ist aus der Abschnittsnummer erkannt, nicht geprüft (Annahme S5).
+
 ## 0.18.1 – 22.11.2026
 
 Vergleich: das Textblatt ist immer ein Blatt A4.

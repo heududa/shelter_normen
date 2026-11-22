@@ -395,7 +395,9 @@ if (typeof document !== 'undefined') (function () {
   }
   function regelKarte(r) {
     const w = werk(r.werkId), layer = istSchicht(w), ziel = r.zielId && regel(r.zielId);
-    const ort = [r.abschnitt && h('Abschnitt ' + r.abschnitt), seitenLink(r.werkId, r.pdfSeite, r.dokId)].filter(Boolean).join(', ');
+    // der Abschnitt führt zur Stelle im Text der Norm; bei einer Schicht in die Basisnorm
+    const qw = layer ? werk(w.basisId) : w, nrA = (/\d{1,2}(?:\.\d{1,2}){0,3}/.exec(r.abschnitt || '') || [])[0], zs = !r.pdfSeite && nrA && qw ? vwSeite(qw, nrA) : null;
+    const ort = [r.abschnitt && (zs ? `<a href="#" data-act="verweis" data-w="${h(qw.id)}" data-d="${h(zs.d)}" data-s="${zs.s}" title="${h(qw.kurz + ', Abschnitt ' + nrA + ', Seite ' + zs.s + ' zeigen')}">Abschnitt ${h(r.abschnitt)}</a><span class="ortseite"> · Seite ${zs.s}</span>` : h('Abschnitt ' + r.abschnitt)), seitenLink(r.werkId, r.pdfSeite, r.dokId)].filter(Boolean).join(', ');
     const pruef = layer ? '' : (r.geprueft ? marke(`am Original geprüft: ${r.geprueft.name}, ${datumCH(r.geprueft.datum)}`, 'ok') : marke('zu bestätigen: nicht am Original geprüft', 'warn'));
     const veraltet = ziel && r.basisRev < ziel.rev ? marke('Basis aktualisiert – prüfen', 'warn') : '';
     const offen = S.offen[r.id];
@@ -1709,7 +1711,7 @@ if (typeof document !== 'undefined') (function () {
       <p class="marken">${standMarke('aenderungen', a)}${a.zurueckgezogen ? marke('zurückgezogen', 'weg') : ''}${basisVeraltet(a) ? marke('Grundtext geändert – prüfen', 'warn') : ''}${a.art === 'fachlich' && !a.zurueckgezogen ? (!r ? marke('ohne Regel: wirkt nicht auf die Auslegung', 'warn') : hatAbw ? marke('Regelwert in der Schicht angepasst', 'ok') : marke('Regelwert in der Schicht noch nicht angepasst', 'warn')) : ''}</p>
       <p class="aktionen">${r && sch && !hatAbw && !a.zurueckgezogen ? `<button data-act="aend-abw" data-id="${h(a.id)}">Regelwert anpassen</button>` : ''}${basisVeraltet(a) ? `<button data-act="aend-basis" data-id="${h(a.id)}">Gegen neuen Grundtext geprüft</button>` : ''}${letzte ? `<button data-act="aend-weg" data-id="${h(a.id)}">${neu ? 'Löschen' : a.zurueckgezogen ? 'Wieder aufnehmen' : 'Zurückziehen'}</button>` : ''}</p></article>`;
   }
-  const zurueckKnopf = () => { const z = S.ed.zurueck, zw = z && werk(z.w); return zw ? `<p class="vwzurueck"><button class="klein" data-act="verweis-zurueck">← Zurück zu ${h(zw.kurz)}, Seite ${z.s}</button></p>` : ''; };
+  const zurueckKnopf = () => { const z = S.ed.zurueck, zw = z && werk(z.w); return zw ? `<p class="vwzurueck"><button class="klein" data-act="verweis-zurueck">← Zurück zu ${h(zw.kurz)}, ${z.tab ? 'Regeln' : 'Seite ' + z.s}</button></p>` : ''; };
   function edAnsicht(w) {
     const ds = dokus(w.id), dok = ds.find(d => d.id === S.ed.dok) || ds[0], N = dok.seiten; S.ed.dok = dok.id;
     const n = S.ed.seite = rund(S.ed.seite | 0, 1, N), E = S.ed;
@@ -1745,7 +1747,7 @@ if (typeof document !== 'undefined') (function () {
       const an = (k, v) => `aria-pressed="${v}" class="${v ? 'an' : ''}"`;
       return `<div class="vgl" id="vgl" data-m="${m[0]}/${m[1]}">
         <div class="vglleiste">
-          <b class="vglname">${h(w.kurz)}</b>${S.ed.zurueck && werk(S.ed.zurueck.w) ? `<button class="klein" data-act="verweis-zurueck">← ${h(werk(S.ed.zurueck.w).kurz)}, S. ${S.ed.zurueck.s}</button>` : ''}
+          <b class="vglname">${h(w.kurz)}</b>${S.ed.zurueck && werk(S.ed.zurueck.w) ? `<button class="klein" data-act="verweis-zurueck">← ${h(werk(S.ed.zurueck.w).kurz)}, ${S.ed.zurueck.tab ? 'Regeln' : 'S. ' + S.ed.zurueck.s}</button>` : ''}
           <span class="zoom"><button data-act="ed-seite" data-d="-1" aria-label="Vorherige Seite" ${n <= 1 ? 'disabled' : ''}>‹</button><label class="sprung">Seite<input type="number" id="ed-sprung" min="1" max="${N}" value="${n}"> von ${N}</label><button data-act="ed-seite" data-d="1" aria-label="Nächste Seite" ${n >= N ? 'disabled' : ''}>›</button></span>
           <span class="zoom"><button data-act="vgl-zoom" data-d="-1" aria-label="Kleiner">−</button><output id="vgl-z" aria-label="Zoom"></output><button data-act="vgl-zoom" data-d="1" aria-label="Grösser">+</button></span>
           <span class="umschalt"><button data-act="vgl-zoom" data-v="seite" id="vgl-seite">Ganze Seite</button><button data-act="vgl-zoom" data-v="breite" id="vgl-breite">Seitenbreite</button></span>
@@ -2370,10 +2372,10 @@ if (typeof document !== 'undefined') (function () {
     'hg-edit': el => mitName(() => hgForm(hg(el.dataset.id))),
     'link-neu': el => mitName(() => linkForm(werk(el.dataset.id))),
     verweis: el => { if (edGesperrt()) return false; const z = el.dataset; if (!werk(z.w)) return false;
-      const hier = S.view.typ === 'werk' && S.tab === 'edit' && S.ed.dok ? { w: S.view.id, d: S.ed.dok, s: S.ed.seite } : null;
+      const hier = S.view.typ === 'werk' && S.tab === 'edit' && S.ed.dok ? { w: S.view.id, d: S.ed.dok, s: S.ed.seite } : S.view.typ === 'werk' && S.tab === 'regeln' ? { w: S.view.id, tab: 'regeln' } : null;
       S.view = { typ: 'werk', id: z.w }; const d = (z.d && dokId(z.d)) || dokVon(z.w);
       if (d) { S.tab = 'edit'; S.ed.dok = d.id; S.ed.seite = +z.s || 1; S.ed.edit = false; S.ed.zurueck = hier; } else S.tab = 'info'; },
-    'verweis-zurueck': () => { const z = S.ed.zurueck; S.ed.zurueck = null; if (!z || !werk(z.w) || !dokId(z.d)) return; S.view = { typ: 'werk', id: z.w }; S.tab = 'edit'; S.ed.dok = z.d; S.ed.seite = z.s; S.ed.edit = false; },
+    'verweis-zurueck': () => { const z = S.ed.zurueck; S.ed.zurueck = null; if (z && z.tab && werk(z.w)) { S.view = { typ: 'werk', id: z.w }; S.tab = z.tab; S.ed.vgl = false; return; } if (!z || !werk(z.w) || !dokId(z.d)) return; S.view = { typ: 'werk', id: z.w }; S.tab = 'edit'; S.ed.dok = z.d; S.ed.seite = z.s; S.ed.edit = false; },
     'bezug-ja': el => mitName(() => { const e = vwBezuege().find(x => x.von === el.dataset.von && x.nach === el.dataset.nach); if (e) bezugJa(e, el.dataset.typ); render(); }),
     'bezug-alle': el => mitName(() => { bezugOffen(werk(el.dataset.id)).forEach(e => bezugJa(e, 'verweist')); render(); }),
     'link-weg': el => mitName(() => { L().verknuepfungen = L().verknuepfungen.filter(v => v.id !== el.dataset.id); log('Verknüpfung entfernt', el.dataset.id); render(); }),

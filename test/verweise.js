@@ -37,5 +37,9 @@ const path = require('path'), assert = require('assert'), { server } = require('
   const vor = await p.locator('[data-act=bezug-ja][data-typ=verweist]').count(); assert(vor > 0, 'keine Nennung bei TPH-19');
   const n0 = await nb(() => window.__nb.S.lib.verknuepfungen.length); await p.locator('[data-act=bezug-ja][data-typ=verweist]').first().click();
   await p.waitForFunction(n => window.__nb.S.lib.verknuepfungen.length === n + 1, n0); assert.equal(await p.locator('[data-act=bezug-ja][data-typ=verweist]').count(), vor - 1);
+  // 7 Regel: der Abschnitt führt zur Stelle in der Norm und zurück zu den Regeln
+  await nb(() => window.__nb.oeffne('twp84', 'regeln')); await p.waitForSelector('article.regel'); const rl = await p.locator('article.regel .ort a[data-act=verweis]').count(); assert(rl >= 15, 'Regeln mit Link: ' + rl);
+  await p.locator('article.regel .ort a[data-act=verweis]').first().click(); await p.waitForSelector('[data-act=verweis-zurueck]'); assert.equal(await nb(() => window.__nb.S.tab), 'edit');
+  await p.locator('[data-act=verweis-zurueck]').first().click(); await p.waitForSelector('article.regel'); assert.equal(await nb(() => window.__nb.S.tab), 'regeln'); console.log('TWP Regeln mit Link zum Abschnitt:', rl);
   console.log('Fehler:', errs); assert.equal(errs.length, 0); await b.close(); srv.close(); console.log('TEST VERWEISE OK');
 })().catch(e => { console.error(String(e.stack || e).slice(0, 1200)); process.exit(1); });
