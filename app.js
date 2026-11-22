@@ -735,7 +735,7 @@ if (typeof document !== 'undefined') (function () {
     const bw = li.clientWidth - 28, bh = li.clientHeight - 28, fit = Math.max(160, Math.min(bw, bh * a / b));
     const W = Math.round(E.vz === 'breite' ? bw : fit * (E.vz === 'seite' ? 100 : E.vz) / 100); E.vzAkt = Math.round(W / fit * 100);
     v.querySelectorAll('.vglblatt').forEach(x => { x.style.width = W + 'px'; });
-    const t = v.querySelector('.vgltext'); if (t) { t.style.minHeight = Math.round(W * b / a) + 'px'; t.style.fontSize = Math.max(4, W * 0.0165).toFixed(2) + 'px'; t.style.padding = `${Math.round(W * 0.06)}px ${Math.round(W * 0.08)}px`; }
+    const t = v.querySelector('.vgltext'); if (t) { t.style.minHeight = Math.round(W * b / a) + 'px'; t.style.fontSize = Math.max(4, W * 0.0165).toFixed(2) + 'px'; t.style.padding = `${Math.round(W * 0.06)}px ${Math.round(W * 0.08)}px`; blattA4(t, W, Math.round(W * b / a)); }
     let zg = $('#vgl-zg'); const se = v.querySelector('.seite');
     if (E.vblink && !E.edit && se && !zg) { zg = document.createElement('div'); zg.id = 'vgl-zg'; zg.className = 'vglzeile blinklage'; zg.dataset.dok = se.dataset.dok; zg.dataset.seite = se.dataset.seite; se.appendChild(zg); }
     if (zg) { if (!zg.classList.contains('blinklage')) zg.style.height = Math.round(W * b / a) + 'px'; else { zg.hidden = !E.vblinkT; const was = $('#vgl-blinkwas'); if (was) was.textContent = E.vblinkT ? 'Zu sehen: erkannter Text' : 'Zu sehen: Scan'; } zeilenBlatt(zg, zg.dataset.dok, +zg.dataset.seite); }
@@ -757,6 +757,15 @@ if (typeof document !== 'undefined') (function () {
       const zgl = ev.target.closest('.zg'); if (zgl) return linealGehe(+zgl.dataset.z, false);
       const s2 = ev.target.closest('.seite'); if (!s2) return; const q = s2.getBoundingClientRect(), y = (ev.clientY - q.top) / q.height; let best = 0; Z2.zl.forEach((z, k) => { if (Math.abs((z.o + z.u) / 2 - y) < Math.abs((Z2.zl[best].o + Z2.zl[best].u) / 2 - y)) best = k; }); linealGehe(best, false);
     });
+  }
+  function blattA4(t, W, H) { // das Textblatt ist ein Blatt wie die Seite daneben: Skizzen und Tabellen so breit wie im Original, Schrift verkleinert, bis der Text auf die Seite passt
+    delete t.dataset.lang; delete t.dataset.eng; t.style.height = ''; if (S.ed.edit) return;
+    const anteil = el => Math.min(100, +el.dataset.w / 0.84).toFixed(1) + '%'; // das Blatt hat links und rechts je 8 % Rand
+    t.querySelectorAll('img.ausschnitt[data-w]').forEach(im => { im.style.width = anteil(im); });
+    t.querySelectorAll('.uerahmen[data-w] > table').forEach(tb => { tb.style.width = anteil(tb.parentNode); });
+    const basis = Math.max(4, W * 0.0165), lt = t.querySelector('.lesetext'), hoch = () => lt ? lt.offsetTop + lt.offsetHeight + Math.round(W * 0.06) : 0; // Legende und Hinweise stehen ausserhalb des Blattes und zählen nicht
+    let f = 1; while (f > 0.6 && hoch() > H + 2) { f -= 0.05; t.style.fontSize = (basis * f).toFixed(2) + 'px'; }
+    if (f < 1) t.dataset.eng = Math.round(f * 100); if (hoch() > H + 2) t.dataset.lang = '1'; else t.style.height = H + 'px';
   }
   function vglZoom(d, v) {
     const E = S.ed; if (v) E.vz = v; else { const jetzt = E.vzAkt || 100, st = d > 0 ? VGL_STUFEN.find(x => x > jetzt + 2) : VGL_STUFEN.slice().reverse().find(x => x < jetzt - 2); if (!st) return; E.vz = st; }
@@ -1611,7 +1620,7 @@ if (typeof document !== 'undefined') (function () {
   function tabelleHtml(e, druck) {
     const Z = e.zeilen || [], dk = druck ? null : dokId(e.dokId), zelle = (t, tag) => `<${tag}>${(dk ? unsicherMark(h(t), dk, e.s) : h(t)).replace(/\n/g, '<br>')}</${tag}>`;
     const kopf = e.ohneKopf || Z.length < 2 ? '' : `<thead><tr>${Z[0].map(c => zelle(c, 'th')).join('')}</tr></thead>`;
-    return `<div class="uerahmen"><table class="uetab${e.ohneKopf ? ' ohnekopf' : ''}">${kopf}<tbody>${(kopf ? Z.slice(1) : Z).map(z => `<tr>${z.map((c, i) => zelle(c, e.ohneKopf && i === 0 ? 'th' : 'td')).join('')}</tr>`).join('')}</tbody></table></div>`;
+    return `<div class="uerahmen"${e.box && e.box.length === 4 ? ` data-w="${Math.round(e.box[2] * 100)}"` : ''}><table class="uetab${e.ohneKopf ? ' ohnekopf' : ''}">${kopf}<tbody>${(kopf ? Z.slice(1) : Z).map(z => `<tr>${z.map((c, i) => zelle(c, e.ohneKopf && i === 0 ? 'th' : 'td')).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
   function elementHtml(e, druck, frei) { // frei: das Element hat keine Marke im Text und lässt sich mit ↑ ↓ verschieben
     const name = (e.typ === 'tabelle' ? 'Tabelle ' : 'Skizze ') + e.nr, nr = `data-nr="${h(e.nr)}"`, sk = e.typ === 'skizze', eigen = sk && e.bild, br = sk && e.breite ? e.breite : 0, au = sk && e.ausr ? e.ausr : '';

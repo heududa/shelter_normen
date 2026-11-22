@@ -1,5 +1,20 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.18.1 – 22.11.2026
+
+Vergleich: das Textblatt ist immer ein Blatt A4.
+
+### Behoben
+- Im Vergleich («Fliesstext») war das Textblatt bei kleinem Zoom schmal und viel länger als die Seite daneben: Tabellen, Skizzen, Legende und Hinweise behielten ihre feste Grösse.
+- Neu ist das Textblatt in jedem Zoom so breit und so hoch wie die Originalseite. Schrift, Tabellen und Skizzen wachsen und schrumpfen mit dem Blatt; Skizzen und Tabellen sind so breit wie im Original.
+- Passt der Text nicht auf die Seite, wird die Schrift in Schritten bis auf 60 % verkleinert. Reicht das nicht, wird das Blatt nach unten verlängert und ein Hinweis steht darunter.
+- Legende der Farben und Hinweise stehen unter dem Blatt statt darauf.
+
+### Annahme (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| U3 | Das Blatt hat das Format der Originalseite (bei allen Normen der Bibliothek A4 hoch). Ein Querformat im Original bliebe quer. |
+
 ## 0.18.0 – 22.11.2026
 
 Suche über alles ausgebaut.

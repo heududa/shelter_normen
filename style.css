@@ -616,3 +616,13 @@ details.menue.klein>summary{font-size:.8rem;padding:.12rem .45rem}
 .suchfilter label{display:flex;gap:.4rem;align-items:center;font-size:.9rem;color:var(--leise)}
 .suchfilter select{max-width:18rem}
 .vglliste mark{background:var(--orange-hell);color:inherit;padding:0 .1rem}
+/* Vergleich: das Textblatt ist ein Blatt A4 wie die Seite daneben */
+.vgltext{position:relative}
+.vgltext .ue{margin:.6em 0}
+.vgltext .uetab{font-size:.9em;min-width:0}
+.vgltext .uetab th,.vgltext .uetab td{padding:.22em .4em;min-width:0}
+.vgltext img.ausschnitt{max-height:none;max-width:100%;height:auto}
+.vgltext .edhinweis,.vgltext .seitenhinweis,.vgltext .vwzurueck{display:none}
+.vgltext .legende{position:absolute;left:0;top:100%;margin:6px 0 0;padding:0;border:0;font-size:11px;white-space:nowrap}
+.vgltext[data-lang]::after{content:"Der Text ist länger als eine Seite; das Blatt ist nach unten verlängert.";position:absolute;right:0;top:100%;margin-top:22px;font:11px var(--ui);color:var(--orange)}
+#vgl-r{padding-bottom:52px}
