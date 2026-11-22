@@ -419,17 +419,17 @@ if (typeof document !== 'undefined') (function () {
   // ----- Kopf und Seitenleiste
   function kopf() {
     const v = letzteVersion(L()), n = R.offen.length, w = S.view.typ === 'werk' && werk(S.view.id);
-    const ort = w ? w.kurz : ({ pruefung: 'Prüfungen', index: 'Index', glossar: 'Glossar', offen: 'Änderungen', fassung: 'Geltende Fassung', verlauf: 'Versionen und Verlauf', suche: 'Suche' })[S.view.typ];
+    const ort = w ? w.kurz : ({ pruefung: 'Prüfen', index: 'Index', glossar: 'Glossar', offen: 'Änderungen', fassung: 'Geltende Fassung', verlauf: 'Verlauf', suche: 'Suche' })[S.view.typ];
     return `<header class="kopf">
       <div class="ort"><nav class="pfad" aria-label="Ort"><a href="#" data-act="ansicht" data-typ="start">Bibliothek</a>${ort ? `<span aria-hidden="true">/</span><b>${h(ort)}</b>` : ''}</nav>
         <p class="stand">${v ? `Version ${v.nr} vom ${datumCH(v.datum)}` : 'Noch keine Version freigegeben'}${n ? `, ${n} ${n === 1 ? 'Änderung' : 'Änderungen'} nicht freigegeben` : ''}</p></div>
       <label class="suche"><span class="sr">Suchen</span><input type="search" id="q" value="${h(S.q)}" placeholder="In Regeln, Texten und Anmerkungen suchen"></label>
       <div class="werkzeug">
-        ${M.an ? `<button data-act="m-konto" aria-haspopup="dialog">${h(M.ich.anzeige)} · ${ROLLE[M.ich.rolle]}</button>` : `<button data-act="name">${L().meta.bearbeiter ? 'Bearbeitet von ' + h(L().meta.bearbeiter) : 'Namen angeben'}</button>`}
+        ${M.an ? `<button data-act="m-konto" aria-haspopup="dialog">${h(M.ich.anzeige)} · ${ROLLE[M.ich.rolle]}</button>` : ''}
         <button data-act="freigeben" ${n && (!M.an || darfFreigeben()) ? '' : 'disabled'} ${M.an && !darfFreigeben() ? 'title="Versionen freigeben dürfen nur Prüfer"' : ''}>Änderungen freigeben</button>
         ${M.an ? `<span class="ablage" id="mstatus" role="status"></span><button id="msperre" data-act="m-sperre">Bearbeiten</button>` : A.dir ? `<span class="ablage" title="Gelesen und gespeichert wird in diesem Ordner">Ordner „${h(A.dir.name)}“</span>` : `<span class="ablage nurlesen" title="Ohne verbundenen Ordner lässt sich nicht direkt speichern">Nur lesen</span>${kannOrdner ? '<button data-act="ordner">Ordner verbinden</button>' : ''}`}
         ${M.an && M.ich.rolle === 'gast' ? '' : `<button class="haupt" data-act="speichern">${S.dirty ? 'Speichern •' : 'Speichern'}</button>`}
-        <button data-act="mehr" aria-haspopup="dialog">Daten</button>
+        ${menue('Daten', `${M.an ? '' : `<button data-act="name">${L().meta.bearbeiter ? 'Bearbeitet von ' + h(L().meta.bearbeiter) + ' (ändern)' : 'Namen angeben'}</button>`}<button data-act="mehr" aria-haspopup="dialog">Daten, Sicherung und Prüfer</button>`)}
       </div></header>`;
   }
   function leiste() {
@@ -439,7 +439,7 @@ if (typeof document !== 'undefined') (function () {
     const st = w && werkStatus(w), ds = w ? dokus(w.id) : [];
     return `<nav class="leiste" aria-label="Bereiche">
       <div class="app"><span class="logo" aria-hidden="true"></span><span class="zeichen" aria-hidden="true"></span><h1>${h(L().meta.titel)}</h1></div>
-      <div class="ansichten">${nav('start', 'Bibliothek')}${nav('offen', 'Änderungen', n)}${nav('pruefung', 'Prüfungen', L().werke.filter(w => dstat(w) === 'pruefung').length)}${nav('glossar', 'Glossar')}${nav('index', 'Index')}${nav('fassung', 'Geltende Fassung')}${nav('verlauf', 'Versionen und Verlauf')}</div>
+      <div class="ansichten">${nav('start', 'Bibliothek')}${nav('offen', 'Änderungen', n)}${nav('pruefung', 'Prüfen', L().werke.filter(w => dstat(w) === 'pruefung').length)}${nav('glossar', 'Glossar')}${nav('index', 'Index')}${nav('fassung', 'Geltende Fassung')}${nav('verlauf', 'Verlauf')}</div>
       <h3>Herausgeber</h3><ul class="hgs">${hgs}</ul>
       <p class="neu"><button data-act="werk-neu">Norm oder Schicht anlegen</button><button data-act="hg-neu">Herausgeber anlegen</button></p>
       ${w ? `<div class="aktuell"><h3>Aktuelle Norm</h3><b>${h(w.kurz)}</b><span>${h(st.pill)}${st.rechts ? ', ' + h(st.rechts) : ''}</span>${ds.length ? `<span>${ds.reduce((x, d) => x + d.seiten, 0)} Seiten</span>` : ''}${w.ausgabe ? `<span>Ausgabe ${h(w.ausgabe)}</span>` : ''}</div>` : ''}</nav>`;
@@ -877,6 +877,10 @@ if (typeof document !== 'undefined') (function () {
     const b = a.rect, pz = v => (v * 100).toFixed(2) + '%', zl = a.rects && a.rects.length && b.w > 0 && b.h > 0 ? a.rects : null;
     return `<button class="fleck art-${a.art}${zl ? ' text' : ''}${a.erledigt ? ' erledigt' : ''}${P.aktiv === a.id ? ' aktiv' : ''}" id="f-${h(a.id)}" data-act="fleck" data-id="${h(a.id)}" style="left:${pz(b.x)};top:${pz(b.y)};width:${pz(b.w)};height:${pz(b.h)}" aria-label="Anmerkung ${a.nr}: ${h(a.text.slice(0, 80))}">${zl ? zl.map(z => `<i style="left:${pz((z.x - b.x) / b.w)};top:${pz((z.y - b.y) / b.h)};width:${pz(z.w / b.w)};height:${pz(z.h / b.h)}"></i>`).join('') : ''}<span>${a.nr}</span></button>`;
   }
+  // Aufklappmenü: ein Knopf, darunter die selteneren Befehle
+  const menue = (titel, inhalt, kl) => `<details class="menue${kl ? ' ' + kl : ''}"><summary>${titel}</summary><div class="menueliste">${inhalt}</div></details>`;
+  document.addEventListener('click', ev => { document.querySelectorAll('details.menue[open]').forEach(d => { if (!d.contains(ev.target) || (ev.target.closest && ev.target.closest('.menueliste button, .menueliste a'))) d.open = false; }); });
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape') document.querySelectorAll('details.menue[open]').forEach(d => { d.open = false; }); });
   const markText = () => P.markWeise !== 'rechteck' && P.markArt !== 'tabelle' && P.markArt !== 'skizze';
   const markKl = () => P.mark ? ' mark' + (markText() ? ' marktext' : '') : '';
   const weiseWahl = () => `<span class="umschalt" role="group" aria-label="Art der Markierung"><button data-act="mark-weise" data-v="text" aria-pressed="${P.markWeise !== 'rechteck'}">Text</button><button data-act="mark-weise" data-v="rechteck" aria-pressed="${P.markWeise === 'rechteck'}">Rechteck</button></span>`;
@@ -1283,18 +1287,22 @@ if (typeof document !== 'undefined') (function () {
       inhaltHtml = (rs.length ? nachThema.map(([t, liste]) => `<section class="thema"><h3>${h(t[1])}</h3>${liste.map(regelKarte).join('')}</section>`).join('')
         : `<div class="leerblock"><p>${layer ? 'Diese Schicht enthält noch keine Abweichungen. Abweichungen erfasst man direkt bei der betreffenden Regel der Basisnorm, zusätzliche Regeln hier.' : 'Für dieses Werk sind noch keine Regeln erfasst.'}</p></div>`);
     }
-    const tab = (k, txt) => `<button role="tab" aria-selected="${S.tab === k}" data-act="tab" data-tab="${k}">${txt}</button>`;
+    // Vier Arbeitsweisen: Lesen, Prüfen, Bearbeiten, Regeln. Selteneres steht unter «Weitere».
     const seitenZ = ds.reduce((n, d) => n + d.seiten, 0), nAnm = L().anmerkungen.filter(a => a.werkId === w.id).length;
+    const modus = S.tab === 'regeln' ? 'regeln' : S.tab === 'edit' ? (S.ed.lesen ? 'lesen' : 'bearbeiten') : S.tab === 'pdf' || S.tab === 'text' ? 'lesen' : '';
+    const tab = (m, txt, attr) => `<button role="tab" aria-selected="${modus === m}" ${attr}>${txt}</button>`;
+    const art = layer ? (ebeneVon(w) === 'kanton' ? 'Kantonale Schicht' : 'Hersteller-Schicht') : w.art === 'produktanforderung' ? 'Produktanforderung, gilt unter jeder Norm' : w.art === 'unterlage' ? 'Weisung, Merkblatt oder Unterlage' : 'Norm';
+    const weitere = menue('<span aria-hidden="true">…</span><span class="sr">Weitere Befehle</span>', `<button data-act="werk-edit" data-id="${h(w.id)}">Angaben bearbeiten</button><button data-act="link-neu" data-id="${h(w.id)}">Verknüpfung hinzufügen</button><button data-act="regel-neu" data-werk="${h(w.id)}">${layer ? 'Regel ergänzen' : 'Regel erfassen'}</button>${dok ? '' : `<button data-act="pdf-neu" data-id="${h(w.id)}">PDF hinzufügen</button>`}${layer ? '' : `<button data-act="import" data-id="${h(w.id)}">Originaltext einlesen</button>`}${dok ? `<button data-act="digital" data-id="${h(w.id)}">Prüfstatus ändern</button>${L().ocr[dok.id] ? `<button data-act="pl-auf" data-id="${h(w.id)}">Prüfliste</button>` : ''}` : ''}${dok && darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}">Norm freigeben</button>` : ''}<hr><button data-act="tab" data-tab="info" aria-current="${S.tab === 'info'}">Angaben und Verknüpfungen</button><button data-act="tab" data-tab="log" aria-current="${S.tab === 'log'}">Änderungsprotokoll</button>`, 'punkte');
+    const unter = modus === 'lesen' ? `<p class="unterwahl"><span class="umschalt" role="group" aria-label="Was gelesen wird">${dok ? `<button data-act="modus" data-m="lesen" aria-pressed="${S.tab === 'edit'}">Seite für Seite</button>` : ''}<button data-act="tab" data-tab="pdf" aria-pressed="${S.tab === 'pdf'}">${dok ? `Ganzes Original (${(ds.length > 1 ? ds.length + ' Teile, ' : '') + seitenZ} Seiten, ${nAnm} Anmerkungen)` : 'Original-PDF (keines)'}</button>${layer ? '' : `<button data-act="tab" data-tab="text" aria-pressed="${S.tab === 'text'}">Abschnitte (${abs.length})</button>`}</span></p>` : '';
     return `<section class="blatt${S.tab === 'pdf' || S.tab === 'edit' ? ' weit' : ''}">
-      <header class="werkkopf">
-        <p class="art"><a href="#" data-act="ansicht" data-typ="start">Zurück zur Bibliothek</a> ${layer ? (ebeneVon(w) === 'kanton' ? 'Kantonale Schicht' : 'Hersteller-Schicht') : w.art === 'produktanforderung' ? 'Produktanforderung, gilt unter jeder Norm' : w.art === 'unterlage' ? 'Weisung, Merkblatt oder Unterlage' : 'Norm'} ${standMarke('werke', w)}</p>
-        <div class="werktitel"><h2>${h(w.kurz)}</h2><p class="lang">${h(w.titel)}</p><span class="pruefstand">${marke(st.pill, st.art)}${dok ? `<button class="klein" data-act="digital" data-id="${h(w.id)}">Prüfstatus ändern</button>` : ''}</span></div>
-        ${dok ? (st.k === 'freigegeben' ? `<p class="geprueft">Digitale Fassung mit dem Original verglichen und freigegeben von ${h((w.digital || {}).pruefer)} am ${datumCH((w.digital || {}).datum)}.</p>` : `<p class="ungeprueft"><b>${st.k === 'ungeprueft' ? 'Ungeprüfte digitale Fassung.' : DSTAT[st.k][0] + '.'}</b> Text und Struktur sind noch nicht anhand des Originals freigegeben. Massgebend ist das Original-PDF.${(w.digital || {}).notiz ? ' Bemerkung: ' + h(w.digital.notiz) : ''}</p>`) : ''}
+      <header class="werkkopf knapp">
+        <div class="werktitel"><h2>${h(w.kurz)}</h2><p class="lang">${h(w.titel)}</p><span class="pruefstand"><span class="art">${art}</span>${marke(st.pill, st.art)}${standMarke('werke', w)}</span></div>
+        ${dok ? (st.k === 'freigegeben' ? `<p class="geprueft">Digitale Fassung mit dem Original verglichen und freigegeben von ${h((w.digital || {}).pruefer)} am ${datumCH((w.digital || {}).datum)}.</p>` : `<p class="ungeprueft"><b>${st.k === 'ungeprueft' ? 'Ungeprüfte digitale Fassung.' : DSTAT[st.k][0] + '.'}</b> Massgebend ist das Original-PDF.${(w.digital || {}).notiz ? ' Bemerkung: ' + h(w.digital.notiz) : ''}</p>`) : ''}
         ${layer && ebeneVon(w) === 'hersteller' ? '<p class="vermerk">Herstellernorm – keine behördliche Norm</p>' : ''}
         ${neuereHtml(w)}
-        <p class="aktionen"><button data-act="werk-edit" data-id="${h(w.id)}">Angaben bearbeiten</button><button data-act="link-neu" data-id="${h(w.id)}">Verknüpfung hinzufügen</button><button data-act="regel-neu" data-werk="${h(w.id)}">${layer ? 'Regel ergänzen' : 'Regel erfassen'}</button>${dok ? '' : `<button data-act="pdf-neu" data-id="${h(w.id)}">PDF hinzufügen</button>`}${layer ? '' : `<button data-act="import" data-id="${h(w.id)}">Originaltext einlesen</button>`}</p>
+        <div class="tabs modi" role="tablist">${layer && !dok ? '' : tab('lesen', 'Lesen', 'data-act="modus" data-m="lesen"')}${dok ? tab('pruefen', 'Prüfen', `data-act="vgl-an" ${pdfDa(dok) && L().seitentext[dok.id] ? '' : 'disabled title="Dafür braucht es das PDF und den Text der Seiten"'}`) + tab('bearbeiten', 'Bearbeiten', 'data-act="tab" data-tab="edit"') : ''}${tab('regeln', `${layer ? 'Einträge' : 'Regeln'} (${rs.length})`, 'data-act="tab" data-tab="regeln"')}<span class="rechts">${modus === 'regeln' ? `<button data-act="regel-neu" data-werk="${h(w.id)}">${layer ? 'Regel ergänzen' : 'Regel erfassen'}</button>` : ''}${weitere}</span></div>
       </header>
-      <div class="tabs" role="tablist">${dok ? tab('edit', 'Bearbeitung') : ''}${tab('pdf', dok ? `Ganze Norm (${(ds.length > 1 ? ds.length + ' Teile, ' : '') + seitenZ} Seiten, ${nAnm} Anmerkungen)` : 'Original-PDF (keines)')}${tab('regeln', `${layer ? 'Einträge' : 'Regeln'} (${rs.length})`)}${layer ? '' : tab('text', `Originaltext (${abs.length} Abschnitte)`)}${tab('log', 'Änderungsprotokoll')}${tab('info', 'Angaben')}</div>
+      ${unter}${S.tab === 'info' ? '<h3 class="untertitel">Angaben und Verknüpfungen</h3>' : S.tab === 'log' ? '<h3 class="untertitel">Änderungsprotokoll</h3>' : ''}
       ${inhaltHtml}</section>`;
   }
 
@@ -1717,32 +1725,38 @@ if (typeof document !== 'undefined') (function () {
           <label class="haken"><input type="checkbox" id="vgl-sync" ${E.vsync ? 'checked' : ''}> Gleich scrollen</label>
           <button data-act="vgl-lineal" ${an('l', E.vlineal)} title="Die aktuelle Zeile ist auf beiden Seiten hervorgehoben; Pfeil auf und ab (L)">Zeilenlineal</button>`}
           <button data-act="vgl-blink" ${an('b', blink)} title="Scan und gesetzter Text liegen übereinander und wechseln auf Tastendruck (B)">Blinkvergleich</button>
-          <span class="rechts"><span class="vglstand" title="Seiten dieses PDF, die als verglichen markiert sind"><progress max="${N}" value="${nOk}"></progress> ${nOk} von ${N}</span><button data-act="vgl-unsicher" title="Zur nächsten Seite mit unsicher gelesenen Stellen (N)">Nächste unsichere</button><button data-act="seite-ok" aria-pressed="${ok}" class="${ok ? 'ok' : ''}" title="Enter: als verglichen markieren und zur nächsten Seite">${ok ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}">Norm freigeben</button>` : ''}${hat && !E.edit ? '<button data-act="ed-edit" title="E">Text bearbeiten</button>' : ''}<button data-act="vgl-tasten" aria-label="Tasten anzeigen">Tasten</button><button class="haupt" data-act="vgl-aus" title="Esc">Vergleich beenden</button></span>
+          <span class="rechts"><span class="vglstand" title="Seiten dieses PDF, die als verglichen markiert sind"><progress max="${N}" value="${nOk}"></progress> ${nOk} von ${N}</span><button data-act="vgl-unsicher" title="Zur nächsten Seite mit unsicher gelesenen Stellen (N)">Nächste unsichere</button>${L().ocr[dok.id] ? `<button data-act="pl-auf" data-id="${h(w.id)}">Prüfliste</button>` : ''}<button data-act="seite-ok" aria-pressed="${ok}" class="${ok ? 'ok' : ''}" title="Enter: als verglichen markieren und zur nächsten Seite">${ok ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}">Norm freigeben</button>` : ''}${hat && !E.edit ? '<button data-act="ed-edit" title="E">Text bearbeiten</button>' : ''}<button data-act="vgl-tasten" aria-label="Tasten anzeigen">Tasten</button><button class="haupt" data-act="vgl-aus" title="Esc">Prüfen beenden</button></span>
         </div>
         <div class="vglgrid${blink ? ' blink' : ''}">
           <div class="vglfeld" id="vgl-l" tabindex="0" aria-label="Original, Seite ${n}"><div class="vglblatt">${links}</div></div>
           ${blink ? '' : `<div class="vglfeld" id="vgl-r" tabindex="0" aria-label="Text der Seite ${n}">${zeile ? `<div class="vglblatt vglzeile" id="vgl-zg" data-dok="${h(dok.id)}" data-seite="${n}"></div>` : `<div class="vglblatt vgltext${E.edit ? ' schreibt' : ''}">${mitte}</div>`}</div>`}
         </div></div>`;
     }
+    const lesen = !!E.lesen, anK = P.mark && P.markArt === 'kommentar', laeuft = P.mark && P.markArt !== 'kommentar' ? P.markArt : '';
+    const jetzt = k => k === 'tabelle' || k === 'skizze' ? 'Jetzt den Bereich im Scan einrahmen' : markText() ? 'Jetzt den Text im Scan überstreichen' : 'Jetzt die Stelle im Scan einrahmen';
+    const markKnopf = (k, txt) => laeuft === k ? '' : `<button data-act="pdf-mark" data-art="${k}" aria-pressed="false">${txt}</button>`;
+    const kommentieren = `<span class="teilknopf"><button data-act="pdf-mark" data-art="kommentar" aria-pressed="${anK}" class="${anK ? 'haupt' : ''}">${anK ? jetzt('kommentar') : 'Stelle kommentieren'}</button>${menue('<span class="sr">Weitere Arten zu kommentieren</span>', `<div class="menuezeile">Markieren als ${weiseWahl()}</div><button data-act="anm-seite" data-werk="${h(w.id)}" data-dok="${h(dok.id)}" data-seite="${n}">Ganze Seite kommentieren</button>${markKnopf('aenderung', 'Änderung im Scan vorschlagen')}`, 'pfeil')}</span>`;
+    const einfuegen = menue('Einfügen', `${markKnopf('tabelle', 'Tabelle übernehmen')}${markKnopf('skizze', 'Skizze übernehmen')}${hat ? '<button data-act="bild-neu">Eigenes Bild einfügen</button>' : ''}`);
+    const ausgeben = menue('Ausgeben', `<button data-act="ed-druck">Drucken oder Word</button><button data-act="ed-pdf">PDF exportieren</button><button data-act="protokoll-csv" data-id="${h(w.id)}">Protokoll für Excel</button>`);
+    const okSeite = (dok.geprueftSeiten || []).includes(n), zoom = `<span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span>`;
+    const original = `<section class="edspalte" aria-label="Original"><header class="edkopf"><h3>Original</h3><span class="edtools">${lesen ? '' : `<button data-act="seite-ok" aria-pressed="${okSeite}" class="klein ${okSeite ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${okSeite ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>`}${zoom}</span></header>
+          <p class="edzeile ebenen"><span class="umschalt"><button data-act="ed-links" data-v="scan" aria-pressed="${E.links === 'scan'}">Scan</button><button data-act="ed-links" data-v="hybrid" aria-pressed="${E.links === 'hybrid'}">Hybrid</button></span>
+            ${E.links === 'hybrid' ? `<label class="regler">Text deckend<input type="range" id="ed-transp" min="0" max="100" step="5" value="${E.transp}"><output>${E.transp} %</output></label><label class="haken"><input type="checkbox" id="ed-z-scan" ${E.zScan ? 'checked' : ''}> Scan</label><label class="haken"><input type="checkbox" id="ed-z-text" ${E.zText ? 'checked' : ''}> Text</label>` : ''}<label class="haken"><input type="checkbox" id="ed-z-marken" ${E.zMarken ? 'checked' : ''}> Markierungen</label></p>
+          ${links}</section>`;
     return `<div class="pdfleiste edleiste">
         ${inhalt}
         ${ds.length > 1 ? `<label class="sprung">Teil<select id="ed-dok">${opt(ds.map(d => [d.id, d.teil || d.datei]), dok.id)}</select></label>` : ''}
         <span class="zoom"><button data-act="ed-seite" data-d="-1" aria-label="Vorherige Seite" ${n <= 1 ? 'disabled' : ''}>‹</button><label class="sprung">Seite<input type="number" id="ed-sprung" min="1" max="${N}" value="${n}"> von ${N}</label><button data-act="ed-seite" data-d="1" aria-label="Nächste Seite" ${n >= N ? 'disabled' : ''}>›</button></span>
-        <label class="sprung">Ich bearbeite<select id="ed-ebene">${opt([['', 'Grundtext (OCR-Korrektur)']].concat(schichten.map(x => [x.id, x.kurz + ' (fachlich)'])), E.ebene)}</select></label>
-        <span class="rechts"><button class="haupt" data-act="vgl-an" ${da && hat ? '' : 'disabled'}>Vergleichen: ganze Seite</button><button data-act="pl-auf" data-id="${h(w.id)}" ${L().ocr[dok.id] ? '' : 'disabled title="Nur für gescannte Normen"'}>Prüfliste</button><button data-act="ed-druck">Drucken oder Word</button><button data-act="ed-pdf">PDF exportieren</button><button data-act="protokoll-csv" data-id="${h(w.id)}">Protokoll für Excel</button></span>
+        ${lesen ? `<label class="haken"><input type="checkbox" id="ed-lesorig" ${E.lesOrig ? 'checked' : ''}> Original daneben zeigen</label>` : `<label class="sprung">Ich bearbeite<select id="ed-ebene">${opt([['', 'Grundtext (OCR-Korrektur)']].concat(schichten.map(x => [x.id, x.kurz + ' (fachlich)'])), E.ebene)}</select></label>`}
+        <span class="rechts">${lesen ? '' : `${laeuft ? `<button data-act="pdf-mark" data-art="${laeuft}" aria-pressed="true" class="haupt">${jetzt(laeuft)}</button>` : ''}${kommentieren}${einfuegen}`}${ausgeben}</span>
       </div>
-      <div class="edgrid">
-        <section class="edspalte" aria-label="Original"><header class="edkopf"><h3>Original</h3><span class="edtools"><button data-act="seite-ok" aria-pressed="${(dok.geprueftSeiten || []).includes(n)}" class="klein ${(dok.geprueftSeiten || []).includes(n) ? 'ok' : ''}" title="${(dok.geprueftSeiten || []).length} von ${N} Seiten verglichen">${(dok.geprueftSeiten || []).includes(n) ? 'Seite verglichen ✓' : 'Seite als verglichen markieren'}</button>${darfFreigeben() && dstat(w) !== 'freigegeben' ? `<button data-act="digital-frei" data-id="${h(w.id)}" class="klein" title="${seitenStand(w).ok} von ${seitenStand(w).alle} Seiten verglichen">Norm freigeben</button>` : ''}<span class="zoom"><button data-act="pdf-zoom" data-d="-25" aria-label="Kleiner">−</button><output>${P.zoom} %</output><button data-act="pdf-zoom" data-d="25" aria-label="Grösser">+</button></span></span></header>
-          <p class="edzeile">${['aenderung', 'kommentar'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? (markText() ? 'Jetzt den Text im Scan überstreichen' : 'Jetzt die Stelle im Scan einrahmen') : k === 'aenderung' ? 'Änderung im Scan vorschlagen' : 'Stelle kommentieren'}</button>`; }).join('')}${weiseWahl()}<button data-act="anm-seite" data-werk="${h(w.id)}" data-dok="${h(dok.id)}" data-seite="${n}">Ganze Seite kommentieren</button></p>
-          <p class="edzeile">${['tabelle', 'skizze'].map(k => { const an = P.mark && P.markArt === k; return `<button data-act="pdf-mark" data-art="${k}" aria-pressed="${an}" class="${an ? 'haupt' : ''}">${an ? 'Jetzt den Bereich im Scan einrahmen' : k === 'tabelle' ? 'Tabelle übernehmen' : 'Skizze übernehmen'}</button>`; }).join('')}${hat ? '<button data-act="bild-neu">Eigenes Bild einfügen</button>' : ''}</p>
-          <p class="edzeile ebenen"><span class="umschalt"><button data-act="ed-links" data-v="scan" aria-pressed="${E.links === 'scan'}">Scan</button><button data-act="ed-links" data-v="hybrid" aria-pressed="${E.links === 'hybrid'}">Hybrid</button></span>
-            ${E.links === 'hybrid' ? `<label class="regler">Text deckend<input type="range" id="ed-transp" min="0" max="100" step="5" value="${E.transp}"><output>${E.transp} %</output></label><label class="haken"><input type="checkbox" id="ed-z-scan" ${E.zScan ? 'checked' : ''}> Scan</label><label class="haken"><input type="checkbox" id="ed-z-text" ${E.zText ? 'checked' : ''}> Text</label>` : ''}<label class="haken"><input type="checkbox" id="ed-z-marken" ${E.zMarken ? 'checked' : ''}> Markierungen</label></p>
-          ${links}</section>
-        <section class="edspalte" aria-label="Text der Seite"><header class="edkopf"><h3>Text der Seite ${n}</h3><span class="edtools"><span class="umschalt">${sicht('original', 'Grundtext')}${sicht('hybrid', 'Mit Änderungen')}${sicht('neu', 'Neu')}</span>${hat && !E.edit ? '<button class="haupt" data-act="ed-edit">Text bearbeiten</button>' : ''}</span></header>
+      <div class="edgrid${lesen ? (E.lesOrig ? ' lesen mitorig' : ' lesen') : ''}">
+        ${lesen && !E.lesOrig ? '' : original}
+        <section class="edspalte" aria-label="Text der Seite"><header class="edkopf"><h3>Text der Seite ${n}</h3><span class="edtools"><span class="umschalt">${sicht('original', 'Grundtext')}${sicht('hybrid', 'Mit Änderungen')}${sicht('neu', 'Neu')}</span>${hat && !E.edit && !lesen ? '<button data-act="ed-edit">Text bearbeiten</button>' : ''}</span></header>
           ${mitte}</section>
-        <aside id="pdfanm" class="edspalte edliste" aria-label="Änderungen"><header class="edkopf"><h3>Änderungen (${aes.length + anms.length})</h3></header>
+        ${lesen ? '' : `<aside id="pdfanm" class="edspalte edliste" aria-label="Änderungen"><header class="edkopf"><h3>Änderungen (${aes.length + anms.length})</h3></header>
           <p class="umschalt chips">${chip('alle', 'Alle', aes.length + anms.length)}${chip('fachlich', 'Fachlich', aes.filter(a => a.art === 'fachlich').length)}${chip('ocr', 'OCR', aes.filter(a => a.art === 'ocr').length)}${chip('kommentar', 'Kommentare', anms.length)}</p>
-          ${liste || '<p class="leer">Noch keine Änderung. Den Text bearbeiten oder eine Stelle im Original kommentieren.</p>'}</aside>
+          ${liste || '<p class="leer">Noch keine Änderung. Den Text bearbeiten oder eine Stelle im Original kommentieren.</p>'}</aside>`}
       </div>`;
   }
   function aendAnlegen(w, dId, n, art, sch, vorher, nachher, begruendung, regelId) {
@@ -1949,7 +1963,7 @@ if (typeof document !== 'undefined') (function () {
     if (!ein.length) return '<tr><td colspan="5" class="leer">Kein Begriff entspricht der Suche.</td></tr>';
     let vor = '';
     return ein.map(g => { const w = werk(g.werkId), d = g.dokId && dokId(g.dokId), erst = g.begriff !== vor; vor = g.begriff;
-      return `<tr class="${g.zurueckgezogen ? 'weg' : ''}${erst ? ' erst' : ''}" id="g-${h(g.id)}"><th scope="row">${erst ? h(g.begriff) : ''}</th><td>${h(g.bedeutung)}</td><td>${w ? `<a href="#" data-act="${d && g.seite ? 'pdf-seite' : 'werk'}" data-id="${h(w.id)}"${d ? ` data-dok="${h(d.id)}"` : ''} data-seite="${h(g.seite || '')}">${h(w.kurz)}${g.seite ? ', S. ' + h(g.seite) : ''}</a>` : 'ohne Quelle'}</td><td>${g.geprueft ? marke('am Original geprüft', 'ok') : marke('zu bestätigen', 'warn')}${g.herkunft === 'text' ? marke('aus dem Lauftext erkannt', 'entwurf') : ''}${standMarke('glossar', g)}${g.zurueckgezogen ? marke('zurückgezogen', 'weg') : ''}</td><td class="tat"><button class="klein" data-act="glossar-edit" data-id="${h(g.id)}">bearbeiten</button><button class="klein" data-act="glossar-pruef" data-id="${h(g.id)}">${g.geprueft ? 'Prüfvermerk entfernen' : 'geprüft'}</button><button class="klein" data-act="glossar-weg" data-id="${h(g.id)}">${standVon(L(), 'glossar', g) === 'neu' ? 'löschen' : g.zurueckgezogen ? 'wieder aufnehmen' : 'zurückziehen'}</button></td></tr>`; }).join('');
+      return `<tr class="${g.zurueckgezogen ? 'weg' : ''}${erst ? ' erst' : ''}" id="g-${h(g.id)}"><th scope="row">${erst ? h(g.begriff) : ''}</th><td>${h(g.bedeutung)}</td><td>${w ? `<a href="#" data-act="${d && g.seite ? 'pdf-seite' : 'werk'}" data-id="${h(w.id)}"${d ? ` data-dok="${h(d.id)}"` : ''} data-seite="${h(g.seite || '')}">${h(w.kurz)}${g.seite ? ', S. ' + h(g.seite) : ''}</a>` : 'ohne Quelle'}</td><td>${g.geprueft ? marke('am Original geprüft', 'ok') : marke('zu bestätigen', 'warn')}${g.herkunft === 'text' ? marke('aus dem Lauftext erkannt', 'entwurf') : ''}${standMarke('glossar', g)}${g.zurueckgezogen ? marke('zurückgezogen', 'weg') : ''}</td><td class="tat"><button class="klein" data-act="glossar-pruef" data-id="${h(g.id)}">${g.geprueft ? 'Prüfvermerk entfernen' : 'geprüft'}</button>${menue(`<span aria-hidden="true">…</span><span class="sr">Weitere Befehle zu ${h(g.begriff)}</span>`, `<button data-act="glossar-edit" data-id="${h(g.id)}">Bearbeiten</button><button data-act="glossar-weg" data-id="${h(g.id)}">${standVon(L(), 'glossar', g) === 'neu' ? 'Löschen' : g.zurueckgezogen ? 'Wieder aufnehmen' : 'Zurückziehen'}</button>`, 'punkte klein')}</td></tr>`; }).join('');
   }
   function glossarAnsicht() {
     const n = new Set(L().glossar.map(g => g.begriff)).size;
@@ -2243,7 +2257,7 @@ if (typeof document !== 'undefined') (function () {
       pdfExport(werk(S.view.id), { deckblatt: !!d.deckblatt, blaetter: !!d.blaetter, marken: !!d.marken, seiten: wahl }).then(n => { $('#dlg').close(); meldung(`PDF mit ${n} Seiten erzeugt.`); }, e => { const f = $('.fehler', form); f.textContent = 'Das PDF lässt sich nicht erzeugen: ' + (e.message || e); f.hidden = false; knopf.disabled = false; knopf.textContent = 'PDF erzeugen'; });
       return false;
     }, 'PDF erzeugen'),
-    'aend-zeige': el => { const a = aend(el.dataset.id); S.view = { typ: 'werk', id: a.werkId }; S.tab = 'edit'; S.ed.dok = a.dokId; S.ed.seite = a.seite; S.ed.edit = false; if (a.schichtId) S.ed.ebene = a.schichtId; P.aktiv = a.id; },
+    'aend-zeige': el => { const a = aend(el.dataset.id); S.view = { typ: 'werk', id: a.werkId }; S.tab = 'edit'; S.ed.lesen = false; S.ed.dok = a.dokId; S.ed.seite = a.seite; S.ed.edit = false; if (a.schichtId) S.ed.ebene = a.schichtId; P.aktiv = a.id; },
     'aend-weg': el => mitName(() => { const a = aend(el.dataset.id); if (standVon(L(), 'aenderungen', a) === 'neu') { L().aenderungen = L().aenderungen.filter(x => x !== a); log('Nicht freigegebene Textänderung gelöscht', a.id); } else if (a.zurueckgezogen) { const k = kette(L(), a.dokId, a.seite, a.art === 'fachlich' ? a.schichtId : ''); if (k.length && k[k.length - 1].nachher !== a.vorher) return meldung('Der Text wurde inzwischen weiter geändert. Diese Änderung lässt sich nicht wieder aufnehmen.'); a.zurueckgezogen = false; L().aenderungen = L().aenderungen.filter(x => x !== a).concat([a]); log('Textänderung wieder aufgenommen', a.id); } else { a.zurueckgezogen = true; log('Textänderung zurückgezogen', a.id); } render(); }),
     'aend-basis': el => mitName(() => { const a = aend(el.dataset.id); a.basis = kurzSum(textOcr(L(), a.dokId, a.seite)); log('Textänderung gegen neuen Grundtext geprüft', a.id); render(); }),
     'aend-abw': el => mitName(() => { const a = aend(el.dataset.id), r = regel(a.regelId); regelForm(null, { werkId: a.schichtId, art: 'aendern', zielId: r.id, basisRev: r.rev, thema: r.thema, titel: r.titel, text: r.text, params: JSON.parse(JSON.stringify(r.params)), abschnitt: '', pdfSeite: '', begruendung: a.begruendung, quelle: 'Textänderung ' + a.id }); }),
@@ -2263,7 +2277,8 @@ if (typeof document !== 'undefined') (function () {
     'pdf-laden': el => { const d = dokId(el.dataset.id); pdfBytes(d).then(b => herunterladenBlob(d.datei, new Blob([b], { type: 'application/pdf' })), e => meldung('Das PDF lässt sich nicht laden: ' + (e.message || e))); return false; },
     'pdf-text': el => mitName(() => { const w = werk(el.dataset.id); if (L().abschnitte.some(a => a.werkId === w.id)) dialog('Originaltext ersetzen?', `<p>Für ${h(w.kurz)} ist bereits ein Originaltext eingelesen. Der Text aus dem PDF ersetzt ihn vollständig.</p>`, () => { pdfText(w); }, 'Ersetzen'); else pdfText(w); }),
     'pdf-seite': el => { geheZu(el.dataset.id, +el.dataset.seite, null, el.dataset.dok); },
-    'vgl-an': () => { S.ed.vgl = true; },
+    'vgl-an': () => { if (edGesperrt()) return false; S.tab = 'edit'; S.ed.vgl = true; },
+    modus: el => { if (edGesperrt()) return false; const w = werk(S.view.id); if (el.dataset.m === 'lesen') { if (dokVon(w.id)) { S.tab = 'edit'; S.ed.lesen = true; S.ed.edit = false; P.mark = false; } else S.tab = istSchicht(w) ? 'pdf' : 'text'; } },
     'vgl-aus': () => { S.ed.vgl = false; },
     'pl-auf': el => { S.view = { typ: 'stellen', id: el.dataset.id }; S.ed.vgl = false; plStart(werk(el.dataset.id), S.pl && S.pl.werk === el.dataset.id ? S.pl.art : 'unsicher'); },
     'pl-ok': () => mitName(() => { plTat('ok'); render(); }),
@@ -2273,7 +2288,7 @@ if (typeof document !== 'undefined') (function () {
     'pl-weiter': () => { S.pl.i++; },
     'pl-zurueck': () => { if (S.pl.i > 0) S.pl.i--; },
     'pl-neu': () => { const Q = S.pl; Q.liste = Q.liste.filter(x => !x.fertig); Q.von = Q.liste.length; Q.i = 0; Q.ok = 0; Q.korr = 0; },
-    'pl-vgl': () => { const it = S.pl.liste[S.pl.i], d = dokId(it.dokId); S.view = { typ: 'werk', id: d.werkId }; S.tab = 'edit'; S.ed.dok = it.dokId; S.ed.seite = it.n; S.ed.edit = false; S.ed.vgl = true; },
+    'pl-vgl': () => { const it = S.pl.liste[S.pl.i], d = dokId(it.dokId); S.view = { typ: 'werk', id: d.werkId }; S.tab = 'edit'; S.ed.lesen = false; S.ed.dok = it.dokId; S.ed.seite = it.n; S.ed.edit = false; S.ed.vgl = true; },
     'vgl-text': el => { S.ed.vtext = el.dataset.v; },
     'vgl-lineal': () => { S.ed.vlineal = !S.ed.vlineal; },
     'vgl-blink': () => { S.ed.vblink = !S.ed.vblink; S.ed.vblinkT = true; },
@@ -2297,7 +2312,7 @@ if (typeof document !== 'undefined') (function () {
     ansicht: el => { S.view = { typ: el.dataset.typ }; },
     werk: el => { if (!werk(el.dataset.id)) return; S.view = { typ: 'werk', id: el.dataset.id }; S.tab = 'regeln'; },
     'werk-text': el => { S.view = { typ: 'werk', id: el.dataset.id }; S.tab = 'text'; },
-    tab: el => { if (edGesperrt()) return false; S.tab = el.dataset.tab; },
+    tab: el => { if (edGesperrt()) return false; S.tab = el.dataset.tab; if (S.tab === 'edit') S.ed.lesen = false; },
     'zeige-regel': el => { const r = regel(el.dataset.id); S.view = { typ: 'werk', id: r.werkId }; S.tab = 'regeln'; render(); const z = document.getElementById('r-' + r.id); if (z) z.scrollIntoView({ block: 'center' }); return false; },
     'm-konto': () => dialog('Konto', `<p>Angemeldet als <b>${h(M.ich.anzeige)}</b> (${h(M.ich.name)}), Rolle ${ROLLE[M.ich.rolle]}.</p>
       <p class="reihe"><button type="button" data-act="m-passwort">Passwort ändern</button><button type="button" data-act="m-abmelden">Abmelden</button></p>
@@ -2368,7 +2383,7 @@ if (typeof document !== 'undefined') (function () {
     'glossar-zeige': el => { const g = L().glossar.find(x => x.id === el.dataset.id); S.view = { typ: 'glossar' }; S.gq = g ? g.begriff : ''; },
     'ed-inhalt': () => { S.ed.inhaltAuf = !S.ed.inhaltAuf; return false; },
     'ed-gehe': el => { if (edGesperrt()) return false; S.ed.seite = +el.dataset.s; S.ed.inhaltAuf = false; },
-    'ue-zeige': el => { const u = L().uebernahmen.find(x => x.id === el.dataset.id); S.view = { typ: 'werk', id: u.werkId }; S.tab = 'edit'; S.ed.dok = u.dokId; S.ed.seite = u.seite; S.ed.edit = false; },
+    'ue-zeige': el => { const u = L().uebernahmen.find(x => x.id === el.dataset.id); S.view = { typ: 'werk', id: u.werkId }; S.tab = 'edit'; S.ed.lesen = false; S.ed.dok = u.dokId; S.ed.seite = u.seite; S.ed.edit = false; },
     'ue-bearbeiten': el => mitName(() => { const e = elementeVon(L(), S.ed.dok, S.ed.seite).find(x => x.nr === el.dataset.nr); if (e) ueForm(werk(S.view.id), Object.assign({}, e, { zeilen: e.zeilen ? e.zeilen.map(z => z.slice()) : null })); }),
     'bild-neu': () => mitName(() => { const w = werk(S.view.id); ueForm(w, { dokId: S.ed.dok, s: S.ed.seite, nr: ueNrNeu(S.ed.dok, S.ed.seite), typ: 'skizze', box: [0, 1, 0, 0], titel: '', neu: true, eigen: true }); }),
     'ue-pos': el => mitName(() => {
@@ -2399,7 +2414,7 @@ if (typeof document !== 'undefined') (function () {
       else if (op === 'zu') { st.zeilen = st.zeilen.filter(z => z.some(c => c)); const voll = st.zeilen[0] ? st.zeilen[0].map((_, j) => st.zeilen.some(z => z[j])) : []; st.zeilen = st.zeilen.map(z => z.filter((_, j) => voll[j])); }
       ueForm(werk(S.view.id), st); return false;
     },
-    'fv-zeige': el => { const f = L().formate.find(x => x.id === el.dataset.id); S.view = { typ: 'werk', id: f.werkId }; S.tab = 'edit'; S.ed.dok = f.dokId; S.ed.seite = f.seite; S.ed.edit = false; },
+    'fv-zeige': el => { const f = L().formate.find(x => x.id === el.dataset.id); S.view = { typ: 'werk', id: f.werkId }; S.tab = 'edit'; S.ed.lesen = false; S.ed.dok = f.dokId; S.ed.seite = f.seite; S.ed.edit = false; },
     'struktur-neu': el => { const ds = dokus(el.dataset.id).filter(pdfDa); el.disabled = true; el.textContent = 'Wird erkannt …'; (async () => { for (const d of ds) await strukturLesen(d); })().then(() => { render(); meldung('Struktur neu erkannt. Zuweisungen von Hand sind erhalten.'); }, e => meldung('Die Struktur lässt sich nicht erkennen: ' + (e.message || e))); return false; },
     'ed-undo': () => { const t = $('#ed-text'); t.focus(); document.execCommand('undo'); S.ed.entwurf = t.value; return false; },
     'ed-redo': () => { const t = $('#ed-text'); t.focus(); document.execCommand('redo'); S.ed.entwurf = t.value; return false; },
@@ -2457,6 +2472,7 @@ if (typeof document !== 'undefined') (function () {
     else if (t.id === 'ed-z-scan') { S.ed.zScan = t.checked; render(); }
     else if (t.id === 'ed-z-text') { S.ed.zText = t.checked; render(); }
     else if (t.id === 'ed-z-marken') { S.ed.zMarken = t.checked; render(); }
+    else if (t.id === 'ed-lesorig') { S.ed.lesOrig = t.checked; render(); }
     else if (t.id === 'pf') { S.pf = t.value; render(); }
     else if (t.id === 'bib-gruppe') { S.bib.gruppe = t.value; render(); }
     else if (t.id === 'bib-status') { S.bib.status = t.value; render(); }

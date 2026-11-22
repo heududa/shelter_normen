@@ -12,13 +12,15 @@ const ORDNER = () => {
 };
 const path0 = path.join(__dirname, 'daten');
 (async () => {
+  // Befehle in Aufklappmenüs: das Menü öffnen, bevor geklickt wird
+  const menueAuf = pg => { const k0 = pg.click.bind(pg); pg.click = async (sel, o) => { await pg.evaluate(q => { try { const e = [...document.querySelectorAll(q)].find(x => x.closest('details.menue') || x.offsetParent) || document.querySelector(q), d = e && e.closest('details.menue'); if (d && !e.matches('summary')) d.open = true; } catch (x) { /* kein CSS-Selektor */ } }, sel).catch(() => {}); return k0(sel, o); }; return pg; };
   fs.rmSync(TMP, { recursive: true, force: true }); fs.mkdirSync(path.join(TMP, 'daten'), { recursive: true });
   fs.readdirSync(path.join(R, 'daten')).filter(f => f.endsWith('.json')).forEach(f => fs.copyFileSync(path.join(R, 'daten', f), path.join(TMP, 'daten', f)));
   const srv = server(R, TMP).listen(0), URL0 = `http://localhost:${srv.address().port}/`;
   const b = await chromium.launch(), ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
   await ctx.exposeFunction('__schreibe', (pfad, b64) => { const f = path.join(TMP, pfad); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, Buffer.from(b64, 'base64')); });
   await ctx.addInitScript(ORDNER);
-  const p = await ctx.newPage(); const errs = []; global.__errs = errs; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => m.type() === 'error' && errs.push(m.text()));
+  const p = menueAuf(await ctx.newPage()); const errs = []; global.__errs = errs; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => m.type() === 'error' && errs.push(m.text()));
   await p.goto(URL0); await p.waitForSelector('.karte');
   await p.click('.kopf [data-act=ordner]'); await p.waitForSelector('.kopf .ablage:has-text("shelter_normen")'); await p.waitForSelector('.karte');
   const lib = () => p.evaluate(() => JSON.parse(JSON.stringify(window.__nb.S.lib.anmerkungen)));

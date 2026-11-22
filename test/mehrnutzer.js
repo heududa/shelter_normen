@@ -5,6 +5,8 @@ const fs = require('fs'), path = require('path'), assert = require('assert');
 const { mehrnutzer, pruefeStand } = require('../werkzeuge/mehrnutzer.js');
 const R = path.resolve(__dirname, '..'), T = path.join(__dirname, 'tmp_m');
 (async () => {
+  // Befehle in Aufklappmenüs: das Menü öffnen, bevor geklickt wird
+  const menueAuf = pg => { const k0 = pg.click.bind(pg); pg.click = async (sel, o) => { await pg.evaluate(q => { try { const e = [...document.querySelectorAll(q)].find(x => x.closest('details.menue') || x.offsetParent) || document.querySelector(q), d = e && e.closest('details.menue'); if (d && !e.matches('summary')) d.open = true; } catch (x) { /* kein CSS-Selektor */ } }, sel).catch(() => {}); return k0(sel, o); }; return pg; };
   fs.rmSync(T, { recursive: true, force: true }); fs.mkdirSync(path.join(T, 'daten'), { recursive: true });
   ['index.html', 'app.js', 'style.css'].forEach(f => fs.copyFileSync(path.join(R, f), path.join(T, f)));
   ['lib', 'marke'].forEach(d => fs.cpSync(path.join(R, d), path.join(T, d), { recursive: true }));
@@ -71,7 +73,7 @@ const R = path.resolve(__dirname, '..'), T = path.join(__dirname, 'tmp_m');
 
   // --- Im Browser: Autor reicht ein, Prüfer vergleicht und gibt frei
   const br = await chromium.launch(), errs = [];
-  const seite = async () => { const c = await br.newContext({ viewport: { width: 1500, height: 950 } }), p = await c.newPage(); p.on('pageerror', e => errs.push(e.message)); return p; };
+  const seite = async () => { const c = await br.newContext({ viewport: { width: 1500, height: 950 } }), p = menueAuf(await c.newPage()); p.on('pageerror', e => errs.push(e.message)); return p; };
   const anmelden = async (p, n, pw) => { await p.goto(U); await p.waitForSelector('#anmeldung'); await p.fill('#anmeldung [name=name]', n); await p.fill('#anmeldung [name=passwort]', pw || n + '-passwort-1'); await p.click('#anmeldung button'); };
   const pa = await seite(); await anmelden(pa, 'anna', 'falsch-falsch'); await pa.waitForSelector('.fehler-fest'); await anmelden(pa, 'anna');
   await pa.waitForSelector('#anmeldung', { state: 'detached' }); await pa.waitForSelector('#dlg[open] input[name=neu]'); // vom Admin gesetztes Passwort: ändern

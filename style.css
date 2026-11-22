@@ -569,3 +569,46 @@ a.beleg{font-weight:400!important;font-size:.85em;white-space:nowrap}
 .links .notiz.warn{color:var(--rot);font-weight:600}
 details.abgeloest summary{cursor:pointer}
 details.abgeloest p{margin:.45rem 0 0}
+/* 0.17.0: Aufklappmenüs, vier Arbeitsweisen der Norm, knapper Kopf */
+details.menue{position:relative;display:inline-block}
+details.menue>summary{list-style:none;cursor:pointer;background:var(--blatt);border:1px solid var(--linie);border-radius:4px;padding:.38rem .75rem;white-space:nowrap;user-select:none}
+details.menue>summary::-webkit-details-marker{display:none}
+details.menue>summary::after{content:"▾";margin-left:.4rem;font-size:.8em;color:var(--leise)}
+details.menue>summary:hover,details.menue[open]>summary{border-color:var(--haupt)}
+details.menue.punkte>summary::after,details.menue.pfeil>summary::after{content:none}
+details.menue.punkte>summary{padding:.38rem .6rem;font-weight:700;letter-spacing:.05em}
+details.menue.pfeil>summary{padding:.38rem .45rem;border-radius:0 4px 4px 0;border-left:0}
+details.menue.pfeil>summary::before{content:"▾";font-size:.8em;color:var(--leise)}
+details.menue.klein>summary{font-size:.8rem;padding:.12rem .45rem}
+.menueliste{position:absolute;right:0;top:calc(100% + 4px);z-index:40;min-width:15rem;background:var(--blatt);border:1px solid var(--linie);border-radius:6px;box-shadow:0 8px 22px rgba(0,0,0,.2);padding:.3rem;display:grid;gap:.1rem;text-align:left}
+.menueliste button{border:0;background:none;text-align:left;padding:.45rem .65rem;border-radius:4px;width:100%;font-weight:400;font-size:.95rem;color:var(--tinte)}
+.menueliste button:hover:not(:disabled){background:var(--papier)}
+.menueliste button[aria-current=true]{font-weight:600}
+.menueliste hr{border:0;border-top:1px solid var(--linie);margin:.25rem 0;width:100%}
+.menuezeile{display:flex;align-items:center;gap:.5rem;padding:.35rem .65rem;font-size:.85rem;color:var(--leise)}
+.menuezeile .umschalt button{width:auto;border:1px solid var(--linie);padding:.15rem .5rem;font-size:.82rem}
+.menuezeile .umschalt button[aria-pressed=true]{background:var(--haupt);color:var(--blatt);border-color:var(--haupt)}
+.teilknopf{display:inline-flex}.teilknopf>button{border-radius:4px 0 0 4px}
+.werkkopf.knapp .werktitel{align-items:baseline;gap:.2rem .9rem}
+.werkkopf.knapp h2{margin:0}
+.werkkopf.knapp .lang{font-size:1rem;margin:0;color:var(--leise)}
+.werkkopf.knapp .pruefstand{display:inline-flex;align-items:center;gap:.5rem}
+.werkkopf.knapp .pruefstand .art{font-size:.82rem;color:var(--leise)}
+.werkkopf.knapp .ungeprueft,.werkkopf.knapp .geprueft{margin:.35rem 0 0;padding:.2rem .6rem;font-size:.85rem;display:inline-block}
+.tabs.modi{margin-top:.6rem;align-items:flex-end}
+.tabs.modi .rechts{margin-left:auto;display:flex;gap:.4rem;align-items:center;padding-bottom:.3rem}
+.tabs.modi .rechts button{border:1px solid var(--linie);border-radius:4px;background:var(--blatt);color:var(--tinte);padding:.38rem .75rem}
+.tabs.modi .menueliste button{border:0;background:none}
+.tabs button:disabled{opacity:.45;cursor:not-allowed}
+.unterwahl{margin:.7rem 0 0}
+.untertitel{margin:1rem 0 .4rem;font-size:1.05rem}
+.edgrid.lesen{grid-template-columns:minmax(0,54rem);justify-content:center}
+.edgrid.lesen.mitorig{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);justify-content:stretch}
+.edgrid.lesen .lesetext{font-size:1.06rem}
+.glossar td.tat{white-space:nowrap}
+.leiste .ansichten a.aktiv i{background:var(--nacht);color:#fff}
+@media print{details.menue{display:none}}
+.menuezeile{white-space:nowrap}
+.edleiste label.haken{display:inline-flex;align-items:center;gap:.35rem}
+.edleiste{gap:.4rem .6rem}
+.edleiste #ed-ebene{max-width:11.5rem}

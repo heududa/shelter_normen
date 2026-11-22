@@ -12,13 +12,15 @@ const ORDNER = () => {
 };
 const path0 = path.join(__dirname, 'daten');
 (async () => {
+  // Befehle in Aufklappmenüs: das Menü öffnen, bevor geklickt wird
+  const menueAuf = pg => { const k0 = pg.click.bind(pg); pg.click = async (sel, o) => { await pg.evaluate(q => { try { const e = [...document.querySelectorAll(q)].find(x => x.closest('details.menue') || x.offsetParent) || document.querySelector(q), d = e && e.closest('details.menue'); if (d && !e.matches('summary')) d.open = true; } catch (x) { /* kein CSS-Selektor */ } }, sel).catch(() => {}); return k0(sel, o); }; return pg; };
   fs.rmSync(TMP, { recursive: true, force: true }); fs.mkdirSync(path.join(TMP, 'daten'), { recursive: true });
   fs.readdirSync(path.join(R, 'daten')).filter(f => f.endsWith('.json')).forEach(f => fs.copyFileSync(path.join(R, 'daten', f), path.join(TMP, 'daten', f)));
   const srv = server(R, TMP).listen(0), URL0 = `http://localhost:${srv.address().port}/`;
   const b = await chromium.launch(), ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, acceptDownloads: true });
   await ctx.exposeFunction('__schreibe', (pfad, b64) => { const f = path.join(TMP, pfad); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, Buffer.from(b64, 'base64')); });
   await ctx.addInitScript(ORDNER);
-  const p = await ctx.newPage(); const errs = []; global.__errs = errs; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => m.type() === 'error' && errs.push(m.text()));
+  const p = menueAuf(await ctx.newPage()); const errs = []; global.__errs = errs; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => m.type() === 'error' && errs.push(m.text()));
   await p.goto(URL0); await p.waitForSelector('.karte');
   // Ablage: zuerst nur lesen, dann Ordner verbinden
   assert.ok((await p.locator('.kopf .ablage').innerText()).includes('Nur lesen'));
@@ -161,7 +163,7 @@ const path0 = path.join(__dirname, 'daten');
   await p.evaluate(() => window.__nb.oeffne('twp66')); await p.click('.werkkopf [data-act=pdf-neu]'); await p.setInputFiles('#dlg input[name=datei]', path0 + '/testnorm.pdf'); await p.click('#dlg button.haupt'); await p.waitForSelector('.seite[data-fertig]'); assert.equal(await p.locator('.seite').count(), 4);
   await p.click('.kopf [data-act=speichern]'); await p.waitForSelector('.meldung:has-text("Gespeichert im Ordner")');
   assert.ok(fs.readdirSync(path.join(TMP, 'pdf', 'eigene')).some(f => f.endsWith('testnorm.pdf'))); const gesp = JSON.parse(fs.readFileSync(path.join(TMP, 'daten', 'bibliothek.json'), 'utf8')); assert.equal(gesp.aenderungen.length, 4); assert.ok(!gesp.seitentext && fs.existsSync(path.join(TMP, 'daten', 'texte.json')));
-  const p2 = await ctx.newPage(); await p2.setViewportSize({ width: 390, height: 800 }); p2.on('pageerror', e => errs.push('neu geladen: ' + e.message)); await p2.goto(URL0); await p2.waitForSelector('.karte');
+  const p2 = menueAuf(await ctx.newPage()); await p2.setViewportSize({ width: 390, height: 800 }); p2.on('pageerror', e => errs.push('neu geladen: ' + e.message)); await p2.goto(URL0); await p2.waitForSelector('.karte');
   assert.equal(await p2.evaluate(() => window.__nb.S.lib.aenderungen.length), 4); assert.equal(await p2.evaluate(() => window.__nb.S.lib.werke.find(w => w.id === 'twp84').digital.status), 'freigegeben');
   assert.ok(await p2.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'kein Querscrollen Start');
   await p2.evaluate(() => window.__nb.oeffne('twp66', 'edit')); await p2.locator('.seite').scrollIntoViewIfNeeded(); await p2.waitForSelector('.seite[data-fertig]'); assert.ok(await p2.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), 'kein Querscrollen Bearbeitung');
@@ -183,7 +185,7 @@ const path0 = path.join(__dirname, 'daten');
   assert.ok((await p.locator('.lesetext').innerText()).includes('Grundrissbeispiele')); await p.screenshot({ path: D + 'k_skizze.png' });
   // Skizze und Tabelle von Hand aus dem Scan übernehmen
   const vorher = await p.locator('.lesetext .ue').count();
-  await p.click('[data-act=pdf-mark][data-art=skizze]'); bx = await p.locator('.seite').boundingBox();
+  await p.click('[data-act=pdf-mark][data-art=skizze]'); await p.evaluate(() => window.scrollTo(0, 0)); bx = await p.locator('.seite').boundingBox();
   await p.mouse.move(bx.x + bx.width * 0.3, bx.y + bx.height * 0.05); await p.mouse.down(); await p.mouse.move(bx.x + bx.width * 0.9, bx.y + bx.height * 0.12, { steps: 4 }); await p.mouse.up();
   await p.waitForSelector('#dlg input[name=titel]'); await p.fill('#dlg input[name=titel]', 'Testskizze'); await p.click('#dlg button.haupt');
   assert.equal(await p.locator('.lesetext .ue').count(), vorher + 1); assert.ok((await p.locator('.lesetext .ue.hand figcaption').last().innerText()).includes('Testskizze'));
@@ -258,7 +260,7 @@ const path0 = path.join(__dirname, 'daten');
   await p.keyboard.press('x'); await p.keyboard.press('Enter'); await p.waitForFunction(() => window.__nb.S.pl.i === 2);
   assert.equal(await p.evaluate(() => window.__nb.S.lib.aenderungen.length + window.__nb.S.lib.uebernahmen.length), aeV + 1); assert.equal(await p.evaluate(() => window.__nb.S.lib.dokumente.find(d => d.id === 'd-twp84-1').vorschlagErledigt.length), 2);
   // Ohne Webserver: Startschirm mit Ordnerwahl
-  const p3 = await b.newPage(); p3.on('pageerror', e => errs.push('file: ' + e.message)); await p3.goto('file://' + R + '/index.html'); await p3.waitForSelector('.startschirm [data-act=ordner]');
+  const p3 = menueAuf(await b.newPage()); p3.on('pageerror', e => errs.push('file: ' + e.message)); await p3.goto('file://' + R + '/index.html'); await p3.waitForSelector('.startschirm [data-act=ordner]');
   srv.close();
   console.log('Fehler:', errs); assert.equal(errs.length, 0); await b.close(); console.log('TEST OK');
 })().catch(e => { console.error('Seitenfehler:', JSON.stringify(global.__errs || [])); console.error(String(e.stack || e).slice(0, 1500)); process.exit(1); });

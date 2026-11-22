@@ -1,5 +1,39 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.17.0 – 22.11.2026
+
+Menüführung: vier Arbeitsweisen der Norm, Aufklappmenüs, knapper Kopf.
+
+### Geändert
+- **Vier Arbeitsweisen statt sechs Reiter:** Lesen, Prüfen, Bearbeiten, Regeln. Jede zeigt nur ihre Werkzeuge.
+  - **Lesen:** der Text der Seite ohne Werkzeuge zum Bearbeiten, auf Wunsch mit dem Original daneben. Darunter die Wahl «Seite für Seite», «Ganzes Original» (bisher Reiter «Ganze Norm») und «Abschnitte» (bisher «Originaltext»).
+  - **Prüfen:** öffnet den Vergleich über das ganze Fenster (bisher Knopf «Vergleichen: ganze Seite»). Die Prüfliste steht dort in der Leiste. «Prüfen beenden» führt zurück.
+  - **Bearbeiten:** wie bisher Original, Text und Änderungen nebeneinander.
+  - **Regeln:** die Regeln der Norm, «Regel erfassen» steht daneben.
+- **Ein Knopf und drei Menüs** statt drei Knopfreihen: «Stelle kommentieren» ist ein Klick; der Pfeil daneben öffnet «Markieren als Text | Rechteck», «Ganze Seite kommentieren» und «Änderung im Scan vorschlagen». «Einfügen» enthält Tabelle, Skizze und eigenes Bild, «Ausgeben» Drucken oder Word, PDF-Export und Protokoll für Excel.
+- Läuft ein Schritt aus einem Menü (z. B. «Tabelle übernehmen»), steht er als hervorgehobener Knopf in der Zeile und lässt sich dort abbrechen.
+- **«Weitere» (…)** enthält, was selten gebraucht wird: Angaben bearbeiten, Verknüpfung hinzufügen, Regel erfassen, Originaltext einlesen, Prüfstatus ändern, Prüfliste, Norm freigeben, Angaben und Verknüpfungen, Änderungsprotokoll.
+- **Kopf der Norm auf eine Zeile:** Kurztitel, Titel, Art und Prüfstand. Der Hinweis auf die ungeprüfte Fassung ist auf einen Satz gekürzt. «Zurück zur Bibliothek» entfällt; der Pfad oben führt zurück.
+- **Nur noch ein hervorgehobener Knopf** je Ansicht: «Speichern».
+- **Kopfzeile:** «Namen angeben» steht unter «Daten». «Ordner verbinden» bleibt sichtbar, solange kein Ordner verbunden ist.
+- **Seitenleiste:** «Prüfen» statt «Prüfungen», «Verlauf» statt «Versionen und Verlauf». Der Zähler am gewählten Eintrag ist nicht mehr rot.
+- **Glossar:** je Zeile steht «geprüft» offen, «Bearbeiten» und «Zurückziehen» liegen hinter «…».
+
+### Wirkung
+- In der Bearbeitung beginnt das Original rund 300 Bildpunkte weiter oben (bei 1440 × 900: vorher bei 85 % der Höhe, jetzt bei 55 %).
+
+### Prüflauf
+- `node test/menue.js` (neu): Arbeitsweisen, Menüs öffnen und schliessen (Klick daneben, Esc), laufender Schritt, Lesen ohne Bearbeitungswerkzeuge, Prüfen und zurück, Weitere, Glossar.
+- Die bestehenden Prüfläufe öffnen ein Menü, bevor sie einen Befehl darin anklicken (`menueAuf`). `test.js`, `anmerkungen.js`, `bilder.js`, `verweise.js`, `rauch.js`, `mehrnutzer.js`: ohne Fehler.
+
+### Annahmen (Status „zu bestätigen“)
+| Nr. | Annahme |
+|---|---|
+| S1 | Eine Norm öffnet sich wie bisher in «Bearbeiten». Wer «Lesen» wählt, bleibt für die Sitzung dabei. Ein Sprung aus der Liste der Änderungen oder der Prüfliste führt immer nach «Bearbeiten». |
+| S2 | «Lesen» zeigt eine Seite auf einmal, nicht die ganze Norm als durchlaufenden Text. |
+| S3 | «Prüfen» belegt weiterhin das ganze Fenster ohne Seitenleiste. |
+| S4 | Die Knöpfe an den Regelkarten (fünf je Regel) und in den übrigen Ansichten sind unverändert. |
+
 ## 0.16.0 – 22.11.2026
 
 Beziehungen zwischen den Normen: Vermerk in der alten Norm, Durchsicht aller Aufhebungen und Ergänzungen, anklickbare Verweise.
