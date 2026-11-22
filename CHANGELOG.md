@@ -1,5 +1,21 @@
 # Normenbibliothek – CHANGELOG
 
+## 0.14.2 – 22.11.2026
+
+PDF-Export mit eigenen Bildern.
+
+### Neu
+- **Eigene Bilder im PDF-Export:** Das Änderungsblatt nach der Seite zeigt jedes eigene Bild in der eingestellten Breite und Ausrichtung, mit Nummer, Titel, Name und Datum. Es sagt, ob das Bild eine Skizze des Originals ersetzt oder neu eingefügt ist und ob es freigegeben ist.
+- Auf der Originalseite ist eine ersetzte Skizze gestrichelt eingerahmt und beschriftet («im Text durch eigenes Bild ersetzt»), wenn «einrahmen» gewählt ist. Die Originalseite selbst bleibt unverändert.
+- Das Änderungsverzeichnis auf dem Deckblatt führt die eigenen Bilder auf.
+
+### Bestätigt
+- **O7** (D. Heusser, 22.11.2026): Ein getauschtes Bild wird nicht als Abweichung einer Schicht geführt; die Bezeichnung «eigenes Bild» genügt.
+
+### Prüflauf
+- `node test/bilder.js`: zusätzlich PDF-Export der Seite mit ersetzter Skizze und der Seite mit neu eingefügtem Bild (Text und eingebettetes Bild im PDF nachgeprüft).
+
+
 ## 0.14.1 – 22.11.2026
 
 Zweitlesung aller gescannten Normen.
@@ -104,11 +120,11 @@ Eigene Bilder im Text: Skizze tauschen, Bild neu einfügen, Grösse, Ausrichtung
 | O4 | Alle Formate werden zu PNG mit weissem Grund. Vektorbilder (SVG) verlieren damit die freie Skalierbarkeit; Fotos werden als PNG grösser als als JPEG. |
 | O5 | Schemas, die als PDF vorliegen, lassen sich nicht direkt einfügen; sie müssen vorher als Bild gespeichert werden. |
 | O6 | Ein entferntes oder ersetztes Bild bleibt als Datei in `bilder/eigene/` liegen, damit freigegebene Versionen es weiter zeigen können. |
-| O7 | Die Erstfreigabe einer Norm bestätigt die Übereinstimmung mit dem Original. Ein getauschtes Bild weicht davon ab; es ist im Text mit «eigenes Bild» bezeichnet, aber nicht als Abweichung einer Schicht (Kanton, Hersteller) geführt. |
+| O7 | Die Erstfreigabe einer Norm bestätigt die Übereinstimmung mit dem Original. Ein getauschtes Bild weicht davon ab; es ist im Text mit «eigenes Bild» bezeichnet, aber nicht als Abweichung einer Schicht (Kanton, Hersteller) geführt. **Bestätigt am 22.11.2026.** |
 
 ### Offen
 - Ohne Server und ohne verbundenen Ordner (nur heruntergeladene `bibliothek.json`) sind neu eingefügte Bilder nicht enthalten; das Programm meldet das.
-- Der PDF-Export (Originalseiten mit Änderungsblättern) zeigt eigene Bilder nicht, nur der Druck und die Word-Datei.
+- Der PDF-Export (Originalseiten mit Änderungsblättern) zeigt eigene Bilder nicht, nur der Druck und die Word-Datei. (Erledigt in 0.14.2.)
 
 ## 0.12.0 – 22.11.2026
 

@@ -44,6 +44,10 @@ const path0 = path.join(__dirname, 'daten');
   let l = await lage(); assert.ok(Math.abs(l.anteil - 0.6) < 0.02, JSON.stringify(l)); assert.ok(Math.abs(l.links - l.rechts) < 3, JSON.stringify(l));
   assert.ok((await p.locator('.lesetext .ue-skizze.eigen figcaption').innerText()).includes('eigenes Bild'));
   await p.screenshot({ path: D + 'b_ersetzt.png' });
+  const pdfAus = async (seiten, datei) => { await p.click('[data-act=ed-pdf]'); await p.fill('#dlg input[name=seiten]', seiten); const [dl] = await Promise.all([p.waitForEvent('download'), p.click('#dlg button.haupt')]); await dl.saveAs(D + datei); await p.waitForFunction(() => !document.querySelector('#dlg').open); return { text: execSync(`pdftotext -layout ${D + datei} -`).toString(), bilder: execSync(`pdfimages -list ${D + datei}`).toString() }; };
+  // PDF-Export: ersetzte Skizze auf der Originalseite eingerahmt, das eigene Bild auf dem Änderungsblatt
+  let ex = await pdfAus('38', 'b_export38.pdf'); assert.ok(ex.text.includes('im Text durch eigenes Bild ersetzt') && ex.text.includes('ersetzt die Skizze des Originals') && ex.text.includes('Schema ANDAIR') && ex.text.includes('1 eigenes Bild') && ex.text.includes('nicht freigegeben'), ex.text.slice(0, 1500));
+  assert.ok(/\s800\s+400\s/.test(ex.bilder), ex.bilder);
   // Grösse und Ausrichtung ändern, ohne das Bild neu zu wählen
   await p.hover('.lesetext .ue-skizze.eigen'); await p.click('.lesetext .ue-skizze.eigen [data-act=ue-bearbeiten]'); await p.waitForSelector('#dlg input[name=original]');
   await p.fill('#dlg input[name=breite]', '5'); await p.click('#dlg button.haupt'); assert.ok((await p.locator('#dlg .fehler').innerText()).includes('10 und 100') || await p.locator('#dlg input:invalid').count() === 1);
@@ -88,6 +92,7 @@ const path0 = path.join(__dirname, 'daten');
   execSync(`cd ${TMP} && rm -rf w && mkdir w && cd w && unzip -q ../b_word.docx`); const dx = fs.readFileSync(path.join(TMP, 'w/word/document.xml'), 'utf8');
   const cx = +/<wp:extent cx="(\d+)"/.exec(dx)[1]; assert.ok(Math.abs(cx - 2880000) < 5000, 'Bild halb so breit wie der Satzspiegel: ' + cx);
   const bildDatei = fs.readFileSync(path.join(TMP, 'w/word/media/bild1.png')); assert.equal(bildDatei.readUInt32BE(16), 800);
+  ex = await pdfAus('64', 'b_export64.pdf'); assert.ok(ex.text.includes('neu eingefügt') && ex.text.includes('Änderungen zu Seite 64') && !ex.text.includes('im Text durch eigenes Bild ersetzt'), ex.text.slice(0, 1500)); assert.ok(/\s800\s+400\s/.test(ex.bilder), ex.bilder);
   await p.waitForSelector('.lesetext .ue-skizze.eigen');
   // nicht freigegebenes Bild entfernen
   await p.hover('.lesetext .ue-skizze.eigen'); await p.click('.lesetext .ue-skizze.eigen [data-act=ue-weg]'); await p.click('#dlg button.haupt'); await p.waitForFunction(() => !document.querySelector('.lesetext .ue-skizze.eigen'));
